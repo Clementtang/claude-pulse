@@ -10,6 +10,9 @@ type: reference
 
 | date       | category    | summary                                                                                                                  | source        |
 | ---------- | ----------- | ------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| 2026-03-25 | claude-code | Claude Code 2.1.83 — managed-settings.d/ 政策片段合併、CwdChanged/FileChanged hook 事件、sandbox.failIfUnavailable、圖片 chip 插入 | github.com    |
+| 2026-03-25 | industry    | DOJ 向聯邦法院聲稱 Pentagon 供應鏈風險認定合法，駁回 Anthropic 第一修正案抗辯                                            | thehill.com   |
+| 2026-03-25 | industry    | Pentagon 爭議引爆熱度，Claude 衝上 Apple/Android 雙榜首，日活用戶較一月增逾 140%                                        | cnbc.com      |
 | 2026-03-24 | claude-code | Claude Code Auto Mode（research preview）— AI 分類器自動審核 tool call 安全性，取代手動逐一核准，Enterprise/API 即將開放 | anthropic.com |
 | 2026-03-24 | platform    | Claude Computer Use + Dispatch 遠端桌面 — 從 iPhone 遠端讓 Claude 操控 Mac 完成任務（Pro/Max）                           | anthropic.com |
 | 2026-03-24 | industry    | Pentagon 訴訟初步禁制令聽證 — 法官質疑 DoD 黑名單「看起來像在摧毀 Anthropic」                                            | reuters.com   |

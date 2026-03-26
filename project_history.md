@@ -66,6 +66,12 @@ Log 格式為純文字條列 `- YYYY-MM-DD | 摘要`。
 
 **Log 結構化：** 同時將 log 從純文字改為 Markdown 表格 + 分類欄位。
 
+**資料來源改善（2026-03-26）：** prompt 改為先抓官方來源再用 WebSearch 補充，降低對 WebSearch 的依賴。
+
+- 官方來源（WebFetch）：Claude Code Changelog、GitHub Releases、Anthropic Blog、Platform Release Notes
+- WebSearch：補充產業動態、法律訴訟、市場數據等第三方消息
+- **Why：** WebSearch 結果每次不同且可能遺漏，官方來源更穩定可靠
+
 ## 已知限制
 
 - **本地副本同步：** GitHub 為權威來源，本地 memory 檔案需手動 pull 同步。手動執行 `/claude-pulse` 時會更新本地版本但不會 push 到 GitHub

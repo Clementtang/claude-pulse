@@ -10,6 +10,9 @@ type: reference
 
 | date       | category    | summary                                                                                                                                 | source        |
 | ---------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| 2026-03-26 | claude-code | Claude Code 2.1.85 — 條件式 hook if 欄位、PreToolUse hook 可回覆 AskUserQuestion、MCP OAuth RFC 9728、修復 Kitty 鍵盤殘留等多項問題     | github.com    |
+| 2026-03-26 | industry    | 聯邦法官 Rita F. Lin 核發臨時禁制令，阻止 Trump 政府封鎖政府機構使用 Anthropic AI，Anthropic 訴訟首獲勝利                              | bloomberg.com |
+| 2026-03-26 | industry    | Axios 獨家：Sam Altman 內部訊息顯示曾試圖「拯救」Anthropic，但 OpenAI 實為 Pentagon 合約最大受益者                                     | axios.com     |
 | 2026-03-25 | claude-code | Claude Code 2.1.83 — managed-settings.d/ drop-in 目錄、CwdChanged/FileChanged hook events、sandbox.failIfUnavailable、transcript search | github.com    |
 | 2026-03-25 | platform    | Claude 全球服務中斷 — 下午 UTC 起大規模斷線，社群與 DownDetector 大量回報                                                               | latestly.com  |
 | 2026-03-25 | industry    | DOJ 向聯邦法院聲稱 Pentagon 供應鏈風險認定合法，駁回 Anthropic 第一修正案抗辯                                                           | thehill.com   |

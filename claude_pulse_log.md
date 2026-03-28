@@ -10,6 +10,10 @@ type: reference
 
 | date       | category    | summary                                                                                                                                 | source        |
 | ---------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| 2026-03-27 | claude-code | Claude Code 2.1.86 — 新增 X-Claude-Code-Session-Id header 供 proxy 聚合、.jj/.sl VCS 排除、Read 工具去重壓縮、@file 減少 JSON 逸出 overhead，修復 --resume、VSCode 模型顯示等多項 bug | github.com    |
+| 2026-03-27 | enterprise  | Bloomberg：Anthropic 正與多家華爾街銀行初步洽談，考慮最快 2026 年 10 月 IPO，與 OpenAI 競速公開上市                                   | bloomberg.com |
+| 2026-03-27 | platform    | Claude 服務再度中斷 — Opus 4.6 與 Sonnet 4.6 受影響，OpenAI Pentagon 合約落空後用戶大量湧入造成基礎設施壓力                            | ibtimes.com.au |
+| 2026-03-26 | research    | Claude Mythos 洩露 — Fortune 獨家：Anthropic 誤將旗艦未發布模型「Mythos」草稿留在公開資料庫，Anthropic 確認屬 CMS 設定人為失誤         | fortune.com   |
 | 2026-03-26 | claude-code | Claude Code 2.1.85 — 條件式 hook if 欄位、PreToolUse hook 可回覆 AskUserQuestion、MCP OAuth RFC 9728、修復 Kitty 鍵盤殘留等多項問題     | github.com    |
 | 2026-03-26 | industry    | 聯邦法官 Rita F. Lin 核發臨時禁制令，阻止 Trump 政府封鎖政府機構使用 Anthropic AI，Anthropic 訴訟首獲勝利                              | bloomberg.com |
 | 2026-03-26 | industry    | Axios 獨家：Sam Altman 內部訊息顯示曾試圖「拯救」Anthropic，但 OpenAI 實為 Pentagon 合約最大受益者                                     | axios.com     |

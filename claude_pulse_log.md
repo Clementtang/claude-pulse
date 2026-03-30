@@ -10,6 +10,7 @@ type: reference
 
 | date       | category    | summary                                                                                                                                 | source        |
 | ---------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| 2026-03-29 | claude-code | Claude Code 2.1.87 — 修復 Cowork Dispatch 訊息無法送達的問題                                                                           | github.com    |
 | 2026-03-28 | industry    | TechCrunch：信用卡交易數據分析顯示 Claude 付費用戶創歷史新高，年化 ARR 達 $19B，在美德加法 App 排行榜均位居前二，分析師預測 2026 年中可望超越 OpenAI 營收 | techcrunch.com |
 | 2026-03-27 | claude-code | Claude Code 2.1.86 — 新增 X-Claude-Code-Session-Id header 供 proxy 聚合、.jj/.sl VCS 排除、Read 工具去重壓縮、@file 減少 JSON 逸出 overhead，修復 --resume、VSCode 模型顯示等多項 bug | github.com    |
 | 2026-03-27 | enterprise  | Bloomberg：Anthropic 正與多家華爾街銀行初步洽談，考慮最快 2026 年 10 月 IPO，與 OpenAI 競速公開上市                                   | bloomberg.com |

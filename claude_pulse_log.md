@@ -10,6 +10,10 @@ type: reference
 
 | date       | category    | summary                                                                                                                                 | source        |
 | ---------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| 2026-03-30 | platform    | API 宣布 4/30 停止支援 Sonnet 4.5/Sonnet 4 的 1M context beta header（context-1m-2025-08-07），請遷移至 Sonnet/Opus 4.6                  | anthropic.com |
+| 2026-03-30 | claude-code | Claude Code 2.1.88 — 新增 flicker-free 渲染（CLAUDE_CODE_NO_FLICKER=1）與 PermissionDenied hook，修復 prompt cache miss、StructuredOutput schema 快取 bug 及記憶體洩漏 | github.com    |
+| 2026-03-30 | industry    | Claude 付費訂閱今年翻倍，MCP 月下載達 9,700 萬次，Claude Code 自 Claude 4 發布後使用量成長 300%                                         | theaiinsider.tech |
+| 2026-03-26 | claude-code | Claude Code 2.1.84 — Windows PowerShell tool（opt-in 預覽）、TaskCreated hook、WorktreeCreate HTTP hook、閒置 75 分鐘返回提示            | github.com    |
 | 2026-03-29 | claude-code | Claude Code 2.1.87 — 修復 Cowork Dispatch 訊息無法送達的問題                                                                           | github.com    |
 | 2026-03-28 | industry    | TechCrunch：信用卡交易數據分析顯示 Claude 付費用戶創歷史新高，年化 ARR 達 $19B，在美德加法 App 排行榜均位居前二，分析師預測 2026 年中可望超越 OpenAI 營收 | techcrunch.com |
 | 2026-03-27 | claude-code | Claude Code 2.1.86 — 新增 X-Claude-Code-Session-Id header 供 proxy 聚合、.jj/.sl VCS 排除、Read 工具去重壓縮、@file 減少 JSON 逸出 overhead，修復 --resume、VSCode 模型顯示等多項 bug | github.com    |

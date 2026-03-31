@@ -13,6 +13,7 @@ type: reference
 | 2026-03-31 | claude-code | Claude Code 2.1.88 — CLAUDE_CODE_NO_FLICKER 無閃爍渲染、PermissionDenied hook（auto mode 拒絕後觸發）                                                                                 | github.com            |
 | 2026-03-31 | platform    | Microsoft Copilot Critique — M365 Copilot 用 Claude 審核 GPT 生成回應，DRACO benchmark 改善 13.8%                                                                                     | microsoft.com         |
 | 2026-03-31 | research    | Claude 發現 Vim 和 GNU Emacs 零日 RCE 漏洞                                                                                                                                            | cybersecuritynews.com |
+| 2026-03-30 | claude-code | Claude Code Computer Use（research preview）— CLI 內建 computer-use MCP server，可操控 macOS GUI，Pro/Max 方案，v2.1.85+                                                              | anthropic.com         |
 | 2026-03-30 | platform    | Claude 再次服務中斷 — 東部時間 9:33AM 起大量錯誤回報                                                                                                                                  | designtaxi.com        |
 | 2026-03-30 | industry    | MIT Technology Review：Pentagon 對 Anthropic 的文化戰策略已全面反噬                                                                                                                   | technologyreview.com  |
 | 2026-03-30 | platform    | Anthropic 尖峰時段限流（平日 8am-2pm ET）— 非尖峰雙倍優惠 3/28 結束，回復標準限額                                                                                                     | mlq.ai                |
@@ -32,7 +33,7 @@ type: reference
 | 2026-03-25 | industry    | DOJ 向聯邦法院聲稱 Pentagon 供應鏈風險認定合法，駁回 Anthropic 第一修正案抗辯                                                                                                         | thehill.com           |
 | 2026-03-25 | industry    | Pentagon 爭議引爆熱度，Claude 衝上 Apple/Android 雙榜首，日活用戶較一月增逾 140%                                                                                                      | cnbc.com              |
 | 2026-03-24 | claude-code | Claude Code Auto Mode（research preview）— AI 分類器自動審核 tool call 安全性，取代手動逐一核准，Enterprise/API 即將開放                                                              | anthropic.com         |
-| 2026-03-24 | platform    | Claude Computer Use + Dispatch 遠端桌面 — 從 iPhone 遠端讓 Claude 操控 Mac 完成任務（Pro/Max）                                                                                        | anthropic.com         |
+| 2026-03-24 | platform    | Claude Cowork Computer Use + Dispatch — Desktop app 可操控 Mac 畫面，搭配 Dispatch 從 iPhone 遠端指派任務（Pro/Max）                                                                  | anthropic.com         |
 | 2026-03-24 | industry    | Pentagon 訴訟初步禁制令聽證 — 法官質疑 DoD 黑名單「看起來像在摧毀 Anthropic」                                                                                                         | reuters.com           |
 | 2026-03-23 | industry    | Ramp AI Index 三月 — Anthropic 月增 4.9%，首購企業 70% 選 Anthropic，ARR $19B                                                                                                         | ramp.com              |
 | 2026-03-22 | platform    | Anthropic 使用者調查（81k 人）— 不可靠性 26.7% 為最大擔憂                                                                                                                             | anthropic.com         |

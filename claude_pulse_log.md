@@ -10,7 +10,7 @@ type: reference
 
 | date       | category    | summary                                                                                                                                                                               | source                |
 | ---------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| 2026-04-01 | claude-code | Claude Code 2.1.88 npm 源碼外洩 — npm 套件誤含 59.8MB source map，暴露約 51.2 萬行 TypeScript 原始碼及未發布功能 BUDDY（寵物 AI）、KAIROS、ULTRAPLAN、Coordinator Mode             | venturebeat.com       |
+| 2026-03-31 | claude-code | Claude Code v2.1.88 npm source map 洩漏 — 512K 行原始碼曝光，含 44 個未發布 feature flags 和三層 memory 架構；部分功能疑為愚人節內容（BUDDY/KAIROS），Anthropic 稱打包人為失誤        | theregister.com       |
 | 2026-03-31 | claude-code | Claude Code 2.1.88 — CLAUDE_CODE_NO_FLICKER 無閃爍渲染、PermissionDenied hook（auto mode 拒絕後觸發）                                                                                 | github.com            |
 | 2026-03-31 | platform    | Microsoft Copilot Critique — M365 Copilot 用 Claude 審核 GPT 生成回應，DRACO benchmark 改善 13.8%                                                                                     | microsoft.com         |
 | 2026-03-31 | research    | Claude 發現 Vim 和 GNU Emacs 零日 RCE 漏洞                                                                                                                                            | cybersecuritynews.com |

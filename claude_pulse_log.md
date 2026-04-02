@@ -10,6 +10,12 @@ type: reference
 
 | date       | category    | summary                                                                                                                                 | source        |
 | ---------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| 2026-04-01 | claude-code | Claude Code 2.1.90 — 新增 /powerup 互動教學課程（動態 demo）、強化 PowerShell 工具安全性、修復 --resume prompt-cache 失效及格式化 hook 覆寫衝突，優化 SSE 傳輸為線性時間 | github.com    |
+| 2026-04-01 | industry    | Bloomberg：OpenAI 二級市場股份需求驟降，多家機構投資人欲拋售逾 $6 億持股，資金加速流向 Anthropic                                        | bloomberg.com |
+| 2026-03-31 | claude-code | Claude Code v2.1.88 npm source map 洩漏 — 512K 行原始碼曝光，含 44 個未發布 feature flags 和三層 memory 架構；Anthropic 稱打包人為失誤  | theregister.com |
+| 2026-03-31 | platform    | Microsoft Copilot Critique — M365 Copilot 用 Claude 審核 GPT 生成回應，DRACO benchmark 改善 13.8%                                      | microsoft.com |
+| 2026-03-31 | research    | Claude 發現 Vim 和 GNU Emacs 零日 RCE 漏洞                                                                                              | cybersecuritynews.com |
+| 2026-03-31 | enterprise  | 澳洲政府與 Anthropic 簽署 AI 安全與研究 MOU，聚焦倫理治理與 AI 經濟影響評估                                                             | anthropic.com |
 | 2026-03-30 | platform    | API 宣布 4/30 停止支援 Sonnet 4.5/Sonnet 4 的 1M context beta header（context-1m-2025-08-07），請遷移至 Sonnet/Opus 4.6                  | anthropic.com |
 | 2026-03-30 | claude-code | Claude Code 2.1.88 — 新增 flicker-free 渲染（CLAUDE_CODE_NO_FLICKER=1）與 PermissionDenied hook，修復 prompt cache miss、StructuredOutput schema 快取 bug 及記憶體洩漏 | github.com    |
 | 2026-03-30 | industry    | Claude 付費訂閱今年翻倍，MCP 月下載達 9,700 萬次，Claude Code 自 Claude 4 發布後使用量成長 300%                                         | theaiinsider.tech |

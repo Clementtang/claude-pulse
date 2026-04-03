@@ -10,6 +10,11 @@ type: reference
 
 | date       | category    | summary                                                                                                                                                                               | source                |
 | ---------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| 2026-04-03 | claude-code | Claude Code 2.1.91 — MCP 工具結果持久化上限 500K（`_meta["anthropic/maxResultSizeChars"]`）、新增 `disableSkillShellExecution` 設定、plugin 支援 bin/ 執行檔，修復 --resume 歷史中斷與 plan mode 問題 | github.com            |
+| 2026-04-02 | claude-code | Claude Code 2.1.90 — 新增 `/powerup` 互動教學功能、修復 auto mode 邊界限制、PowerShell 工具安全強化（trailing & bypass、TOCTOU 等）、大幅效能優化（SSE、MCP schema、長 session）      | github.com            |
+| 2026-04-01 | claude-code | Claude Code 2.1.89 — PreToolUse 新增 `"defer"` 決策可暫停後恢復、named subagent @mention、MCP_CONNECTION_NONBLOCKING 非阻塞連線、/buddy 愚人節彩蛋，修復多項 crash 與跨平台相容性問題 | github.com            |
+| 2026-04-01 | enterprise  | 澳洲政府與 Anthropic 簽署 MOU：AUD $3M 學術 API 額度（ANU 等 4 所機構）、AI 安全合作、探索資料中心投資，新創最高獲 US$5 萬 API 額度支援                                              | industry.gov.au       |
+| 2026-04-01 | industry    | Bloomberg：Anthropic 二級市場投資人需求大幅超越 OpenAI，企業估值熱度持續攀升，市場資金加速轉向                                                                                        | bloomberg.com         |
 | 2026-03-31 | claude-code | Claude Code v2.1.88 npm source map 洩漏 — 512K 行原始碼曝光，含 44 個未發布 feature flags 和三層 memory 架構；部分功能疑為愚人節內容（BUDDY/KAIROS），Anthropic 稱打包人為失誤        | theregister.com       |
 | 2026-03-31 | claude-code | Claude Code 2.1.88 — CLAUDE_CODE_NO_FLICKER 無閃爍渲染、PermissionDenied hook（auto mode 拒絕後觸發）                                                                                 | github.com            |
 | 2026-03-31 | platform    | Microsoft Copilot Critique — M365 Copilot 用 Claude 審核 GPT 生成回應，DRACO benchmark 改善 13.8%                                                                                     | microsoft.com         |

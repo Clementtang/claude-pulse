@@ -10,6 +10,9 @@ type: reference
 
 | date       | category    | summary                                                                                                                                                                               | source                |
 | ---------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| 2026-04-03 | enterprise  | Anthropic 以約 4 億美元全股票收購 AI 生技新創 Coefficient Bio（不足 10 人、全為前 Genentech 計算生物學家），加速進軍藥物研發與臨床商業化市場                                         | techcrunch.com        |
+| 2026-04-03 | industry    | Anthropic 成立政治行動委員會 AnthroPAC，計畫跨黨派捐款影響 AI 法規，資金來自員工自願捐獻（上限 5,000 美元）                                                                         | techcrunch.com        |
+| 2026-04-03 | research    | Anthropic 洩漏部落格揭示即將發布的 Mythos 模型可高速利用資安漏洞，現正讓特定機構提前測試以協助強化防禦                                                                               | krdo.com              |
 | 2026-04-02 | claude-code | Claude Code 2.1.91 — MCP 工具結果持久化上限 500K（`_meta["anthropic/maxResultSizeChars"]`）、新增 `disableSkillShellExecution` 設定、plugin 支援 bin/ 執行檔，修復 --resume 歷史中斷與 plan mode 問題 | github.com            |
 | 2026-04-01 | claude-code | Claude Code 2.1.90 — 新增 `/powerup` 互動教學功能、修復 auto mode 邊界限制、PowerShell 工具安全強化（trailing & bypass、TOCTOU 等）、大幅效能優化（SSE、MCP schema、長 session）      | github.com            |
 | 2026-04-01 | enterprise  | 澳洲政府與 Anthropic 簽署 MOU：AUD $3M 學術 API 額度（ANU 等 4 所機構）、AI 安全合作、探索資料中心投資，新創最高獲 US$5 萬 API 額度支援                                              | industry.gov.au       |

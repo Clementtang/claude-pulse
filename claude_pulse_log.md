@@ -10,6 +10,9 @@ type: reference
 
 | date       | category    | summary                                                                                                                                                                               | source                |
 | ---------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| 2026-04-04 | claude-code | Claude Code 2.1.92 — `forceRemoteSettingsRefresh` 強制遠端設定刷新、互動式 Bedrock 設定精靈、`/cost` 按模型與快取細分、`/release-notes` 版本選擇器、Remote Control 以主機名為前綴、Write diff 提速 60%、移除 `/tag` `/vim` | github.com            |
+| 2026-04-04 | industry    | Anthropic 封鎖 Claude Pro/Max 訂閱用於 OpenClaw 等第三方 AI agent 框架（4/4 生效），改採用量計費，數千用戶費用最高暴漲 50 倍，OpenClaw 創辦人批評此舉背刺開源開發者                    | venturebeat.com       |
+| 2026-04-04 | research    | Anthropic 工程部落格發布三代理 harness 架構（規劃/生成/評估），支援多小時長程自主全端開發，獨立評估代理以 few-shot 校準解決自我過評問題，實測 6 小時產出完整應用                        | anthropic.com         |
 | 2026-04-03 | enterprise  | Anthropic 以約 4 億美元全股票收購 AI 生技新創 Coefficient Bio（不足 10 人、全為前 Genentech 計算生物學家），加速進軍藥物研發與臨床商業化市場                                         | techcrunch.com        |
 | 2026-04-03 | industry    | Anthropic 成立政治行動委員會 AnthroPAC，計畫跨黨派捐款影響 AI 法規，資金來自員工自願捐獻（上限 5,000 美元）                                                                         | techcrunch.com        |
 | 2026-04-03 | research    | Anthropic 洩漏部落格揭示即將發布的 Mythos 模型可高速利用資安漏洞，現正讓特定機構提前測試以協助強化防禦                                                                               | krdo.com              |

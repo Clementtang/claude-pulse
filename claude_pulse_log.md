@@ -10,6 +10,8 @@ type: reference
 
 | date       | category    | summary                                                                                                                                                                               | source                 |
 | ---------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 2026-04-04 | industry    | Anthropic 終止第三方工具訂閱覆蓋 — OpenClaw 等 agent 工具不再包含在 Pro/Max 訂閱，需另購用量包或用 API key，原因為自動化 agent 系統負擔過重                                           | thetechportal.com      |
+| 2026-04-02 | claude-code | Claude Code 2.1.91 — 更大 MCP result 持久化、停用 skills/commands inline shell 執行、多行 deep links、效能改善                                                                        | github.com             |
 | 2026-04-02 | industry    | Scientific American：洩漏揭露 Claude Code 掃描使用者挫折情緒（profanity、負面語句），引發隱私爭議                                                                                     | scientificamerican.com |
 | 2026-04-02 | industry    | 分析師質疑 Anthropic 七天三次「意外」（Mythos + source map + CMS）是否為 IPO 前刻意曝光                                                                                               | medium.com             |
 | 2026-04-01 | claude-code | Claude Code 2.1.90 — /powerup 互動教學、修復 rate-limit dialog 無限迴圈、--resume cache miss、.husky 保護目錄                                                                         | github.com             |

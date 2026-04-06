@@ -10,6 +10,9 @@ type: reference
 
 | date       | category    | summary                                                                                                                                                                               | source                 |
 | ---------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 2026-04-04 | claude-code | Claude Code 2.1.92 — forceRemoteSettingsRefresh 政策設定、互動式 Bedrock 設定精靈、/cost 顯示模型與快取命中分類、/release-notes 版本選擇器、移除 /tag 與 /vim 指令，修復 tmux 子 agent 失敗等多項 bug | github.com             |
+| 2026-04-03 | enterprise  | Anthropic 以約 4 億美元全股票收購生技新創 Coefficient Bio（前 Genentech 計算生物學團隊，不足 10 人），進軍 AI 驅動藥物研發領域                                                        | techcrunch.com         |
+| 2026-04-03 | industry    | Anthropic 向聯邦選舉委員會登記成立 AnthroPAC，以員工自願捐款支持兩黨候選人，目標影響 2026 期中選舉 AI 政策立法                                                                       | techcrunch.com         |
 | 2026-04-04 | industry    | Anthropic 終止第三方工具訂閱覆蓋 — OpenClaw 等 agent 工具不再包含在 Pro/Max 訂閱，需另購用量包或用 API key，原因為自動化 agent 系統負擔過重                                           | thetechportal.com      |
 | 2026-04-02 | claude-code | Claude Code 2.1.91 — 更大 MCP result 持久化、停用 skills/commands inline shell 執行、多行 deep links、效能改善                                                                        | github.com             |
 | 2026-04-02 | industry    | Scientific American：洩漏揭露 Claude Code 掃描使用者挫折情緒（profanity、負面語句），引發隱私爭議                                                                                     | scientificamerican.com |

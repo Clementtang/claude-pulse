@@ -10,6 +10,13 @@ type: reference
 
 | date       | category    | summary                                                                                                                                                                                               | source                 |
 | ---------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 2026-04-07 | claude-code | Claude Code 2.1.94 — 支援 Amazon Bedrock Mantle（CLAUDE_CODE_USE_MANTLE=1）、API/Bedrock/Enterprise 預設 effort 改為 high、Slack MCP 頻道可點擊標頭、hookSpecificOutput.sessionTitle 欄位、CJK 多位元組亂碼修復、VSCode 多項改善 | github.com             |
+| 2026-04-07 | research    | Anthropic 透過 Project Glasswing 推出 Claude Mythos 研究預覽（邀請制）— 專注防禦性網路安全，Amazon、Apple、Microsoft、Cisco 獲得早期存取                                                               | anthropic.com          |
+| 2026-04-07 | platform    | Messages API 正式登陸 Amazon Bedrock 研究預覽 — 端點 /anthropic/v1/messages 與第一方 API 格式相同，AWS 管理基礎設施零 operator 存取，目前限 us-east-1 地區                                            | platform.claude.com    |
+| 2026-04-07 | industry    | Anthropic ARR 突破 $30B 超越 OpenAI（$25B），$1M+ 年費企業客戶兩個月從 500+ 翻倍至逾 1,000 家，以四分之一訓練成本達成，七項專家基準超越 ChatGPT                                                       | the-ai-corner.com      |
+| 2026-04-07 | enterprise  | Anthropic 與 Google、Broadcom 擴大算力協議，取得約 3.5 吉瓦 Google TPU 運算容量，應對激增的模型使用需求                                                                                               | techcrunch.com         |
+| 2026-04-07 | industry    | OpenAI、Anthropic、Google 透過 Frontier Model Forum 聯合對抗中國模型複製問題，共享情報並協調防堵蒸餾旗艦模型行為                                                                                      | bloomberg.com          |
+| 2026-04-07 | platform    | Claude 服務再度中斷（4/7）— 繼 4/6 事故後再爆新障礙，DownDetector 逾 8,000 筆用戶回報，企業 AI 工作流大規模受阻                                                                                      | ibtimes.com.au         |
 | 2026-04-06 | platform    | Claude 服務大規模中斷 — 登入、語音模式及對話全線失效，含桌面/手機版與 Claude Code 登入，東部時間 10:30AM 爆發，12:44PM 修復，歷時約 2 小時                                                             | gvwire.com             |
 | 2026-04-06 | industry    | Anthropic 為 OpenClaw 用戶提供一次性補償 — 等同月費訂閱的信用額度，4/17 前兌換，有效期 90 天，可用於 Claude Code、Cowork、Chat 及第三方工具，並提供最高 3 折的額外用量包折扣                           | computerworld.com      |
 | 2026-04-06 | research    | Anthropic 研究：Claude 內部發現類似人類情緒（快樂、悲傷、恐懼）的神經元叢集表徵，會對不同刺激激活                                                                                                     | anthropic.com          |

@@ -10,6 +10,12 @@ type: reference
 
 | date       | category    | summary                                                                                                                                                                                               | source                 |
 | ---------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 2026-04-08 | claude-code | Claude Code 2.1.97 — focus view toggle（Ctrl+O）、refreshInterval 狀態列、/agents ● N running 指示器、Cedar policy 語法高亮、修復 MCP HTTP/SSE 記憶體洩漏（~50 MB/hr）、--dangerously-skip-permissions 降級及多項 /resume、NO_FLICKER 與 Bedrock 問題 | github.com             |
+| 2026-04-08 | platform    | Claude Managed Agents 公開 beta — 全托管 agent 執行環境，含安全沙盒、內建工具、SSE 串流，需 managed-agents-2026-04-01 beta header，支援容器設定與 session API | platform.claude.com    |
+| 2026-04-08 | platform    | ant CLI 正式推出 — 命令列 Claude API 客戶端，原生整合 Claude Code，支援 YAML 版控 API 資源，加速 API 互動 | platform.claude.com    |
+| 2026-04-08 | platform    | Claude 服務第三度中斷（4/8）— 登入失敗與對話錯誤，繼 4/6、4/7 後連三天斷線，百餘名用戶回報 | ibtimes.com.au         |
+| 2026-04-08 | industry    | CoinDesk：Anthropic Mythos 預覽被視為 DeFi 加密安全重大轉折，其零日漏洞發現能力改變業界對 AI 安全防護的假設 | coindesk.com           |
+| 2026-04-07 | claude-code | Claude Code 2.1.96 — 修復 2.1.94 迴歸：使用 AWS_BEARER_TOKEN_BEDROCK 或 CLAUDE_CODE_SKIP_BEDROCK_AUTH 時 Bedrock 請求遺失 Authorization 標頭 | github.com             |
 | 2026-04-07 | claude-code | Claude Code 2.1.94 — 支援 Amazon Bedrock Mantle（CLAUDE_CODE_USE_MANTLE=1）、API/Bedrock/Enterprise 預設 effort 改為 high、Slack MCP 頻道可點擊標頭、hookSpecificOutput.sessionTitle 欄位、CJK 多位元組亂碼修復、VSCode 多項改善 | github.com             |
 | 2026-04-07 | research    | Anthropic 透過 Project Glasswing 推出 Claude Mythos 研究預覽（邀請制）— 專注防禦性網路安全，Amazon、Apple、Microsoft、Cisco 獲得早期存取                                                               | anthropic.com          |
 | 2026-04-07 | platform    | Messages API 正式登陸 Amazon Bedrock 研究預覽 — 端點 /anthropic/v1/messages 與第一方 API 格式相同，AWS 管理基礎設施零 operator 存取，目前限 us-east-1 地區                                            | platform.claude.com    |

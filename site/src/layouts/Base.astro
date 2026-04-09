@@ -1,0 +1,69 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Claude Pulse",
+  description = "Anthropic / Claude 動態追蹤",
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Claude Pulse RSS"
+      href={`${base}feed.xml`}
+    />
+    <title>{title}</title>
+    <style is:global>
+      :root {
+        --bg: #0f172a;
+        --bg-card: #1e293b;
+        --bg-card-hover: #263548;
+        --text: #e2e8f0;
+        --text-muted: #94a3b8;
+        --text-dim: #64748b;
+        --border: #334155;
+        --accent: #38bdf8;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Noto Sans TC", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -10,6 +10,10 @@ type: reference
 
 | date       | category    | summary                                                                                                                                                                                               | source                 |
 | ---------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 2026-04-09 | claude-code | Claude Code 2.1.98 — Google Vertex AI 互動設定精靈、Perforce 整合（CLAUDE_CODE_PERFORCE_MODE）、Monitor 工具串流背景事件、Linux PID 命名空間沙盒、修復 Bash 工具反斜線逃逸權限繞過漏洞、/agents 分頁式 Running/Library 介面、Accept Edits 自動核准安全環境變數指令 | github.com             |
+| 2026-04-09 | platform    | Advisor Tool 公開 beta — 搭配快速 executor 模型與高智能 advisor 模型，advisor 於生成中途提供策略引導，以 executor 速率完成大量 token 生成並達接近 advisor 品質，需 advisor-tool-2026-03-01 beta header | platform.claude.com    |
+| 2026-04-09 | research    | Project Glasswing 擴大至 40+ 機構 — Anthropic 承諾 $100M 使用額度及 $400 萬美元捐助給開源安全組織，Claude Mythos 已發現數千個未知軟體漏洞，速度遠超人類研究員                                       | anthropic.com          |
+| 2026-04-09 | industry    | 美國軟體股因 Anthropic Claude Mythos AI 新模型引發市場對 AI 顛覆的憂慮而下跌，投資者擔心新世代 AI 能力對傳統軟體業的衝擊                                                                             | usnews.com             |
 | 2026-04-08 | claude-code | Claude Code 2.1.97 — focus view toggle（Ctrl+O）、refreshInterval 狀態列、/agents ● N running 指示器、Cedar policy 語法高亮、修復 MCP HTTP/SSE 記憶體洩漏（~50 MB/hr）、--dangerously-skip-permissions 降級及多項 /resume、NO_FLICKER 與 Bedrock 問題 | github.com             |
 | 2026-04-08 | platform    | Claude Managed Agents 公開 beta — 全托管 agent 執行環境，含安全沙盒、內建工具、SSE 串流，需 managed-agents-2026-04-01 beta header，支援容器設定與 session API | platform.claude.com    |
 | 2026-04-08 | platform    | ant CLI 正式推出 — 命令列 Claude API 客戶端，原生整合 Claude Code，支援 YAML 版控 API 資源，加速 API 互動 | platform.claude.com    |

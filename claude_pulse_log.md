@@ -10,6 +10,9 @@ type: reference
 
 | date       | category    | summary                                                                                                                                                                                               | source                 |
 | ---------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 2026-04-10 | claude-code | Claude Code 2.1.101 — 新增 /team-onboarding 隊友入門指南指令、OS CA 憑證預設信任（企業 TLS proxy 支援）、/ultraplan 遠端 session 自動建立雲端環境、具名子 agent @mention 補全，修復 POSIX which 命令注入漏洞及長 session 記憶體洩漏 | github.com             |
+| 2026-04-10 | enterprise  | Anthropic 與 CoreWeave 簽訂多年算力協議，取得美國資料中心 Nvidia GPU 容量以支撐 Claude 生產規模工作負載，CoreWeave 股價應聲上漲 13%                                                                   | bloomberg.com          |
+| 2026-04-10 | industry    | 美財政部長 Bessent 與聯準會主席 Powell 召集華爾街 CEO 緊急會議，就 Anthropic Claude Mythos 引發的網路安全威脅向各大銀行發出警示，要求金融機構加強防禦                                                   | bloomberg.com          |
 | 2026-04-09 | claude-code | Claude Code 2.1.98 — Google Vertex AI 互動設定精靈、Perforce 整合（CLAUDE_CODE_PERFORCE_MODE）、Monitor 工具串流背景事件、Linux PID 命名空間沙盒、修復 Bash 工具反斜線逃逸權限繞過漏洞、/agents 分頁式 Running/Library 介面、Accept Edits 自動核准安全環境變數指令 | github.com             |
 | 2026-04-09 | platform    | Advisor Tool 公開 beta — 搭配快速 executor 模型與高智能 advisor 模型，advisor 於生成中途提供策略引導，以 executor 速率完成大量 token 生成並達接近 advisor 品質，需 advisor-tool-2026-03-01 beta header | platform.claude.com    |
 | 2026-04-09 | research    | Project Glasswing 擴大至 40+ 機構 — Anthropic 承諾 $100M 使用額度及 $400 萬美元捐助給開源安全組織，Claude Mythos 已發現數千個未知軟體漏洞，速度遠超人類研究員                                       | anthropic.com          |

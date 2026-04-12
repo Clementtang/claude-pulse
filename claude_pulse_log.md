@@ -10,6 +10,8 @@ type: reference
 
 | date       | category    | summary                                                                                                                                                                                               | source                 |
 | ---------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 2026-04-11 | industry    | HumanX AI 峰會（舊金山，6,500 位高管/創辦人/投資人）確認「Claude mania」浪潮，Anthropic 成業界最熱話題，OpenAI 不再主導 AI 業界對話                                                                  | cnbc.com               |
+| 2026-04-11 | research    | Anthropic 邀請 15 位基督教領袖召開 Claude 靈性發展峰會，討論 AI 道德框架、Claude 可否視為「上帝之子」及如何確保其行為端正，計劃擴及更多宗教群體                                                       | gizmodo.com            |
 | 2026-04-10 | claude-code | Claude Code 2.1.101 — 新增 /team-onboarding 隊友入門指南指令、OS CA 憑證預設信任（企業 TLS proxy 支援）、/ultraplan 遠端 session 自動建立雲端環境、具名子 agent @mention 補全，修復 POSIX which 命令注入漏洞及長 session 記憶體洩漏 | github.com             |
 | 2026-04-10 | enterprise  | Anthropic 與 CoreWeave 簽訂多年算力協議，取得美國資料中心 Nvidia GPU 容量以支撐 Claude 生產規模工作負載，CoreWeave 股價應聲上漲 13%                                                                   | bloomberg.com          |
 | 2026-04-10 | industry    | 美財政部長 Bessent 與聯準會主席 Powell 召集華爾街 CEO 緊急會議，就 Anthropic Claude Mythos 引發的網路安全威脅向各大銀行發出警示，要求金融機構加強防禦                                                   | bloomberg.com          |

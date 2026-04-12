@@ -1,0 +1,28 @@
+{
+  "lang": "ja",
+  "htmlLang": "ja",
+  "title": "Claude Pulse",
+  "subtitle": "Anthropic / Claude ニュース追跡",
+  "metaDescription": "Anthropic と Claude の最新情報を毎日追跡 — Claude Code リリース、プラットフォーム更新、研究、業界ニュース。",
+  "filterCategory": "カテゴリー",
+  "filterAll": "すべて",
+  "filterTime": "期間",
+  "range7": "7 日間",
+  "range30": "30 日間",
+  "rangeAll": "すべて",
+  "empty": "該当する項目がありません",
+  "rss": "RSS",
+  "statusLoading": "ステータス",
+  "statusOk": "すべて正常に稼働中",
+  "footer": "Claude Pulse · 作者",
+  "languageLabel": "言語",
+  "languageName": "日本語",
+  "relative": {
+    "justNow": "たった今",
+    "minutesAgo": "{n} 分前",
+    "hoursAgo": "{n} 時間前",
+    "daysAgo": "{n} 日前",
+    "monthsAgo": "{n} ヶ月前",
+    "yearsAgo": "{n} 年前"
+  }
+}

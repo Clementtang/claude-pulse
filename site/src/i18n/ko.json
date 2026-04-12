@@ -1,0 +1,28 @@
+{
+  "lang": "ko",
+  "htmlLang": "ko",
+  "title": "Claude Pulse",
+  "subtitle": "Anthropic / Claude 뉴스 트래커",
+  "metaDescription": "Anthropic과 Claude의 최신 정보를 매일 추적 — Claude Code 릴리즈, 플랫폼 업데이트, 연구, 업계 뉴스.",
+  "filterCategory": "카테고리",
+  "filterAll": "전체",
+  "filterTime": "기간",
+  "range7": "7 일",
+  "range30": "30 일",
+  "rangeAll": "전체",
+  "empty": "일치하는 항목이 없습니다",
+  "rss": "RSS",
+  "statusLoading": "상태",
+  "statusOk": "모든 시스템 정상",
+  "footer": "Claude Pulse · 제작",
+  "languageLabel": "언어",
+  "languageName": "한국어",
+  "relative": {
+    "justNow": "방금",
+    "minutesAgo": "{n} 분 전",
+    "hoursAgo": "{n} 시간 전",
+    "daysAgo": "{n} 일 전",
+    "monthsAgo": "{n} 개월 전",
+    "yearsAgo": "{n} 년 전"
+  }
+}

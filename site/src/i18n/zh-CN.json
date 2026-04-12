@@ -1,0 +1,28 @@
+{
+  "lang": "zh-CN",
+  "htmlLang": "zh-Hans-CN",
+  "title": "Claude Pulse",
+  "subtitle": "Anthropic / Claude 动态追踪",
+  "metaDescription": "每日追踪 Anthropic 与 Claude 动态 — Claude Code 版本、平台更新、研究成果与行业新闻。",
+  "filterCategory": "分类",
+  "filterAll": "全部",
+  "filterTime": "时间",
+  "range7": "7 天",
+  "range30": "30 天",
+  "rangeAll": "全部",
+  "empty": "没有符合条件的项目",
+  "rss": "RSS",
+  "statusLoading": "状态",
+  "statusOk": "系统运行正常",
+  "footer": "Claude Pulse · 作者",
+  "languageLabel": "语言",
+  "languageName": "简体中文",
+  "relative": {
+    "justNow": "刚刚",
+    "minutesAgo": "{n} 分钟前",
+    "hoursAgo": "{n} 小时前",
+    "daysAgo": "{n} 天前",
+    "monthsAgo": "{n} 个月前",
+    "yearsAgo": "{n} 年前"
+  }
+}

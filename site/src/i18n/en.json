@@ -1,0 +1,28 @@
+{
+  "lang": "en",
+  "htmlLang": "en",
+  "title": "Claude Pulse",
+  "subtitle": "Anthropic / Claude news tracker",
+  "metaDescription": "Daily updates on Anthropic and Claude — Claude Code releases, platform changes, research, and industry news.",
+  "filterCategory": "Category",
+  "filterAll": "All",
+  "filterTime": "Time",
+  "range7": "7 days",
+  "range30": "30 days",
+  "rangeAll": "All",
+  "empty": "No matching items",
+  "rss": "RSS",
+  "statusLoading": "Status",
+  "statusOk": "All systems operational",
+  "footer": "Claude Pulse by",
+  "languageLabel": "Language",
+  "languageName": "English",
+  "relative": {
+    "justNow": "just now",
+    "minutesAgo": "{n}m ago",
+    "hoursAgo": "{n}h ago",
+    "daysAgo": "{n}d ago",
+    "monthsAgo": "{n}mo ago",
+    "yearsAgo": "{n}y ago"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "lang": "zh-HK",
+  "htmlLang": "zh-Hant-HK",
+  "title": "Claude Pulse",
+  "subtitle": "Anthropic / Claude 動態追蹤",
+  "metaDescription": "每日追蹤 Anthropic 同 Claude 動態 — Claude Code 版本、平台更新、研究成果同行業新聞。",
+  "filterCategory": "分類",
+  "filterAll": "全部",
+  "filterTime": "時間",
+  "range7": "7 日",
+  "range30": "30 日",
+  "rangeAll": "全部",
+  "empty": "冇符合條件嘅項目",
+  "rss": "RSS",
+  "statusLoading": "狀態",
+  "statusOk": "系統運作正常",
+  "footer": "Claude Pulse · 作者",
+  "languageLabel": "語言",
+  "languageName": "繁體中文 (香港)",
+  "relative": {
+    "justNow": "啱啱",
+    "minutesAgo": "{n} 分鐘前",
+    "hoursAgo": "{n} 小時前",
+    "daysAgo": "{n} 日前",
+    "monthsAgo": "{n} 個月前",
+    "yearsAgo": "{n} 年前"
+  }
+}

@@ -1,0 +1,957 @@
+---
+import Base from "../layouts/Base.astro";
+import { parsePulseLog, getCategories } from "../lib/parse-pulse.js";
+import {
+  getStrings,
+  getAllLanguageOptions,
+  SUPPORTED_LOCALES,
+} from "../lib/i18n.js";
+
+interface Props {
+  locale: string;
+}
+
+const { locale } = Astro.props;
+const t = getStrings(locale);
+const languageOptions = getAllLanguageOptions();
+
+const items = parsePulseLog(); // already sorted desc by datetimeUtc
+const categories = getCategories();
+
+const base = import.meta.env.BASE_URL;
+
+// Build language URLs — each locale points to its own index page
+const normalizedBase = base.endsWith("/") ? base : `${base}/`;
+function localeUrl(loc: string): string {
+  return loc === "en" ? normalizedBase : `${normalizedBase}${loc}/`;
+}
+---
+
+<Base
+  title={t.title}
+  description={t.metaDescription}
+  htmlLang={t.htmlLang}
+>
+  <header class="header">
+    <div class="header-inner">
+      <h1>{t.title}</h1>
+      <p class="subtitle">{t.subtitle}</p>
+      <div class="header-meta">
+        <a
+          id="status-link"
+          class="status-link"
+          href="https://status.claude.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Claude Service Status"
+        >
+          <span class="status-dot" data-indicator="loading"></span>
+          <span class="status-text">{t.statusLoading}</span>
+        </a>
+        <a href={`${base}feed.xml`} class="rss-link" title="RSS Feed">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="6.18" cy="17.82" r="2.18"></circle>
+            <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"
+            ></path>
+          </svg>
+          {t.rss}
+        </a>
+        <label class="lang-switcher-wrap" aria-label={t.languageLabel}>
+          <select id="lang-switcher" class="lang-switcher">
+            {
+              languageOptions.map((opt) => (
+                <option value={opt.key} selected={opt.key === locale}>
+                  {opt.name}
+                </option>
+              ))
+            }
+          </select>
+          <span class="lang-switcher-caret" aria-hidden="true">▾</span>
+        </label>
+      </div>
+    </div>
+    <div class="header-line"></div>
+  </header>
+
+  <main class="main">
+    <nav class="filters" id="filters">
+      <div class="filter-group">
+        <span class="filter-label">{t.filterCategory}</span>
+        <button class="filter-btn active" data-category="all">
+          {t.filterAll}
+        </button>
+        {
+          categories.map((cat) => (
+            <>
+              <span class="filter-separator" aria-hidden="true">
+                ·
+              </span>
+              <button
+                class="filter-btn"
+                data-category={cat.key}
+                style={`--cat-color: ${cat.color}`}
+              >
+                <span class="cat-dot" style={`background: ${cat.color}`} />
+                {cat.label}
+              </button>
+            </>
+          ))
+        }
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">{t.filterTime}</span>
+        <button class="filter-btn range-btn active" data-range="7">
+          {t.range7}
+        </button>
+        <span class="filter-separator" aria-hidden="true">·</span>
+        <button class="filter-btn range-btn" data-range="30">
+          {t.range30}
+        </button>
+        <span class="filter-separator" aria-hidden="true">·</span>
+        <button class="filter-btn range-btn" data-range="all">
+          {t.rangeAll}
+        </button>
+      </div>
+    </nav>
+
+    <div class="timeline" id="timeline">
+      {
+        items.map((item, i) => {
+          const prevDate = i > 0 ? items[i - 1].date : null;
+          const showSeparator = prevDate !== item.date;
+          return (
+            <Fragment>
+              {showSeparator && (
+                <div class="day-separator" data-date={item.date}>
+                  <time class="day-separator-chip" datetime={item.date}>
+                    {item.date}
+                  </time>
+                </div>
+              )}
+              <article
+                class="card"
+                data-category={item.category}
+                data-datetime={item.datetimeUtc}
+                style={`--cat-color: ${item.categoryColor}`}
+              >
+                <div class="card-meta">
+                  <time
+                    class="card-time"
+                    datetime={item.datetimeUtc}
+                    data-datetime={item.datetimeUtc}
+                  >
+                    {item.date} {item.time} UTC
+                  </time>
+                  <span class="card-category">
+                    <span class="cat-dot" aria-hidden="true" />
+                    {item.categoryLabel}
+                  </span>
+                </div>
+                <p class="card-summary">{item.summary}</p>
+                <a
+                  class="card-source"
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span class="card-source-icon" aria-hidden="true">
+                    🔗
+                  </span>
+                  {item.source}
+                </a>
+              </article>
+            </Fragment>
+          );
+        })
+      }
+    </div>
+
+    <p class="empty-state" id="empty" style="display: none;">
+      {t.empty}
+    </p>
+
+    <footer class="footer">
+      <p>
+        {t.footer}
+        <a href="https://github.com/Clementtang">Clement Tang</a>
+      </p>
+    </footer>
+  </main>
+</Base>
+
+<script
+  is:inline
+  define:vars={{
+    CURRENT_LOCALE: locale,
+    SUPPORTED_LOCALES,
+    RELATIVE_STRINGS: t.relative,
+    STATUS_OK_DEFAULT: t.statusOk,
+    BASE_PATH: normalizedBase,
+  }}
+>
+  // ============================================================
+  // Auto-detect language on first visit (runs inline, before body)
+  // ============================================================
+  (function autoDetectLocale() {
+    try {
+      if (localStorage.getItem("claude-pulse-lang-redirected")) return;
+
+      const browserLang = navigator.language || "en";
+
+      // Exact match
+      let matched = SUPPORTED_LOCALES.find((l) => l === browserLang);
+
+      // Prefix match (e.g., "zh-Hant-TW" → "zh-TW" via "zh-TW" prefix check)
+      if (!matched) {
+        matched = SUPPORTED_LOCALES.find((l) => browserLang.startsWith(l));
+      }
+
+      // Primary tag fallback
+      if (!matched) {
+        const primary = browserLang.split("-")[0].toLowerCase();
+        if (primary === "zh") {
+          // Try region hint
+          if (/-(HK|MO)/i.test(browserLang)) matched = "zh-HK";
+          else if (/-(CN|SG)/i.test(browserLang)) matched = "zh-CN";
+          else matched = "zh-TW";
+        } else if (primary === "ja") matched = "ja";
+        else if (primary === "ko") matched = "ko";
+        else matched = "en";
+      }
+
+      localStorage.setItem("claude-pulse-lang-redirected", "1");
+
+      if (matched && matched !== CURRENT_LOCALE) {
+        const target =
+          matched === "en" ? BASE_PATH : BASE_PATH + matched + "/";
+        window.location.replace(target);
+      }
+    } catch (e) {
+      // localStorage/navigator unavailable — skip
+    }
+  })();
+
+  // ============================================================
+  // Language switcher
+  // ============================================================
+  const switcher = document.getElementById("lang-switcher");
+  if (switcher) {
+    switcher.addEventListener("change", (e) => {
+      const target = e.target.value;
+      try {
+        localStorage.setItem("claude-pulse-lang", target);
+        localStorage.setItem("claude-pulse-lang-redirected", "1");
+      } catch (_) {}
+      const url =
+        target === "en" ? BASE_PATH : BASE_PATH + target + "/";
+      window.location.href = url;
+    });
+  }
+
+  // ============================================================
+  // Status monitoring — status.claude.com
+  // ============================================================
+  async function loadStatus() {
+    const link = document.getElementById("status-link");
+    if (!link) return;
+
+    const dot = link.querySelector(".status-dot");
+    const text = link.querySelector(".status-text");
+    if (!dot || !text) return;
+
+    try {
+      const [statusRes, incidentsRes] = await Promise.all([
+        fetch("https://status.claude.com/api/v2/status.json"),
+        fetch("https://status.claude.com/api/v2/incidents/unresolved.json"),
+      ]);
+
+      if (!statusRes.ok || !incidentsRes.ok) {
+        throw new Error("Status API unavailable");
+      }
+
+      const statusData = await statusRes.json();
+      const incidentsData = await incidentsRes.json();
+
+      const indicator = (statusData.status && statusData.status.indicator) || "none";
+      const apiDescription = statusData.status && statusData.status.description;
+      const firstIncident = incidentsData.incidents && incidentsData.incidents[0];
+
+      dot.setAttribute("data-indicator", indicator);
+      // Prefer: unresolved incident name → localized default → API description
+      text.textContent =
+        (firstIncident && firstIncident.name) ||
+        (indicator === "none" ? STATUS_OK_DEFAULT : apiDescription) ||
+        STATUS_OK_DEFAULT;
+
+      link.classList.add("ready");
+    } catch (e) {
+      link.style.display = "none";
+    }
+  }
+
+  loadStatus();
+
+  // ============================================================
+  // Time formatting — browser timezone + relative time
+  // ============================================================
+  const TZ =
+    Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Taipei";
+
+  // Use en-CA to get stable YYYY-MM-DD HH:mm numeric parts regardless of locale
+  const ymdhmFormatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  function formatYmdHm(d) {
+    const parts = ymdhmFormatter.formatToParts(d);
+    const get = (type) => {
+      const p = parts.find((x) => x.type === type);
+      return p ? p.value : "";
+    };
+    return (
+      get("year") +
+      "-" +
+      get("month") +
+      "-" +
+      get("day") +
+      " " +
+      get("hour") +
+      ":" +
+      get("minute")
+    );
+  }
+
+  function formatYmd(d) {
+    const parts = ymdhmFormatter.formatToParts(d);
+    const get = (type) => {
+      const p = parts.find((x) => x.type === type);
+      return p ? p.value : "";
+    };
+    return get("year") + "-" + get("month") + "-" + get("day");
+  }
+
+  // Weekday formatter uses the current locale so output matches page language
+  const weekdayFormatter = new Intl.DateTimeFormat(CURRENT_LOCALE, {
+    timeZone: TZ,
+    weekday: "long",
+  });
+
+  function interp(tmpl, n) {
+    return tmpl.replace("{n}", String(n));
+  }
+
+  function formatRelative(iso) {
+    const d = new Date(iso);
+    const diffSec = Math.floor((Date.now() - d.getTime()) / 1000);
+    if (diffSec < 60) return RELATIVE_STRINGS.justNow;
+    if (diffSec < 3600)
+      return interp(RELATIVE_STRINGS.minutesAgo, Math.floor(diffSec / 60));
+    if (diffSec < 86400)
+      return interp(RELATIVE_STRINGS.hoursAgo, Math.floor(diffSec / 3600));
+    const days = Math.floor(diffSec / 86400);
+    if (days < 30) return interp(RELATIVE_STRINGS.daysAgo, days);
+    const months = Math.floor(days / 30);
+    if (months < 12) return interp(RELATIVE_STRINGS.monthsAgo, months);
+    return interp(RELATIVE_STRINGS.yearsAgo, Math.floor(days / 365));
+  }
+
+  // Format card time text — "2026-04-08 15:00 · 3 days ago"
+  document.querySelectorAll(".card-time[data-datetime]").forEach((el) => {
+    const iso = el.dataset.datetime;
+    const d = new Date(iso);
+    const abs = formatYmdHm(d);
+    const rel = formatRelative(iso);
+    el.textContent = abs + " · " + rel;
+  });
+
+  // Format day separator chip — "2026-04-08 Wednesday"
+  document.querySelectorAll(".day-separator-chip").forEach((el) => {
+    const dateStr = el.getAttribute("datetime");
+    if (!dateStr) return;
+    const d = new Date(dateStr + "T12:00:00Z");
+    const ymd = formatYmd(d);
+    const weekday = weekdayFormatter.format(d);
+    el.textContent = ymd + " " + weekday;
+  });
+
+  // ============================================================
+  // Filters — category + time range
+  // ============================================================
+  const categoryBtns = document.querySelectorAll("[data-category]");
+  const rangeBtns = document.querySelectorAll("[data-range]");
+  const cards = document.querySelectorAll(".card");
+  const separators = document.querySelectorAll(".day-separator");
+  const emptyEl = document.getElementById("empty");
+
+  let activeCategory = "all";
+  let activeRange = "7";
+
+  function daysSince(iso) {
+    const d = new Date(iso);
+    return Math.floor((Date.now() - d.getTime()) / 86400000);
+  }
+
+  function applyFilters() {
+    let visibleCount = 0;
+    const visibleDates = new Set();
+
+    cards.forEach((card) => {
+      const cat = card.dataset.category;
+      const iso = card.dataset.datetime;
+      const days = daysSince(iso);
+
+      const matchCategory =
+        activeCategory === "all" || cat === activeCategory;
+      const matchRange =
+        activeRange === "all" || days <= parseInt(activeRange, 10);
+      const visible = matchCategory && matchRange;
+
+      card.style.display = visible ? "" : "none";
+      if (visible) {
+        visibleCount++;
+        visibleDates.add(iso.slice(0, 10));
+      }
+    });
+
+    separators.forEach((sep) => {
+      const date = sep.dataset.date;
+      sep.style.display = visibleDates.has(date) ? "" : "none";
+    });
+
+    if (emptyEl) {
+      emptyEl.style.display = visibleCount === 0 ? "" : "none";
+    }
+  }
+
+  categoryBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      categoryBtns.forEach((b) => {
+        b.classList.remove("active");
+        b.setAttribute("aria-pressed", "false");
+      });
+      btn.classList.add("active");
+      btn.setAttribute("aria-pressed", "true");
+      activeCategory = btn.dataset.category;
+      applyFilters();
+    });
+  });
+
+  rangeBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      rangeBtns.forEach((b) => {
+        b.classList.remove("active");
+        b.setAttribute("aria-pressed", "false");
+      });
+      btn.classList.add("active");
+      btn.setAttribute("aria-pressed", "true");
+      activeRange = btn.dataset.range;
+      applyFilters();
+    });
+  });
+
+  applyFilters();
+</script>
+
+<style>
+  /* ============================================================
+     HEADER — Editorial masthead
+     ============================================================ */
+  .header {
+    padding: 3rem 1rem 0;
+  }
+
+  .header-inner {
+    max-width: 48rem;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .header h1 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 0.375rem;
+  }
+
+  .header-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .rss-link,
+  .status-link,
+  .lang-switcher-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.625rem;
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+  }
+
+  .rss-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* ============================================================
+     STATUS INDICATOR
+     ============================================================ */
+  .status-link {
+    max-width: 18rem;
+    overflow: hidden;
+  }
+
+  .status-link .status-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .status-link:hover {
+    border-color: var(--border-hover);
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--text-tertiary);
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .status-dot[data-indicator="none"] {
+    background: #10b981;
+  }
+  .status-dot[data-indicator="minor"] {
+    background: #f59e0b;
+  }
+  .status-dot[data-indicator="major"],
+  .status-dot[data-indicator="critical"] {
+    background: #dc2626;
+  }
+  .status-dot[data-indicator="maintenance"] {
+    background: #2563eb;
+  }
+
+  .status-dot[data-indicator="minor"]::before,
+  .status-dot[data-indicator="major"]::before,
+  .status-dot[data-indicator="critical"]::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    color: inherit;
+    animation: status-pulse 2s ease-out infinite;
+  }
+
+  @keyframes status-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(2.2);
+      opacity: 0;
+    }
+  }
+
+  .status-link.ready .status-text {
+    color: inherit;
+  }
+
+  /* ============================================================
+     LANGUAGE SWITCHER
+     ============================================================ */
+  .lang-switcher-wrap {
+    position: relative;
+    cursor: pointer;
+    padding-right: 0.375rem;
+  }
+
+  .lang-switcher-wrap:hover {
+    border-color: var(--border-hover);
+    color: var(--text-secondary);
+  }
+
+  .lang-switcher {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: none;
+    padding: 0 0.375rem 0 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-transform: none;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .lang-switcher:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .lang-switcher-caret {
+    font-size: 0.625rem;
+    line-height: 1;
+    color: var(--text-tertiary);
+  }
+
+  .header-line {
+    max-width: 48rem;
+    margin: 2.5rem auto 0;
+    height: 1px;
+    background: var(--border);
+    position: relative;
+  }
+
+  .header-line::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 3rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* ============================================================
+     MAIN / FILTERS
+     ============================================================ */
+  .main {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 2.5rem 1rem 3rem;
+  }
+
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.125rem;
+  }
+
+  .filter-label {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-right: 0.75rem;
+  }
+
+  .filter-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.25rem 0.25rem;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+  }
+
+  .filter-btn:hover {
+    color: var(--text);
+  }
+
+  .filter-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .filter-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .filter-separator {
+    color: var(--border-hover);
+    padding: 0 0.125rem;
+    user-select: none;
+  }
+
+  .filter-btn .cat-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ============================================================
+     DAY SEPARATOR — left-aligned, no line
+     ============================================================ */
+  .day-separator {
+    text-align: left;
+    margin: 2.25rem 0 0.75rem;
+    animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .day-separator:first-child {
+    margin-top: 0;
+  }
+
+  .day-separator-chip {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+
+  /* ============================================================
+     CARDS — Open layout, no hover effects
+     ============================================================ */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    animation: fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .card:last-child {
+    border-bottom: none;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-time {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .card-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--cat-color);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .card-category .cat-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cat-color);
+  }
+
+  .card-summary {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .card-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+  }
+
+  .card-source:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    text-decoration: none;
+  }
+
+  .card-source-icon {
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+  /* ============================================================
+     ANIMATIONS
+     ============================================================ */
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .card:nth-child(1) {
+    animation-delay: 0ms;
+  }
+  .card:nth-child(2) {
+    animation-delay: 30ms;
+  }
+  .card:nth-child(3) {
+    animation-delay: 60ms;
+  }
+  .card:nth-child(4) {
+    animation-delay: 90ms;
+  }
+  .card:nth-child(5) {
+    animation-delay: 120ms;
+  }
+  .card:nth-child(6) {
+    animation-delay: 150ms;
+  }
+  .card:nth-child(7) {
+    animation-delay: 180ms;
+  }
+  .card:nth-child(8) {
+    animation-delay: 210ms;
+  }
+
+  /* ============================================================
+     EMPTY STATE + FOOTER
+     ============================================================ */
+  .empty-state {
+    text-align: center;
+    color: var(--text-tertiary);
+    padding: 3rem 0;
+    font-family: var(--font-body);
+  }
+
+  .footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+  }
+
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+  @media (max-width: 640px) {
+    .header {
+      padding-top: 2rem;
+    }
+
+    .header h1 {
+      font-size: 1.625rem;
+    }
+
+    .subtitle {
+      font-size: 0.8125rem;
+    }
+
+    .header-line {
+      margin-top: 1.75rem;
+    }
+
+    .main {
+      padding: 2rem 1rem 2rem;
+    }
+
+    .filter-label {
+      width: 100%;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-summary {
+      font-size: 0.875rem;
+    }
+  }
+
+  /* ============================================================
+     REDUCED MOTION
+     ============================================================ */
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .day-separator {
+      animation: none;
+    }
+  }
+</style>

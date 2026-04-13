@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import summariesEn from "../i18n/summaries-en.json" with { type: "json" };
 
 const CATEGORY_LABELS = {
   "claude-code": {
@@ -35,6 +36,7 @@ export function parsePulseLog() {
 
   const lines = content.split("\n");
   const items = [];
+  const keyCounts = {}; // track duplicates for #N suffix
 
   for (const line of lines) {
     if (!line.startsWith("|")) continue;
@@ -71,6 +73,13 @@ export function parsePulseLog() {
     // Build ISO datetime string in UTC
     const datetimeUtc = `${date}T${time}:00Z`;
 
+    // Look up English summary with #N suffix for duplicate keys
+    const baseKey = `${date}|${category}|${source}`;
+    keyCounts[baseKey] = (keyCounts[baseKey] || 0) + 1;
+    const enKey =
+      keyCounts[baseKey] === 1 ? baseKey : `${baseKey}#${keyCounts[baseKey]}`;
+    const summaryEn = summariesEn[enKey] || summary;
+
     items.push({
       date,
       time,
@@ -80,6 +89,7 @@ export function parsePulseLog() {
       categoryColor: meta.color,
       categoryBg: meta.bg,
       summary,
+      summaryEn,
       source,
       url,
     });

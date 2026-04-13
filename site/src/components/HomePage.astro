@@ -147,18 +147,20 @@ function localeUrl(loc: string): string {
                     {item.categoryLabel}
                   </span>
                 </div>
-                <p class="card-summary">{item.summary}</p>
-                <a
-                  class="card-source"
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span class="card-source-icon" aria-hidden="true">
-                    🔗
-                  </span>
-                  {item.source}
-                </a>
+                <p class="card-summary">
+                  {locale.startsWith("zh") ? item.summary : item.summaryEn}
+                </p>
+                <span class="card-source-row">
+                  <span class="card-source-icon" aria-hidden="true">🔗</span>
+                  <a
+                    class="card-source"
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {item.source}
+                  </a>
+                </span>
               </article>
             </Fragment>
           );
@@ -816,11 +818,15 @@ function localeUrl(loc: string): string {
     color: var(--text);
   }
 
-  .card-source {
+  .card-source-row {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
     margin-top: 0.5rem;
+  }
+
+  .card-source {
+    display: inline;
     font-family: var(--font-mono);
     font-size: 0.6875rem;
     color: var(--text-tertiary);

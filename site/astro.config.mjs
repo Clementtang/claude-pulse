@@ -7,7 +7,7 @@ export default defineConfig({
   base: "/claude-pulse",
   i18n: {
     defaultLocale: "en",
-    locales: ["en", "zh-TW", "zh-HK", "zh-CN", "ja", "ko"],
+    locales: ["en", "zh-TW", "zh-CN", "ja", "ko"],
     routing: {
       prefixDefaultLocale: false,
     },

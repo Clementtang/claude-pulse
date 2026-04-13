@@ -48,6 +48,26 @@ function localeUrl(loc: string): string {
         {t.title}
       </h1>
       <p class="subtitle">{t.subtitle}</p>
+      <nav class="lang-nav" aria-label={t.languageLabel}>
+        {
+          languageOptions.map((opt, i) => (
+            <>
+              {i > 0 && (
+                <span class="lang-sep" aria-hidden="true">
+                  /
+                </span>
+              )}
+              {opt.key === locale ? (
+                <span class="lang-btn lang-active">{opt.name}</span>
+              ) : (
+                <a class="lang-btn" href={localeUrl(opt.key)}>
+                  {opt.name}
+                </a>
+              )}
+            </>
+          ))
+        }
+      </nav>
       <div class="header-meta">
         <a
           id="status-link"
@@ -59,6 +79,7 @@ function localeUrl(loc: string): string {
         >
           <span class="status-dot" data-indicator="loading"></span>
           <span class="status-text">{t.statusLoading}</span>
+          <span class="external-icon" aria-hidden="true">&#8599;</span>
         </a>
         <a href={`${base}feed.xml`} class="rss-link" title="RSS Feed">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
@@ -68,26 +89,6 @@ function localeUrl(loc: string): string {
           </svg>
           {t.rss}
         </a>
-        <nav class="lang-nav" aria-label={t.languageLabel}>
-          {
-            languageOptions.map((opt, i) => (
-              <>
-                {i > 0 && (
-                  <span class="lang-sep" aria-hidden="true">
-                    /
-                  </span>
-                )}
-                {opt.key === locale ? (
-                  <span class="lang-btn lang-active">{opt.name}</span>
-                ) : (
-                  <a class="lang-btn" href={localeUrl(opt.key)}>
-                    {opt.name}
-                  </a>
-                )}
-              </>
-            ))
-          }
-        </nav>
       </div>
     </div>
     <div class="header-line"></div>
@@ -154,19 +155,10 @@ function localeUrl(loc: string): string {
                 data-datetime={item.datetimeUtc}
                 style={`--cat-color: ${item.categoryColor}`}
               >
-                <div class="card-meta">
-                  <time
-                    class="card-time"
-                    datetime={item.datetimeUtc}
-                    data-datetime={item.datetimeUtc}
-                  >
-                    {item.date} {item.time} UTC
-                  </time>
-                  <span class="card-category">
-                    <span class="cat-dot" aria-hidden="true" />
-                    {t.categories[item.category] || item.categoryLabel}
-                  </span>
-                </div>
+                <span class="card-category">
+                  <span class="cat-dot" aria-hidden="true" />
+                  {t.categories[item.category] || item.categoryLabel}
+                </span>
                 <p class="card-summary">
                   {locale.startsWith("zh") ? item.summary : item.summaryEn}
                 </p>
@@ -181,6 +173,13 @@ function localeUrl(loc: string): string {
                     {item.source}
                   </a>
                 </span>
+                <time
+                  class="card-time"
+                  datetime={item.datetimeUtc}
+                  data-datetime={item.datetimeUtc}
+                >
+                  {item.date} {item.time} UTC
+                </time>
               </article>
             </Fragment>
           );
@@ -244,9 +243,8 @@ function localeUrl(loc: string): string {
       if (!matched) {
         const primary = browserLang.split("-")[0].toLowerCase();
         if (primary === "zh") {
-          // Try region hint
-          if (/-(HK|MO)/i.test(browserLang)) matched = "zh-HK";
-          else if (/-(CN|SG)/i.test(browserLang)) matched = "zh-CN";
+          // Try region hint — HK/MO/TW all map to zh-TW
+          if (/-(CN|SG)/i.test(browserLang)) matched = "zh-CN";
           else matched = "zh-TW";
         } else if (primary === "ja") matched = "ja";
         else if (primary === "ko") matched = "ko";
@@ -612,6 +610,12 @@ function localeUrl(loc: string): string {
     color: inherit;
   }
 
+  .external-icon {
+    font-size: 0.75rem;
+    line-height: 1;
+    opacity: 0.7;
+  }
+
   /* ============================================================
      LOGO
      ============================================================ */
@@ -623,12 +627,14 @@ function localeUrl(loc: string): string {
   }
 
   /* ============================================================
-     LANGUAGE NAV — inline buttons
+     LANGUAGE NAV — inline buttons, own row
      ============================================================ */
   .lang-nav {
-    display: inline-flex;
+    display: flex;
+    justify-content: center;
     align-items: center;
     gap: 0.125rem;
+    margin-top: 0.75rem;
     font-family: var(--font-mono);
     font-size: 0.625rem;
     letter-spacing: 0.06em;
@@ -698,6 +704,7 @@ function localeUrl(loc: string): string {
   .filter-group {
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 0.125rem;
   }
@@ -798,22 +805,6 @@ function localeUrl(loc: string): string {
     border-bottom: none;
   }
 
-  .card-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .card-time {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    color: var(--text-tertiary);
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-  }
-
   .card-category {
     display: inline-flex;
     align-items: center;
@@ -824,6 +815,17 @@ function localeUrl(loc: string): string {
     color: var(--cat-color);
     letter-spacing: 0.06em;
     text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-time {
+    display: block;
+    margin-top: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
   }
 
   .card-category .cat-dot {

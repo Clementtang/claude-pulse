@@ -3,19 +3,21 @@ interface Props {
   title?: string;
   description?: string;
   htmlLang?: string;
+  locale?: string;
 }
 
 const {
   title = "Claude Pulse",
   description = "Anthropic / Claude news tracker",
   htmlLang = "en",
+  locale = "en",
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL;
 ---
 
 <!doctype html>
-<html lang={htmlLang}>
+<html lang={htmlLang} data-locale={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,7 +25,7 @@ const base = import.meta.env.BASE_URL;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Source+Sans+3:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Source+Sans+3:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500&family=Noto+Sans+SC:wght@400;500&family=Noto+Sans+JP:wght@400;500&family=Noto+Sans+KR:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <link
@@ -53,10 +55,10 @@ const base = import.meta.env.BASE_URL;
         --border: #e5e2d6;
         --border-hover: #d4d0c2;
 
-        /* Font stacks */
+        /* Font stacks — English base */
         --font-display: "Newsreader", "Noto Sans TC", Georgia, serif;
         --font-body: "Source Sans 3", "Noto Sans TC", system-ui, sans-serif;
-        --font-mono: "IBM Plex Mono", "Noto Sans TC", ui-monospace, monospace;
+        --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
         /* Spacing tokens */
         --sp-1: 0.5rem;
@@ -65,6 +67,24 @@ const base = import.meta.env.BASE_URL;
         --sp-4: 2rem;
         --sp-6: 3rem;
         --sp-8: 4rem;
+      }
+
+      /* Per-locale CJK primary font */
+      html[data-locale="zh-TW"] {
+        --font-body: "Noto Sans TC", "Source Sans 3", system-ui, sans-serif;
+        --font-display: "Newsreader", "Noto Sans TC", Georgia, serif;
+      }
+      html[data-locale="zh-CN"] {
+        --font-body: "Noto Sans SC", "Source Sans 3", system-ui, sans-serif;
+        --font-display: "Newsreader", "Noto Sans SC", Georgia, serif;
+      }
+      html[data-locale="ja"] {
+        --font-body: "Noto Sans JP", "Source Sans 3", system-ui, sans-serif;
+        --font-display: "Newsreader", "Noto Sans JP", Georgia, serif;
+      }
+      html[data-locale="ko"] {
+        --font-body: "Noto Sans KR", "Source Sans 3", system-ui, sans-serif;
+        --font-display: "Newsreader", "Noto Sans KR", Georgia, serif;
       }
 
       * {

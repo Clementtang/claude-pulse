@@ -31,6 +31,7 @@ function localeUrl(loc: string): string {
   title={t.title}
   description={t.metaDescription}
   htmlLang={t.htmlLang}
+  locale={locale}
 >
   <header class="header">
     <div class="header-inner">
@@ -50,22 +51,15 @@ function localeUrl(loc: string): string {
       <p class="subtitle">{t.subtitle}</p>
       <nav class="lang-nav" aria-label={t.languageLabel}>
         {
-          languageOptions.map((opt, i) => (
-            <>
-              {i > 0 && (
-                <span class="lang-sep" aria-hidden="true">
-                  /
-                </span>
-              )}
-              {opt.key === locale ? (
-                <span class="lang-btn lang-active">{opt.name}</span>
-              ) : (
-                <a class="lang-btn" href={localeUrl(opt.key)}>
-                  {opt.name}
-                </a>
-              )}
-            </>
-          ))
+          languageOptions.map((opt) =>
+            opt.key === locale ? (
+              <span class="lang-pill lang-active">{opt.name}</span>
+            ) : (
+              <a class="lang-pill" href={localeUrl(opt.key)}>
+                {opt.name}
+              </a>
+            ),
+          )
         }
       </nav>
       <div class="header-meta">
@@ -103,19 +97,14 @@ function localeUrl(loc: string): string {
         </button>
         {
           categories.map((cat) => (
-            <>
-              <span class="filter-separator" aria-hidden="true">
-                ·
-              </span>
-              <button
-                class="filter-btn"
-                data-category={cat.key}
-                style={`--cat-color: ${cat.color}`}
-              >
-                <span class="cat-dot" style={`background: ${cat.color}`} />
-                {t.categories[cat.key] || cat.label}
-              </button>
-            </>
+            <button
+              class="filter-btn"
+              data-category={cat.key}
+              style={`--cat-color: ${cat.color}`}
+            >
+              <span class="cat-dot" style={`background: ${cat.color}`} />
+              {t.categories[cat.key] || cat.label}
+            </button>
           ))
         }
       </div>
@@ -124,11 +113,9 @@ function localeUrl(loc: string): string {
         <button class="filter-btn range-btn active" data-range="7">
           {t.range7}
         </button>
-        <span class="filter-separator" aria-hidden="true">·</span>
         <button class="filter-btn range-btn" data-range="30">
           {t.range30}
         </button>
-        <span class="filter-separator" aria-hidden="true">·</span>
         <button class="filter-btn range-btn" data-range="all">
           {t.rangeAll}
         </button>
@@ -627,41 +614,44 @@ function localeUrl(loc: string): string {
   }
 
   /* ============================================================
-     LANGUAGE NAV — inline buttons, own row
+     LANGUAGE NAV — pill buttons matching status/RSS style
      ============================================================ */
   .lang-nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0.125rem;
+    gap: 0.375rem;
     margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .lang-pill {
+    display: inline-flex;
+    align-items: center;
     font-family: var(--font-mono);
-    font-size: 0.625rem;
-    letter-spacing: 0.06em;
+    font-size: 0.6875rem;
     color: var(--text-tertiary);
-  }
-
-  .lang-btn {
-    padding: 0.125rem 0.25rem;
-    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.625rem;
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
     text-decoration: none;
-    border-radius: 2px;
-    transition: color 0.15s;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
   }
 
-  a.lang-btn:hover {
+  a.lang-pill:hover {
     color: var(--accent);
+    border-color: var(--accent);
     text-decoration: none;
   }
 
   .lang-active {
     color: var(--accent);
+    border-color: var(--accent);
     font-weight: 600;
-  }
-
-  .lang-sep {
-    color: var(--border-hover);
-    user-select: none;
   }
 
   .header-line {
@@ -706,7 +696,7 @@ function localeUrl(loc: string): string {
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 0.125rem;
+    gap: 0.375rem;
   }
 
   .filter-label {
@@ -750,12 +740,6 @@ function localeUrl(loc: string): string {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
     border-radius: 2px;
-  }
-
-  .filter-separator {
-    color: var(--border-hover);
-    padding: 0 0.125rem;
-    user-select: none;
   }
 
   .filter-btn .cat-dot {

@@ -15,8 +15,11 @@
   "statusLoading": "ステータス",
   "statusOk": "すべて正常に稼働中",
   "footer": "Claude Pulse · 作者",
+  "copyright": "Claude、Claude Code、Anthropic は Anthropic, PBC の商標です。本サイトは Anthropic とは無関係であり、同社の推奨を受けていません。",
+  "sourceCode": "ソースコード",
   "languageLabel": "言語",
   "languageName": "日本語",
+  "weekdayFormat": "long",
   "relative": {
     "justNow": "たった今",
     "minutesAgo": "{n} 分前",
@@ -24,5 +27,12 @@
     "daysAgo": "{n} 日前",
     "monthsAgo": "{n} ヶ月前",
     "yearsAgo": "{n} 年前"
+  },
+  "categories": {
+    "claude-code": "Claude Code",
+    "platform": "プラットフォーム",
+    "research": "リサーチ",
+    "industry": "業界",
+    "enterprise": "エンタープライズ"
   }
 }

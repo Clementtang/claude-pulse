@@ -15,8 +15,11 @@
   "statusLoading": "상태",
   "statusOk": "모든 시스템 정상",
   "footer": "Claude Pulse · 제작",
+  "copyright": "Claude, Claude Code, Anthropic은 Anthropic, PBC의 상표입니다. 이 사이트는 Anthropic과 관련이 없으며 승인을 받지 않았습니다.",
+  "sourceCode": "소스 코드",
   "languageLabel": "언어",
   "languageName": "한국어",
+  "weekdayFormat": "long",
   "relative": {
     "justNow": "방금",
     "minutesAgo": "{n} 분 전",
@@ -24,5 +27,12 @@
     "daysAgo": "{n} 일 전",
     "monthsAgo": "{n} 개월 전",
     "yearsAgo": "{n} 년 전"
+  },
+  "categories": {
+    "claude-code": "Claude Code",
+    "platform": "플랫폼",
+    "research": "리서치",
+    "industry": "산업",
+    "enterprise": "엔터프라이즈"
   }
 }

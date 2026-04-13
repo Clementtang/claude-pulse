@@ -15,8 +15,11 @@
   "statusLoading": "狀態",
   "statusOk": "系統運作正常",
   "footer": "Claude Pulse · 作者",
+  "copyright": "Claude、Claude Code 和 Anthropic 為 Anthropic, PBC 的商標。本站與 Anthropic 無關，亦未獲其背書。",
+  "sourceCode": "原始碼",
   "languageLabel": "語言",
-  "languageName": "繁體中文 (台灣)",
+  "languageName": "繁中",
+  "weekdayFormat": "short",
   "relative": {
     "justNow": "剛剛",
     "minutesAgo": "{n} 分鐘前",
@@ -24,5 +27,12 @@
     "daysAgo": "{n} 天前",
     "monthsAgo": "{n} 個月前",
     "yearsAgo": "{n} 年前"
+  },
+  "categories": {
+    "claude-code": "Claude Code",
+    "platform": "平台",
+    "research": "研究",
+    "industry": "產業",
+    "enterprise": "企業"
   }
 }

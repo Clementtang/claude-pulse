@@ -15,8 +15,11 @@
   "statusLoading": "Status",
   "statusOk": "All systems operational",
   "footer": "Claude Pulse by",
+  "copyright": "Claude, Claude Code, and Anthropic are trademarks of Anthropic, PBC. This site is not affiliated with or endorsed by Anthropic.",
+  "sourceCode": "Source Code",
   "languageLabel": "Language",
-  "languageName": "English",
+  "languageName": "EN",
+  "weekdayFormat": "long",
   "relative": {
     "justNow": "just now",
     "minutesAgo": "{n}m ago",
@@ -24,5 +27,12 @@
     "daysAgo": "{n}d ago",
     "monthsAgo": "{n}mo ago",
     "yearsAgo": "{n}y ago"
+  },
+  "categories": {
+    "claude-code": "Claude Code",
+    "platform": "Platform",
+    "research": "Research",
+    "industry": "Industry",
+    "enterprise": "Enterprise"
   }
 }

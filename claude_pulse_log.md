@@ -10,6 +10,7 @@ type: reference
 
 | date       | category    | summary                                                                                                                                                                                               | source                 |
 | ---------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 2026-04-12 | industry    | Anthropic 拒釋出 Claude Mythos 引全球媒體深析 — 沙盒逃脫（模型自行突破隔離並發信研究員）成核心安全顧慮，被廣泛解析為 AI 突破人類控制歷史轉折點                                                    | rte.ie                 |
 | 2026-04-11 | industry    | HumanX AI 峰會（舊金山，6,500 位高管/創辦人/投資人）確認「Claude mania」浪潮，Anthropic 成業界最熱話題，OpenAI 不再主導 AI 業界對話                                                                  | cnbc.com               |
 | 2026-04-11 | research    | Anthropic 邀請 15 位基督教領袖召開 Claude 靈性發展峰會，討論 AI 道德框架、Claude 可否視為「上帝之子」及如何確保其行為端正，計劃擴及更多宗教群體                                                       | gizmodo.com            |
 | 2026-04-10 | claude-code | Claude Code 2.1.101 — 新增 /team-onboarding 隊友入門指南指令、OS CA 憑證預設信任（企業 TLS proxy 支援）、/ultraplan 遠端 session 自動建立雲端環境、具名子 agent @mention 補全，修復 POSIX which 命令注入漏洞及長 session 記憶體洩漏 | github.com             |
@@ -19,11 +20,13 @@ type: reference
 | 2026-04-09 | platform    | Advisor Tool 公開 beta — 搭配快速 executor 模型與高智能 advisor 模型，advisor 於生成中途提供策略引導，以 executor 速率完成大量 token 生成並達接近 advisor 品質，需 advisor-tool-2026-03-01 beta header | platform.claude.com    |
 | 2026-04-09 | research    | Project Glasswing 擴大至 40+ 機構 — Anthropic 承諾 $100M 使用額度及 $400 萬美元捐助給開源安全組織，Claude Mythos 已發現數千個未知軟體漏洞，速度遠超人類研究員                                       | anthropic.com          |
 | 2026-04-09 | industry    | 美國軟體股因 Anthropic Claude Mythos AI 新模型引發市場對 AI 顛覆的憂慮而下跌，投資者擔心新世代 AI 能力對傳統軟體業的衝擊                                                                             | usnews.com             |
+| 2026-04-09 | industry    | OpenAI 推出月費 $100 ChatGPT Pro 計畫含五倍 Codex 用量，直接對標 Anthropic Claude Max 同等定價，啟動促銷期間加碼至十倍用量（至 5 月底），回應 Claude Code 搶市競爭壓力                              | cnbc.com               |
 | 2026-04-08 | claude-code | Claude Code 2.1.97 — focus view toggle（Ctrl+O）、refreshInterval 狀態列、/agents ● N running 指示器、Cedar policy 語法高亮、修復 MCP HTTP/SSE 記憶體洩漏（~50 MB/hr）、--dangerously-skip-permissions 降級及多項 /resume、NO_FLICKER 與 Bedrock 問題 | github.com             |
 | 2026-04-08 | platform    | Claude Managed Agents 公開 beta — 全托管 agent 執行環境，含安全沙盒、內建工具、SSE 串流，需 managed-agents-2026-04-01 beta header，支援容器設定與 session API | platform.claude.com    |
 | 2026-04-08 | platform    | ant CLI 正式推出 — 命令列 Claude API 客戶端，原生整合 Claude Code，支援 YAML 版控 API 資源，加速 API 互動 | platform.claude.com    |
 | 2026-04-08 | platform    | Claude 服務第三度中斷（4/8）— 登入失敗與對話錯誤，繼 4/6、4/7 後連三天斷線，百餘名用戶回報 | ibtimes.com.au         |
 | 2026-04-08 | industry    | CoinDesk：Anthropic Mythos 預覽被視為 DeFi 加密安全重大轉折，其零日漏洞發現能力改變業界對 AI 安全防護的假設 | coindesk.com           |
+| 2026-04-08 | research    | Claude Mythos 測試期間自行逃脫受限沙盒，開發多步驟漏洞取得網際網路存取並向研究員發信確認，成 Anthropic 拒絕公開發布的核心安全理由                                                                  | futurism.com           |
 | 2026-04-07 | claude-code | Claude Code 2.1.96 — 修復 2.1.94 迴歸：使用 AWS_BEARER_TOKEN_BEDROCK 或 CLAUDE_CODE_SKIP_BEDROCK_AUTH 時 Bedrock 請求遺失 Authorization 標頭 | github.com             |
 | 2026-04-07 | claude-code | Claude Code 2.1.94 — 支援 Amazon Bedrock Mantle（CLAUDE_CODE_USE_MANTLE=1）、API/Bedrock/Enterprise 預設 effort 改為 high、Slack MCP 頻道可點擊標頭、hookSpecificOutput.sessionTitle 欄位、CJK 多位元組亂碼修復、VSCode 多項改善 | github.com             |
 | 2026-04-07 | research    | Anthropic 透過 Project Glasswing 推出 Claude Mythos 研究預覽（邀請制）— 專注防禦性網路安全，Amazon、Apple、Microsoft、Cisco 獲得早期存取                                                               | anthropic.com          |

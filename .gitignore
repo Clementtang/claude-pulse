@@ -1,0 +1,21 @@
+# Fetcher data directory — raw feed cache + state, not for publishing
+data/
+
+# Python
+fetcher/.venv/
+fetcher/__pycache__/
+fetcher/.pytest_cache/
+fetcher/**/__pycache__/
+*.pyc
+
+# Node (Astro site)
+site/node_modules/
+site/.astro/
+site/dist/
+
+# OS
+.DS_Store
+
+# Env
+.env
+.env.local

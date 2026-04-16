@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.clementtang.claude-pulse-fetcher</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/uv</string>
+        <string>run</string>
+        <string>--directory</string>
+        <string>/Users/clementtang/claude-pulse/fetcher</string>
+        <string>python</string>
+        <string>-m</string>
+        <string>src.main</string>
+    </array>
+
+    <!-- Run every 4 hours. Times are LOCAL (GMT+7 at time of install).
+         The Python code logs/processes in UTC internally so behaviour
+         is timezone-agnostic. Adjust these hours if you move timezones
+         and want consistent UTC coverage. -->
+    <key>StartCalendarInterval</key>
+    <array>
+        <dict>
+            <key>Hour</key><integer>0</integer>
+            <key>Minute</key><integer>0</integer>
+        </dict>
+        <dict>
+            <key>Hour</key><integer>4</integer>
+            <key>Minute</key><integer>0</integer>
+        </dict>
+        <dict>
+            <key>Hour</key><integer>8</integer>
+            <key>Minute</key><integer>0</integer>
+        </dict>
+        <dict>
+            <key>Hour</key><integer>12</integer>
+            <key>Minute</key><integer>0</integer>
+        </dict>
+        <dict>
+            <key>Hour</key><integer>16</integer>
+            <key>Minute</key><integer>0</integer>
+        </dict>
+        <dict>
+            <key>Hour</key><integer>20</integer>
+            <key>Minute</key><integer>0</integer>
+        </dict>
+    </array>
+
+    <key>StandardOutPath</key>
+    <string>/Users/clementtang/.claude/logs/pulse-fetcher-out.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/clementtang/.claude/logs/pulse-fetcher-err.log</string>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/clementtang/claude-pulse/fetcher</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

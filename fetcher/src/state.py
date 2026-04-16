@@ -30,11 +30,18 @@ class State:
         return self._data.get(collector_name, {})
 
     def update(self, collector_name: str, guid: str, published_at: datetime) -> None:
-        self._data[collector_name] = {
-            "last_guid": guid,
-            "last_published": published_at.isoformat(),
-            "last_run": datetime.now(timezone.utc).isoformat(),
-        }
+        entry = self._data.setdefault(collector_name, {})
+        entry["last_guid"] = guid
+        entry["last_published"] = published_at.isoformat()
+        entry["last_run_with_new"] = datetime.now(timezone.utc).isoformat()
+
+    def mark_checked(self, collector_name: str) -> None:
+        """Record that collector ran, regardless of whether new items appeared.
+
+        Lets monitoring distinguish `fetcher is alive but quiet` from `fetcher is dead`.
+        """
+        entry = self._data.setdefault(collector_name, {})
+        entry["last_checked"] = datetime.now(timezone.utc).isoformat()
 
     def save(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)

@@ -71,6 +71,7 @@ def run() -> int:
             continue
 
         new_only = filter_already_seen(fetched, state, collector.name)
+        state.mark_checked(collector.name)
         if new_only:
             # Feed ordering is typically newest-first; record the newest as last-seen
             newest = max(new_only, key=lambda a: a.published_at)

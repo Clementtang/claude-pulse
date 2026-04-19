@@ -1,4 +1,5 @@
 {
+  "2026-04-18|claude-code|github.com": "Claude Code 2.1.114 -- fixes crash in permission dialog when an agent team teammate requests tool permission.",
   "2026-04-17|platform|x.com": "Opus 4.7 rate limit bug fixed -- @ClaudeDevs announces that subscription rate limit miscalculation for long-context requests has been fixed, and all users' 5-hour and weekly quotas have been reset.",
   "2026-04-17|claude-code|platform.claude.com": "Opus 4.7 migration tooling shipped -- claude-api skill supports natural-language migration (say 'migrate to Opus 4.7' in Claude Code to auto-update model names, prompts, and effort settings); full Migration Guide published.",
   "2026-04-16|platform|x.com": "Anthropic launches @ClaudeDevs developer X account -- official 'direct line from the team' for changelogs, API releases, community updates, and deep dives; reached 220K+ followers within 20 hours of launch.",

@@ -1,5 +1,5 @@
 {
-  "2026-04-20|platform|status.claude.com": "Claude Sonnet 4.5 error spike (ongoing) -- status.claude.com began investigating at 06:14 UTC on 04-20; incident not yet resolved.",
+  "2026-04-20|platform|status.claude.com": "Claude Sonnet 4.5 error spike outage -- status.claude.com began investigating at 06:14 UTC on 04-20, entered monitoring at 06:38 UTC, resolved at 07:25 UTC; duration approximately 1 hour 11 minutes; affected claude.ai, platform.claude.com, API, Claude Code, Cowork, and Claude for Government.",
   "2026-04-19|platform|status.claude.com": "Claude Opus 4.6 elevated error rate outage -- status.claude.com began investigating at 22:44 UTC on 04-19, resolved at 00:00 UTC on 04-20; duration approximately 1 hour 16 minutes.",
   "2026-04-18|industry|x.com": "Claude Design system prompt leaked -- @Saccc_c published analysis of the full prompt on X, noting it emphasizes 'overall design context', 'encourages exploring multiple options', and pre-sets 'de-AI-flavor rules'; widely shared in Chinese-speaking tech community.",
   "2026-04-18|platform|x.com": "Anthropic co-hosts Opus 4.7 virtual hackathon with Cerebral Valley -- applications open through Sunday, week-long Claude Code build week starting Tuesday; theme 'Built with Opus 4.7', open to developers worldwide.",

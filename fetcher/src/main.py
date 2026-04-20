@@ -11,12 +11,14 @@ from src.collectors.base import Collector
 from src.collectors.claude_status import ClaudeStatusCollector
 from src.collectors.github_releases import GitHubReleasesCollector
 from src.dedup import dedup, filter_already_seen
+from src.incident_watcher import IncidentWatcher
 from src.models import Article
 from src.state import State
 
 DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 STATE_PATH = DATA_DIR / "state.json"
 CANDIDATES_PATH = DATA_DIR / "candidates.json"
+PENDING_UPDATES_PATH = DATA_DIR / "pending_log_updates.json"
 RAW_DIR = DATA_DIR / "raw"
 
 logging.basicConfig(
@@ -61,6 +63,7 @@ def run() -> int:
 
     state = State(STATE_PATH)
     collectors = get_collectors()
+    watcher = IncidentWatcher(state, PENDING_UPDATES_PATH)
 
     all_new: list[Article] = []
     for collector in collectors:
@@ -69,6 +72,15 @@ def run() -> int:
         except Exception as e:  # noqa: BLE001 — we want any collector failure isolated
             logger.exception("Collector %s crashed: %s", collector.name, e)
             continue
+
+        # Watch status incidents for Investigating → Resolved transitions.
+        # Runs on every fetch (all items, not just new) so we catch updates
+        # to previously-seen incidents.
+        if collector.name == "claude_status":
+            try:
+                watcher.watch(fetched)
+            except Exception as e:  # noqa: BLE001
+                logger.exception("incident_watcher failed: %s", e)
 
         new_only = filter_already_seen(fetched, state, collector.name)
         state.mark_checked(collector.name)

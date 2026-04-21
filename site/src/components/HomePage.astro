@@ -147,7 +147,7 @@ function localeUrl(loc: string): string {
                   {t.categories[item.category] || item.categoryLabel}
                 </span>
                 <p class="card-summary">
-                  {locale.startsWith("zh") ? item.summary : item.summaryEn}
+                  {item.summaries?.[locale] || item.summary}
                 </p>
                 <span class="card-source-row">
                   <span class="card-source-icon" aria-hidden="true">🔗</span>

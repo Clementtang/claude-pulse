@@ -1,6 +1,16 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import summariesEn from "../i18n/summaries-en.json" with { type: "json" };
+import summariesZhCN from "../i18n/summaries-zh-CN.json" with { type: "json" };
+import summariesJa from "../i18n/summaries-ja.json" with { type: "json" };
+import summariesKo from "../i18n/summaries-ko.json" with { type: "json" };
+
+const LOCALE_SUMMARIES = {
+  en: summariesEn,
+  "zh-CN": summariesZhCN,
+  ja: summariesJa,
+  ko: summariesKo,
+};
 
 const CATEGORY_LABELS = {
   "claude-code": {
@@ -73,12 +83,18 @@ export function parsePulseLog() {
     // Build ISO datetime string in UTC
     const datetimeUtc = `${date}T${time}:00Z`;
 
-    // Look up English summary with #N suffix for duplicate keys
+    // Build lookup key with #N suffix for duplicate (date|category|source) triples.
     const baseKey = `${date}|${category}|${source}`;
     keyCounts[baseKey] = (keyCounts[baseKey] || 0) + 1;
-    const enKey =
+    const lookupKey =
       keyCounts[baseKey] === 1 ? baseKey : `${baseKey}#${keyCounts[baseKey]}`;
-    const summaryEn = summariesEn[enKey] || summary;
+
+    // Per-locale summaries. Fall back to zh-TW source (`summary`) if a locale
+    // hasn't translated this entry yet.
+    const summaries = { "zh-TW": summary };
+    for (const [loc, dict] of Object.entries(LOCALE_SUMMARIES)) {
+      summaries[loc] = dict[lookupKey] || summary;
+    }
 
     items.push({
       date,
@@ -89,7 +105,8 @@ export function parsePulseLog() {
       categoryColor: meta.color,
       categoryBg: meta.bg,
       summary,
-      summaryEn,
+      summaryEn: summaries.en,
+      summaries,
       source,
       url,
     });

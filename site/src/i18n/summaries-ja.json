@@ -1,7 +1,9 @@
 {
   "2026-04-20|platform|status.claude.com": "Claude Sonnet 4.5 のエラー率異常によるサービス中断 — status.claude.com が 04-20 06:14 UTC に調査を開始、06:38 UTC にモニタリング段階へ移行、07:25 UTC に解除、約 1 時間 11 分継続。claude.ai、platform.claude.com、API、Claude Code、Cowork、Claude for Government に影響。",
+  "2026-04-20|platform|status.claude.com#2": "Claude.ai / API のファイルアップロード異常 — status.claude.com が 04-20 13:31 UTC に調査を開始し、14:21 UTC に解除。約 50 分継続、Claude.ai および Claude API の一部ファイルアップロードリクエストに影響。",
   "2026-04-20|claude-code|github.com": "Claude Code 2.1.116 — 大規模セッション（40MB+）での /resume が 67% 高速化、MCP 起動の高速化、VS Code/Cursor/Windsurf ターミナルでのスクロール改善、thinking spinner にインライン進捗表示（「still thinking」→「almost done」）を追加、Devanagari 文字のレンダリングや sandbox セキュリティパスのバイパスなど多数の問題を修正。",
-  "2026-04-20|enterprise|bloomberg.com": "Amazon が $5B の追加出資を発表（累計 $13B、マイルストーン条項により最大 $25B まで拡張可能）。Anthropic は 10 年間にわたり AWS に $1,000 億超を支出し、5GW の算力容量を確保、現行および将来の Trainium チップを採用する。本ラウンドの評価額は $3,800 億。",
+  "2026-04-20|enterprise|anthropic.com": "Anthropic が Amazon との計算リソース提携拡大を正式発表 — 「前例のない消費者の成長」による信頼性への圧力を理由に挙げる（年換算売上は $9B から $30B へ拡大）。10 年間で AWS 上に最大 5GW の容量を確保、現在 100 万を超える Trainium2 チップが稼働中、Q2 2026 に新規 Trainium2 容量を投入、年末までに Trainium3 で約 1GW を追加、将来の Trainium4 オプションも保持。",
+  "2026-04-20|enterprise|bloomberg.com": "Bloomberg が Amazon 出資案の財務条件を報道 — Amazon が $5B を追加出資（累計 $13B、マイルストーン達成で最大 $25B まで拡張可能）、Anthropic は 10 年間で AWS に $1,000 億超を支出する。本ラウンドの評価額は $3,800 億。",
   "2026-04-20|industry|thenextweb.com": "オーストラリア ASIC など世界の金融規制当局が、Anthropic Mythos AI の銀行システムに対するリスク監視に参加すると発表。Foreign Policy は Mythos が各国のサイバーセキュリティ戦略の枠組みを再構築していると分析し、世界の規制当局が単一の AI モデルについて初めて国境を越えた協調監視を開始したと伝えた。",
   "2026-04-19|platform|status.claude.com": "Claude Opus 4.6 のエラー率異常によるサービス中断 — status.claude.com が 04-19 22:44 UTC に調査を開始し、04-20 00:00 UTC に解除。約 1 時間 16 分継続。",
   "2026-04-19|platform|platform.claude.com": "Claude Haiku 3（claude-3-haiku-20240307）正式退役 — API リクエストは即座にエラーを返し、猶予期間なし。Anthropic は Claude Haiku 4.5 への移行を推奨。claude.ai ユーザーは新モデルへ自動切替されるため影響なし。",

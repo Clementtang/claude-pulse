@@ -1,7 +1,9 @@
 {
   "2026-04-20|platform|status.claude.com": "Claude Sonnet 4.5 오류율 이상으로 인한 서비스 중단 — status.claude.com이 04-20 06:14 UTC에 조사 개시, 06:38 UTC에 모니터링 단계로 전환, 07:25 UTC에 해소. 약 1시간 11분 지속. claude.ai, platform.claude.com, API, Claude Code, Cowork, Claude for Government에 영향.",
+  "2026-04-20|platform|status.claude.com#2": "Claude.ai / API 파일 업로드 오류 — status.claude.com이 04-20 13:31 UTC에 조사 개시, 14:21 UTC에 해소. 약 50분 지속, 일부 Claude.ai 및 Claude API 파일 업로드 요청에 영향.",
   "2026-04-20|claude-code|github.com": "Claude Code 2.1.116 — 대형 session(40MB+)에서 /resume 67% 가속, MCP 시작 속도 향상, VS Code/Cursor/Windsurf 터미널 스크롤 개선, thinking spinner에 인라인 진행 상황 표시('still thinking' → 'almost done') 추가. Devanagari 문자 렌더링, sandbox 안전 경로 우회 등 여러 문제 수정.",
-  "2026-04-20|enterprise|bloomberg.com": "Amazon, 추가 $5B 투자 발표(누적 $13B, 마일스톤 조항에 따라 최대 $25B까지 확장 가능). Anthropic은 10년간 AWS에 $1,000억 이상 지출하고 5GW 컴퓨팅 용량을 확보하며 현재 및 미래 Trainium 칩을 채택하기로 약속. 이번 라운드 기업가치 $3,800억.",
+  "2026-04-20|enterprise|anthropic.com": "Anthropic, Amazon과 컴퓨팅 파트너십 확대를 공식 발표 — '전례 없는 소비자 성장'이 안정성에 압력을 가한 점을 이유로 제시(연환산 매출 $9B에서 $30B로 증가). 10년간 AWS에 최대 5GW 용량 확보, 현재 100만 개가 넘는 Trainium2 칩 가동 중. Q2 2026에 신규 Trainium2 용량이 온라인 전환되고, 연말까지 Trainium3로 약 1GW 추가 확장, 향후 Trainium4 옵션도 확보.",
+  "2026-04-20|enterprise|bloomberg.com": "Bloomberg, Amazon 투자안의 재무 조건 보도 — Amazon이 $5B 추가 투자(누적 $13B, 마일스톤 달성 시 최대 $25B까지 확장 가능)하고, Anthropic은 10년간 AWS에 $1,000억 이상 지출하기로 약속. 이번 라운드 기업가치 $3,800억.",
   "2026-04-20|industry|thenextweb.com": "호주 ASIC 등 글로벌 금융 규제 기관, Anthropic Mythos AI가 은행 시스템에 미치는 위험 모니터링에 합류한다고 발표. Foreign Policy는 Mythos가 각국의 사이버 보안 전략 구도를 재편하고 있다고 분석. 전 세계 규제 기관이 단일 AI 모델에 대해 국경을 넘는 공동 모니터링을 처음으로 시작.",
   "2026-04-19|platform|status.claude.com": "Claude Opus 4.6 오류율 이상으로 인한 서비스 중단 — status.claude.com이 04-19 22:44 UTC에 조사 개시, 04-20 00:00 UTC에 해소. 약 1시간 16분 지속.",
   "2026-04-19|platform|platform.claude.com": "Claude Haiku 3(claude-3-haiku-20240307) 공식 은퇴 — API 요청은 즉시 오류를 반환하며 유예 기간 없음. Anthropic은 Claude Haiku 4.5로의 마이그레이션을 권장. claude.ai 사용자는 새 모델로 자동 전환되어 영향 없음.",

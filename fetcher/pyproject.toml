@@ -1,0 +1,25 @@
+[project]
+name = "claude-pulse-fetcher"
+version = "0.1.0"
+description = "Multi-tier RSS/Atom/sitemap fetcher for Claude Pulse"
+requires-python = ">=3.12"
+dependencies = [
+    "feedparser>=6.0",
+    "httpx>=0.27",
+    "python-dateutil>=2.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

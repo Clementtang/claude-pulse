@@ -12,6 +12,23 @@ const LOCALE_SUMMARIES = {
   ko: summariesKo,
 };
 
+// Group separator anchored to curator's local timezone (Hanoi). Card timestamps
+// remain in viewer's browser TZ; this only controls day-grouping so v2.1.119
+// (23:24 UTC = 06:24 Hanoi next day) appears under the Hanoi date.
+const DISPLAY_TZ = "Asia/Ho_Chi_Minh";
+const displayDateFormatter = new Intl.DateTimeFormat("en-CA", {
+  timeZone: DISPLAY_TZ,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+function toDisplayDate(isoUtc) {
+  const parts = displayDateFormatter.formatToParts(new Date(isoUtc));
+  const get = (type) => parts.find((p) => p.type === type)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
 const CATEGORY_LABELS = {
   "claude-code": {
     label: "Claude Code",
@@ -100,6 +117,7 @@ export function parsePulseLog() {
       date,
       time,
       datetimeUtc,
+      displayDate: toDisplayDate(datetimeUtc),
       category,
       categoryLabel: meta.label,
       categoryColor: meta.color,

@@ -125,14 +125,14 @@ function localeUrl(loc: string): string {
     <div class="timeline" id="timeline">
       {
         items.map((item, i) => {
-          const prevDate = i > 0 ? items[i - 1].date : null;
-          const showSeparator = prevDate !== item.date;
+          const prevDate = i > 0 ? items[i - 1].displayDate : null;
+          const showSeparator = prevDate !== item.displayDate;
           return (
             <Fragment>
               {showSeparator && (
-                <div class="day-separator" data-date={item.date}>
-                  <time class="day-separator-chip" datetime={item.date}>
-                    {item.date}
+                <div class="day-separator" data-date={item.displayDate}>
+                  <time class="day-separator-chip" datetime={item.displayDate}>
+                    {item.displayDate}
                   </time>
                 </div>
               )}
@@ -140,6 +140,7 @@ function localeUrl(loc: string): string {
                 class="card"
                 data-category={item.category}
                 data-datetime={item.datetimeUtc}
+                data-display-date={item.displayDate}
                 style={`--cat-color: ${item.categoryColor}`}
               >
                 <span class="card-category">
@@ -342,9 +343,11 @@ function localeUrl(loc: string): string {
     return get("year") + "-" + get("month") + "-" + get("day");
   }
 
-  // Weekday formatter uses the current locale so output matches page language
+  // Weekday formatter uses the current locale so output matches page language.
+  // Pin to Hanoi to match server-side displayDate grouping (avoids viewer-TZ
+  // weekday drift when the noon-UTC anchor crosses days in their local zone).
   const weekdayFormatter = new Intl.DateTimeFormat(CURRENT_LOCALE, {
-    timeZone: TZ,
+    timeZone: "Asia/Ho_Chi_Minh",
     weekday: WEEKDAY_FORMAT || "long",
   });
 
@@ -377,13 +380,14 @@ function localeUrl(loc: string): string {
   });
 
   // Format day separator chip — "2026-04-08 Wednesday"
+  // dateStr is already the Hanoi display date (server-rendered); show as-is and
+  // derive weekday from a noon-UTC anchor to be safe against viewer-TZ drift.
   document.querySelectorAll(".day-separator-chip").forEach((el) => {
     const dateStr = el.getAttribute("datetime");
     if (!dateStr) return;
     const d = new Date(dateStr + "T12:00:00Z");
-    const ymd = formatYmd(d);
     const weekday = weekdayFormatter.format(d);
-    el.textContent = ymd + " " + weekday;
+    el.textContent = dateStr + " " + weekday;
   });
 
   // ============================================================
@@ -421,7 +425,7 @@ function localeUrl(loc: string): string {
       card.style.display = visible ? "" : "none";
       if (visible) {
         visibleCount++;
-        visibleDates.add(iso.slice(0, 10));
+        visibleDates.add(card.dataset.displayDate);
       }
     });
 

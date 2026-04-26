@@ -1,5 +1,5 @@
 {
-  "2026-04-25|claude-code|github.com": "Claude Code 2.1.120 — 仅更新 CHANGELOG.md，无新增功能或修复记录（版本号 bump commit）。",
+  "2026-04-25|platform|status.claude.com": "Claude Opus 4.7 错误率异常 — status.claude.com 于 04-25 08:43 UTC 开始调查，08:57 UTC 进入监控，11:58 UTC 解除，历时约 3 小时 15 分钟；影响 claude.ai、platform.claude.com、API 与 Claude Code。",
   "2026-04-24|enterprise|bloomberg.com": "Google 宣布向 Anthropic 投资最高 400 亿美元 — 先期注入 100 亿美元现金，其余 300 亿美元视绩效里程碑达成后分批释出；Google Cloud 同步承诺五年内提供 5 吉瓦算力，并保留数吉瓦扩充选项；Anthropic 年化营收已突破 300 亿美元。",
   "2026-04-24|platform|platform.claude.com": "Anthropic 发布 Rate Limits API — 管理员可通过 API 以编程方式查询组织和工作区配置的速率限制。",
   "2026-04-23|platform|platform.claude.com": "Claude Managed Agents 记忆功能公开 beta — 通过记忆库（memory store）让 agent 跨 session 持久化信息；记忆库为工作区范围的文本文件集合，在容器内挂载为 `/mnt/memory/` 下的目录，agent 使用标准 file 工具读写；每次修改产生不可变版本记录，支持审计与回滚，历史保留 30 天；每 session 最多挂载 8 个记忆库，支持 `read_write` / `read_only` 访问控制；需 `managed-agents-2026-04-01` beta header。",

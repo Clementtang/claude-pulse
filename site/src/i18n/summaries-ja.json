@@ -1,4 +1,5 @@
 {
+  "2026-04-25|claude-code|github.com": "Claude Code 2.1.120 — CHANGELOG.md の更新のみ。リリースノートに新機能・バグ修正の記録なし（バージョン番号 bump commit）。",
   "2026-04-24|enterprise|bloomberg.com": "Google が Anthropic に最大 400 億ドルを投資すると発表。先行して 100 億ドルを現金で注入し、残り最大 300 億ドルはパフォーマンスマイルストーン達成次第で段階的に拠出。Google Cloud は同時に 5 年間で 5 ギガワットの算力供給を約束し、追加数ギガワットのオプションも確保。Anthropic の年化換算収益は 300 億ドルを突破。",
   "2026-04-24|platform|platform.claude.com": "Anthropic が Rate Limits API をリリース。管理者が組織およびワークスペースに設定されたレート制限を API 経由でプログラム的に照会できるようになります。",
   "2026-04-23|platform|platform.claude.com": "Claude Managed Agents のメモリ機能がパブリック Beta として提供開始。メモリストアにより agent はセッション間で情報を永続化可能。各ストアはワークスペーススコープのテキスト文書コレクションとしてセッションコンテナ内の `/mnt/memory/` 以下にディレクトリとしてマウントされ、標準エージェントツールセットで読み書き可能。変更ごとに不変のメモリバージョンが生成され、監査とロールバックに対応（30 日間保存）。セッションごとに最大 8 つのメモリストアをアタッチ可能で、`read_write` / `read_only` のアクセス制御をサポート。`managed-agents-2026-04-01` beta ヘッダーが必要。",

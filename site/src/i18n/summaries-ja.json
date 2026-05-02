@@ -1,4 +1,5 @@
 {
+  "2026-04-29|platform|claude.com": "Anthropic が claude-api skill をより多くの開発者ツールに展開 — この skill は Claude API のベストプラクティス（モデル移行、prompt caching の適用、エージェントアーキテクチャパターン、Claude Managed Agents の設定など）をまとめており、もともと Claude Code に内蔵されていた（2026-03 公開）が、現在は CodeRabbit、JetBrains（Junie 含む）、Resolve AI、Warp の 4 つの開発ツールにも搭載；skill は anthropics/skills リポジトリ（パス skills/claude-api）でオープンソース化されており、~20 行の CI 設定で公式更新を自動同期可能；事例：Resolve AI のエンジニアはモデルリリース後にコードを一括移行でき、Warp ユーザーは Claude API パラメータを調べるためにターミナルを離れる必要がない。",
   "2026-04-30|platform|status.claude.com": "claude.ai と API が利用不可 — status.claude.com が 04-30 01:20 UTC に調査を開始、01:34 UTC にモニタリングへ移行、01:51 UTC に解消、合計約 31 分。",
   "2026-04-29|platform|status.claude.com": "Claude Haiku 4.5 のエラー率が上昇 — status.claude.com が 04-29 13:47 UTC に調査を開始、14:01 UTC にモニタリングへ移行、14:14 UTC に解消、実際の影響時間帯は 12:37–13:37 UTC、約 1 時間継続。",
   "2026-04-29|industry|yahoo.com": "Goldman Sachs 香港オフィスのスタッフが Anthropic Claude へのアクセスを失う — Reuters/FT が報道、Goldman Sachs は Anthropic との契約を厳格に解釈した結果、APAC 主要拠点である香港でいかなる Anthropic 製品も使用できないと判断；制限は地理的位置に基づき、海外従業員が香港訪問中も使用不可、主にソフトウェアエンジニアに影響；Hong Kong は Anthropic API と claude.ai の公式サポート市場リストに含まれない；Gemini と ChatGPT は Goldman プラットフォームで引き続き利用可能。",

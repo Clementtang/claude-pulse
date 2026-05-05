@@ -23,7 +23,7 @@ uv run python -m src.main
 
 ## Architecture
 
-See `../ARCHITECTURE_V2.md`.
+See `../docs/architecture.md`.
 
 ## Data flow (Phase 2)
 

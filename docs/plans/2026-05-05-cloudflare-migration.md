@@ -13,6 +13,7 @@ GitHub Pages → Cloudflare Pages，網域改為 `claude-pulse.chatbot.tw`，並
 | -------------- | ------------------------------------- | ------------------------------------ |
 | 網域           | `clementtang.github.io/claude-pulse/` | `claude-pulse.chatbot.tw/`           |
 | Hosting        | GitHub Pages                          | Cloudflare Pages                     |
+| **DNS 託管**   | Gandi                                 | **不變，留 Gandi**（僅加一條 CNAME） |
 | Astro `base`   | `/claude-pulse`                       | `/`（root）                          |
 | 數據分析       | 無                                    | GA4                                  |
 | SEO            | 無                                    | Google Search Console + sitemap 提交 |
@@ -35,25 +36,20 @@ GitHub Pages → Cloudflare Pages，網域改為 `claude-pulse.chatbot.tw`，並
 
 - [x] 1.1 GA4 property「Claude Pulse」已由使用者手動建立 — Measurement ID `G-R69N8EZQE7`，Stream ID `14810473085`
 - [x] 1.2 GSC property 已由使用者手動建立，Thufir service account 已授權
-- [ ] 1.3 把 `chatbot.tw` 從 Gandi 搬到 Cloudflare DNS：
-  - **1.3.0 Audit**：跑下列指令並截圖留檔（新舊 NS 比對基準）：
-    ```bash
-    dig chatbot.tw ANY +noall +answer @ns-20-b.gandi.net
-    dig MX chatbot.tw
-    dig TXT chatbot.tw
-    dig CAA chatbot.tw
-    dig SPF chatbot.tw  # 即使 deprecated 仍要看
-    ```
-    特別注意 MX / SPF / DKIM / DMARC（信件相關）、CAA（證書授權），這些 Cloudflare auto-scan 常漏
-  - 在 Cloudflare 加入 zone `chatbot.tw`，等 auto-scan 完成
-  - **逐筆比對 1.3.0 截圖**：缺漏的 records 手動補上
-  - 在 Cloudflare 設好 `chatbot.tw` root 的 redirect rule（指向 FB 社團，模擬目前 Gandi 行為）
-  - 在 Gandi 把 NS 改為 Cloudflare 提供的 NS（生效 ~2-24h）
-  - 切換後再 `dig chatbot.tw ANY @8.8.8.8` 比對 1.3.0 截圖確認無漏
-  - **Gandi 仍維持 registrar 角色，只是把 DNS 託管轉到 Cloudflare**
-- [ ] 1.4 註冊 / 登入 Cloudflare Pages
+- [ ] 1.3 註冊 / 登入 Cloudflare（純帳號動作，零 DNS 變更）
 
-> ⚠️ Phase 1.3 NS 切換前，整個 chatbot.tw zone 都會跟著切，FB 社團的 redirect 也要在 Cloudflare 重做（HTTP redirect rule 或 page rule）。確認 redirect 在 Cloudflare 上正確再切 NS。
+> **2026-05-06 路線變更：DNS 留 Gandi，不搬整個 zone**
+>
+> 原計畫把 chatbot.tw zone 整個搬到 Cloudflare 託管，reviewer 與 audit 過程都將此視為前提。User 在 2026-05-06 提問「乾脆全搬？」促使重新評估，發現：
+>
+> - Claude Pulse 是靜態站，**不需要** CF zone-level 功能（Workers / Email Routing / 全域 redirect rules）
+> - chatbot.tw 已有 4 個 active subdomain（buddydex / events / qrcode / blog），整個搬遷的風險與收益不對等
+> - CF Pages 的 SSL、custom domain、CDN、per-project Analytics、Preview deploy 全部都跟 DNS 託管在哪裡無關
+> - 在 Gandi 加一條 CNAME + 一條 TXT 即可達成所有目標
+>
+> 決定改 **Option B**：DNS 全留 Gandi，僅在 Phase 5 於 Gandi 加 CNAME `claude-pulse.chatbot.tw` → CF Pages、加 TXT GSC 驗證。
+>
+> Phase 1.3 從「DNS zone 搬遷」簡化為「註冊 CF 帳號」。Phase 1 從半天工作量縮為 5 分鐘。原 Phase 1.3 的 DNS audit 工作仍保留為 [`docs/plans/2026-05-05-dns-audit.md`](2026-05-05-dns-audit.md)，作為 chatbot.tw 現況背景參考（Cloudflare zone records list 章節已不適用）。
 
 > **[審查 2026-05-05]** PM：「把 Gandi 上現有的 DNS records 匯入 Cloudflare」假設 zone 內只有指向 FB 社團的 root record。
 >
@@ -186,8 +182,8 @@ GitHub Pages → Cloudflare Pages，網域改為 `claude-pulse.chatbot.tw`，並
 
 **順序很重要 — merge 必須在 add custom domain 之前完成**，否則 production deployment 還是舊 base 配置，custom domain 綁過去會壞站。
 
-- [ ] 5.1 Cloudflare DNS 加 CNAME：`claude-pulse` → `claude-pulse-xxxx.pages.dev`，**Proxy 開啟（橘雲）**，TTL 設 Auto
-- [ ] 5.2 Cloudflare DNS 加 GSC TXT 驗證 record（位置看 GSC 給的指示，多半是 `chatbot.tw` root 或 `_google.claude-pulse.chatbot.tw`）
+- [ ] 5.1 **Gandi DNS** 加 CNAME：`claude-pulse.chatbot.tw` → `claude-pulse-xxxx.pages.dev`（TTL 設 5 min 方便回滾）
+- [ ] 5.2 **Gandi DNS** 加 GSC TXT 驗證 record（位置看 GSC 給的指示，多半是 `chatbot.tw` root 或 `_google.claude-pulse.chatbot.tw`）
 - [ ] 5.3 **先 merge `migrate/cloudflare-pages` 到 `main`** → CF Pages 自動 rebuild production，等 deploy log 顯示 success
 - [ ] 5.4 此時 `xxxx.pages.dev` 應該已是新 base（無 `/claude-pulse/` 前綴），用 `curl -I https://claude-pulse-xxxx.pages.dev` 驗證根目錄 200
 - [ ] 5.5 CF Pages → Project → Custom domains → Add `claude-pulse.chatbot.tw`
@@ -274,51 +270,51 @@ GitHub Pages → Cloudflare Pages，網域改為 `claude-pulse.chatbot.tw`，並
 
 ## 4. 風險 & 回滾
 
-| 風險                                                                   | 機率 | 影響 | 緩解 / 回滾                                                                                               |
-| ---------------------------------------------------------------------- | ---- | ---- | --------------------------------------------------------------------------------------------------------- |
-| Astro `base` 移除後內部連結壞                                          | 中   | 高   | Phase 3 嚴格本機 + preview 雙重驗證才動 DNS                                                               |
-| Phase 1.3 chatbot.tw NS 切到 Cloudflare 過程 FB 社團 redirect 短暫失效 | 中   | 低   | 在 Cloudflare 把 redirect 設好再切 NS；分一週前置                                                         |
-| Phase 1.3 NS 切換漏 MX/SPF/DKIM/CAA records → email 退信               | 中   | 高   | Phase 1.3.0 audit + 切完比對                                                                              |
-| Phase 5 順序錯誤 → custom domain 綁完 main 還是舊 base，新網域 404     | 中   | 高   | **新版 Phase 5 已重排：merge → 等 rebuild → 才 add custom domain**                                        |
-| DNS 切換過渡期 claude-pulse.chatbot.tw 短暫不可訪問                    | 低   | 低   | CNAME TTL 設 Auto / 300s                                                                                  |
-| GH Pages SEO 流量斷層                                                  | 中   | 中   | meta refresh + canonical + sitemap，預期 30-90 天 transition（Change of Address 可能被拒，已備 fallback） |
-| GA4 measurement ID 寫錯 / 未啟用                                       | 低   | 低   | Phase 4 在 .pages.dev preview 先驗證 Realtime                                                             |
-| CF Pages build 失敗                                                    | 低   | 中   | 保留 GitHub Pages 部署直到 CF Pages 連續 7 天無事故才停                                                   |
-| Cloudflare zone 設定誤觸發 chatbot.tw FB redirect 壞                   | 低   | 中   | Phase 1.3 完成後立刻 curl 驗證 root domain redirect 仍正確                                                |
+| 風險                                                               | 機率 | 影響 | 緩解 / 回滾                                                                                               |
+| ------------------------------------------------------------------ | ---- | ---- | --------------------------------------------------------------------------------------------------------- |
+| Astro `base` 移除後內部連結壞                                      | 中   | 高   | Phase 3 嚴格本機 + preview 雙重驗證才動 DNS                                                               |
+| ~~Phase 1.3 chatbot.tw NS 切到 Cloudflare~~                        | —    | —    | **採 Option B 後此風險消失**（DNS 留 Gandi）                                                              |
+| ~~Phase 1.3 NS 切換漏 MX/SPF/DKIM/CAA records~~                    | —    | —    | **採 Option B 後此風險消失**                                                                              |
+| Phase 5 順序錯誤 → custom domain 綁完 main 還是舊 base，新網域 404 | 中   | 高   | **新版 Phase 5 已重排：merge → 等 rebuild → 才 add custom domain**                                        |
+| Gandi DNS propagation 慢於預期                                     | 低   | 低   | CNAME TTL 設 5 min；新網域訪問若仍指 GH Pages 等 propagation                                              |
+| GH Pages SEO 流量斷層                                              | 中   | 中   | meta refresh + canonical + sitemap，預期 30-90 天 transition（Change of Address 可能被拒，已備 fallback） |
+| GA4 measurement ID 寫錯 / 未啟用                                   | 低   | 低   | Phase 4 在 .pages.dev preview 先驗證 Realtime                                                             |
+| CF Pages build 失敗                                                | 低   | 中   | 保留 GitHub Pages 部署直到 CF Pages 連續 7 天無事故才停                                                   |
+| ~~Cloudflare zone 設定誤觸發 chatbot.tw FB redirect 壞~~           | —    | —    | **採 Option B 後此風險消失**                                                                              |
 
 ## 5. 預估時程
 
-| 階段                  | 動手時間    | 等待時間（DNS / SSL / SEO）                                 |
-| --------------------- | ----------- | ----------------------------------------------------------- |
-| Phase 1（含 NS 切換） | 30 min      | 2-24h DNS propagation                                       |
-| Phase 2               | 30 min      | —                                                           |
-| Phase 3               | 60 min      | —                                                           |
-| Phase 4               | 30 min      | —                                                           |
-| Phase 5               | 20 min      | 2-5 min SSL                                                 |
-| Phase 6               | 30 min      | 30-90 天 SEO transition（meta refresh，無 server-side 301） |
-| Phase 7               | 30 min      | —                                                           |
-| Phase 8               | 30 min      | —                                                           |
-| **總純動手**          | **~4 小時** | —                                                           |
-| **總含等待**          | —           | **2-4 週完整生效**                                          |
+| 階段                                   | 動手時間      | 等待時間（DNS / SSL / SEO）                                 |
+| -------------------------------------- | ------------- | ----------------------------------------------------------- |
+| Phase 1（CF 註冊）                     | 5 min         | —                                                           |
+| Phase 2                                | 30 min        | —                                                           |
+| Phase 3                                | 60 min        | —                                                           |
+| Phase 4                                | 30 min        | —                                                           |
+| Phase 5（Gandi CNAME + custom domain） | 20 min        | 5-30 min DNS propagation + 2-5 min SSL                      |
+| Phase 6                                | 30 min        | 30-90 天 SEO transition（meta refresh，無 server-side 301） |
+| Phase 7                                | 30 min        | —                                                           |
+| Phase 8                                | 30 min        | —                                                           |
+| **總純動手**                           | **~3.5 小時** | —                                                           |
+| **總含等待**                           | —             | **2-4 週完整生效**（DNS 部分快很多，SEO 不變）              |
 
 ## 6. 建議分批執行排程
 
-| Session        | 內容                               | 何時                       |
-| -------------- | ---------------------------------- | -------------------------- |
-| S1（前置）     | Phase 1：GA4 + Cloudflare DNS 切換 | 週末上午                   |
-| S2（核心遷移） | Phase 2 + 3 + 4 + 5                | 連續一個半天，避開週一週會 |
-| S3（收尾）     | Phase 6 + 7 + 8                    | 切換後 1-3 天內            |
-| S4（觀察）     | 確認 SEO transition、流量數據      | 切換後 30 天               |
+| Session        | 內容                                                    | 何時                   |
+| -------------- | ------------------------------------------------------- | ---------------------- |
+| S1（核心遷移） | Phase 1（CF 註冊）+ 2 + 3 + 4 + 5（Gandi CNAME + 上線） | 連續半天，避開週一週會 |
+| S2（收尾）     | Phase 6 + 7 + 8                                         | 切換後 1-3 天內        |
+| S3（觀察）     | 確認 SEO transition、流量數據                           | 切換後 30 天 / 90 天   |
 
 ## 7. Decision log（執行時填）
 
-| 日期       | 決策                                              | 結果                                                                                             |
-| ---------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| 2026-05-05 | 域名選 `chatbot.tw`（vs `clementtang.net`）       | 主題契合度高、未來可擴 ai-pulse / openai-pulse                                                   |
-| 2026-05-05 | Hosting 選 Cloudflare Pages（vs 留 GitHub Pages） | 河內 / 全球 CDN 速度、無頻寬上限、PR preview                                                     |
-| 2026-05-05 | GA4 新 property（vs 共用）                        | claude-pulse 與 FB 社團內容性質差太多                                                            |
-| 2026-05-05 | DNS 託管 Gandi → Cloudflare                       | CF Pages 整合 + DNS 操作介面更直觀                                                               |
-| 2026-05-05 | GA4 + GSC 由使用者手動先建好                      | Measurement ID `G-R69N8EZQE7`、Stream `14810473085`；GSC property 含 Thufir service account 授權 |
+| 日期       | 決策                                              | 結果                                                                                                                    |
+| ---------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-05 | 域名選 `chatbot.tw`（vs `clementtang.net`）       | 主題契合度高、未來可擴 ai-pulse / openai-pulse                                                                          |
+| 2026-05-05 | Hosting 選 Cloudflare Pages（vs 留 GitHub Pages） | 河內 / 全球 CDN 速度、無頻寬上限、PR preview                                                                            |
+| 2026-05-05 | GA4 新 property（vs 共用）                        | claude-pulse 與 FB 社團內容性質差太多                                                                                   |
+| 2026-05-05 | ~~DNS 託管 Gandi → Cloudflare~~                   | ~~CF Pages 整合 + DNS 操作介面更直觀~~（**已於 2026-05-06 反轉，見下行**）                                              |
+| 2026-05-05 | GA4 + GSC 由使用者手動先建好                      | Measurement ID `G-R69N8EZQE7`、Stream `14810473085`；GSC property 含 Thufir service account 授權                        |
+| 2026-05-06 | **DNS 留 Gandi，不搬整 zone（Option B）**         | Claude Pulse 是靜態站不需 CF zone-level 功能；chatbot.tw 既有 4 active subdomain 風險不對等；Phase 1 從半天簡化為 5 min |
 
 ---
 

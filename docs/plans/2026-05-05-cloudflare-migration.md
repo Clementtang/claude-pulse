@@ -36,7 +36,7 @@ GitHub Pages → Cloudflare Pages，網域改為 `claude-pulse.chatbot.tw`，並
 
 - [x] 1.1 GA4 property「Claude Pulse」已由使用者手動建立 — Measurement ID `G-R69N8EZQE7`，Stream ID `14810473085`
 - [x] 1.2 GSC property 已由使用者手動建立，Thufir service account 已授權
-- [ ] 1.3 註冊 / 登入 Cloudflare（純帳號動作，零 DNS 變更）
+- [x] 1.3 Cloudflare 帳號（user 既有，多專案已在用）
 
 > **2026-05-06 路線變更：DNS 留 Gandi，不搬整個 zone**
 >

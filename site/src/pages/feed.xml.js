@@ -13,7 +13,7 @@ export function GET(context) {
       description: item.summary,
       pubDate: new Date(item.date + "T08:00:00+07:00"),
       categories: [item.category],
-      link: `${context.site}claude-pulse/#${item.date}-${item.category}-${i}`,
+      link: `${context.site}#${item.date}-${item.category}-${i}`,
     })),
     customData: "<language>zh-Hant</language>",
   });

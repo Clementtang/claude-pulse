@@ -34,6 +34,10 @@ jobs:
         working-directory: site
         run: npm run build
 
+      - name: Replace dist with redirect-only shell (GH Pages → CF Pages)
+        working-directory: site
+        run: node scripts/make-redirects.mjs
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

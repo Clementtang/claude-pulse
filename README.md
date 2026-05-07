@@ -2,7 +2,8 @@
 
 Anthropic / Claude 動態追蹤站。
 
-- **網站**：<https://clementtang.github.io/claude-pulse/>（搬遷至 `claude-pulse.chatbot.tw` 進行中）
+- **網站**：<https://claude-pulse.chatbot.tw/>（Cloudflare Pages，2026-05-07 啟用）
+- **舊網址**：<https://clementtang.github.io/claude-pulse/> 已改為 redirect-only shell，會自動跳轉至新網址；保留作為 SEO transition fallback（30-90 天觀察期）
 - **資料源**：根目錄 `claude_pulse_log.md`（v2 schema：`date | time UTC | category | summary | source | url`）
 - **5 locale**：原文 zh-TW、自動同步翻譯 en / zh-CN / ja / ko
 

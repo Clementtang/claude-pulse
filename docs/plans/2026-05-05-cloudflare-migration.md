@@ -3,7 +3,8 @@
 GitHub Pages → Cloudflare Pages，網域改為 `claude-pulse.chatbot.tw`，並補上 GA4 + GSC。
 
 > 計畫建立日期：2026-05-05
-> 狀態：待執行
+> 狀態：**Phase 1-7 完成**（2026-05-07）；Phase 8 final verification 進行中
+> 結果：https://claude-pulse.chatbot.tw 上線、舊 GH Pages URL 自動 redirect、GA4 + GSC + sitemap + security headers 全部就位
 
 ---
 

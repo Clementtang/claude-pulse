@@ -221,6 +221,10 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
 - **T1 官方優先**：anthropic.com/engineering > anthropic.com/news > claude.com/blog > github.com/anthropics > 媒體 > 社群
 - **同事件可拆兩筆**：官方公告先、Bloomberg / 媒體解析後
 - **寧缺勿濫**：今天沒可驗證新動態 → 「沒有新動態」 → 跳過 commit。不為了「有產出」而寫推測
+- **log 是 retrospective — 不寫未來日期**：每筆 entry 的 `date` 必須 ≤ 今天（系統 `date` 命令的當前日期）。對「未來事件公告」（例如尚未舉辦的大會、即將推出的功能）：
+  - 若用「公告日」可考據 → 用公告日入 log，summary 描述「將於 YYYY-MM-DD 舉辦/上線」
+  - 若公告日不明確 → **不入 log**，等事件實際發生後 retrospective curate（live-blog / recap / changelog）
+  - 違反會把未來日期排在 log 頂端，視覺上誤導為「最新已發生」
 
 ## 反幻覺鐵律
 

@@ -191,10 +191,13 @@ for e in entries:  # entries 按 log file order（新→舊）排序
 cd ~/claude-pulse
 git add claude_pulse_log.md site/src/i18n/
 git commit -m "pulse: add N items YYYY-MM-DD..YYYY-MM-DD (短分類描述)"
-git push origin main
+# Push 用 gh token over HTTPS — 不依賴 1Password SSH agent，auto mode 無人值守可靠
+git -c credential.helper='!gh auth git-credential' push https://github.com/Clementtang/claude-pulse.git main
 ```
 
 GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
+
+**為何 push 不用 `git push origin main`（SSH remote）：** auto mode 由 LaunchAgent 無人值守觸發，若 1Password vault 鎖住，SSH agent 內的金鑰不可用 → SSH push 失敗、commit 卡在本地。改走 `gh` token（存於 macOS keyring，不受 1Password 鎖影響）over HTTPS 可穩定無人值守。commit 簽章已由 repo-local `commit.gpgsign=false` 關閉（互動開發仍走 global config 簽章），因此 `git commit` 不需 `--no-gpg-sign`。互動模式手動跑也可直接用此指令，或正常 `git push origin main`。
 
 ### 步驟 9：完成處理
 

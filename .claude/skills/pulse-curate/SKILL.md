@@ -205,7 +205,10 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
 
 **Auto mode**：
 
-1. echo 摘要到 `~/.claude/logs/pulse-curate-out.log`（含 commit hash、新增筆數、commit URL）
+1. **輸出**一行結構化摘要當作回應文字（**不要** `>> file` 重定向）。格式：
+   `[YYYY-MM-DDThh:mm:ssZ] pulse-curate auto: +N items YYYY-MM-DD — commit <hash> <commit-url>`
+   接著輸出依分類的自然語言報告。
+   - LaunchAgent plist 的 `StandardOutPath` 已把 `claude -p` 的 stdout 全部重定向進 `~/.claude/logs/pulse-curate-out.log`，所以「輸出為文字」自然落入 log，無須也不要自己 `echo >> file`（會撞 `~/.claude/` 敏感路徑寫入權限）。
 2. macOS notification：
    - 若 `terminal-notifier` 已安裝：
      ```bash
@@ -216,8 +219,7 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
      ```bash
      osascript -e 'display notification "+N 筆" with title "Pulse" subtitle "YYYY-MM-DD"'
      ```
-
-3. 無新動態：echo 「沒有新動態」到 stdout log，**不發 notification**（避免 noise），exit 0
+3. 無新動態：輸出一行 `[YYYY-MM-DDThh:mm:ssZ] pulse-curate auto: 沒有新動態` 當回應文字，**不發 notification**（避免 noise），exit 0
 
 ## 編輯原則
 

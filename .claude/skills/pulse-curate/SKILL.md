@@ -230,6 +230,7 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
   - 若用「公告日」可考據 → 用公告日入 log，summary 描述「將於 YYYY-MM-DD 舉辦/上線」
   - 若公告日不明確 → **不入 log**，等事件實際發生後 retrospective curate（live-blog / recap / changelog）
   - 違反會把未來日期排在 log 頂端，視覺上誤導為「最新已發生」
+  - **creator / 官方團隊的功能預告**（如 Boris Cherny 於 X 預告下一版 Claude Code 功能、@ClaudeDevs 預告即將上線）→ **收錄**，`date` = 發文當日，summary 描述「預告」「將推出」；**不要**用功能實際上線日。例：5/20 發文預告 5/24 上線 → 入 log 於 5/20。此類不受「未公布的 GitHub release version 一律不寫」鐵律限制 — 該鐵律針對「未經考據的版本號」，可考據的功能預告貼文不在其內
 
 ## 反幻覺鐵律
 

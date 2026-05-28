@@ -324,6 +324,7 @@
   "2026-03-26|industry|bloomberg.com": "联邦法官 Rita F. Lin 发布临时禁令，阻止 Trump 政府封锁政府机构使用 Anthropic AI，Anthropic 诉讼首获胜利。",
   "2026-03-26|industry|axios.com": "Axios 独家：Sam Altman 内部消息显示曾试图「拯救」Anthropic，但 OpenAI 实为 Pentagon 合约最大受益者。",
   "2026-03-25|claude-code|github.com": "Claude Code 2.1.83 — managed-settings.d/ drop-in 目录、CwdChanged/FileChanged hook events、sandbox.failIfUnavailable、transcript search。",
+  "2026-03-25|claude-code|anthropic.com": "Anthropic 工程博客《How we built Claude Code auto mode: a safer way to skip permissions》（作者 John Hughes）深入拆解 auto 模式安全架构 — auto 模式介于「逐一手动批准」（用户约 93% 都会批准、存在疲劳风险）与「完全停用防护」之间，改由 AI 分类器判定潜在危险操作。双层防御：(1) 输入层 prompt injection 防御 — 服务器端 probe 在 tool 输出（文件读取、web fetch、shell 结果）进入 agent context 前扫描，检测到可疑内容即注入警告，要求 agent 先确认用户意图而非执行被注入的指令；(2) 输出层 action gating — transcript 分类器在执行前评估每个动作，采用两阶段（快速 single-token 筛选倾向拦截，仅命中才进入详细推理），平衡安全与成本。关键设计：分类器只看用户消息与原始 tool 指令，不看 agent 推理或 tool 输出，避免被 agent 的说服性理由带偏并消除主要注入向量。三层权限模型：内置安全工具 allowlist（读取、搜索、导航）／项目内文件操作（可经版本控制审查）／高风险动作（shell 命令、外部调用、项目范围外文件操作）需分类器审核。性能数据：真实流量误报率 8.5%→第二阶段后 0.4%，真实危险动作漏报率 6.6%→17%，合成数据泄露 recall 1.8%→5.7%；17% 漏报反映分类器主要限制 — 判断用户同意是否实际涵盖某危险指令的破坏半径。被拦截动作以 tool result 返回并附「寻找更安全替代方案」指示，连续 3 次拒绝或累计 20 次拦截才升级至人工介入，避免误报造成连锁故障。Anthropic 明言这并非高风险基础设施上「人工审查的直接替代品」，目标群体为原本会完全跳过权限的用户。",
   "2026-03-25|platform|latestly.com": "Claude 全球服务中断 — 下午 UTC 起大规模断线，社群与 DownDetector 大量反馈。",
   "2026-03-25|industry|thehill.com": "DOJ 向联邦法院声称 Pentagon 供应链风险认定合法，驳回 Anthropic 第一修正案抗辩。",
   "2026-03-25|industry|cnbc.com": "Pentagon 争议引爆热度，Claude 冲上 Apple/Android 双榜首，日活用户较一月增加超 140%。",

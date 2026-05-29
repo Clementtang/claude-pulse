@@ -15,10 +15,12 @@ logger = logging.getLogger(__name__)
 class AnthropicNewsCollector:
     """T1: Anthropic news via sitemap.xml polling.
 
-    Anthropic has no RSS for /news. We fetch the sitemap, filter /news/* URLs,
-    and use lastmod as published_at. Title comes from the URL slug (LLM can
-    rewrite it later in Phase 3).
+    Anthropic has no RSS for /news. We fetch the sitemap, filter for /news/*,
+    /research/*, and /engineering/* URLs, and use lastmod as published_at.
+    Title comes from the URL slug (LLM can rewrite it later in Phase 3).
     """
+
+    PATH_PREFIXES = ("/news/", "/research/", "/engineering/")
 
     name = "anthropic_news"
     tier = "T1"
@@ -54,7 +56,7 @@ class AnthropicNewsCollector:
             if loc_node is None or loc_node.text is None:
                 continue
             loc = loc_node.text.strip()
-            if "/news/" not in loc:
+            if not any(prefix in loc for prefix in self.PATH_PREFIXES):
                 continue
             lastmod = _parse_iso(lastmod_node.text) if lastmod_node is not None else None
             if not lastmod:

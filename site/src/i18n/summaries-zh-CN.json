@@ -1,4 +1,5 @@
 {
+  "2026-05-29|platform|status.claude.com": "Claude Opus 4.8 错误率异常（进行中）— status.claude.com 于 2026-05-29 08:30 UTC 开始调查，影响范围涵盖 claude.ai、Claude Console（platform.claude.com）、Claude API（api.anthropic.com）、Claude Code 与 Claude Cowork；截至本条记录尚未解除，Anthropic 未公开根因。这是 Opus 4.8（5/28 上线）的首起错误率事件，接续此前数日 Opus 4.7 的多起同类告警。",
   "2026-05-29|claude-code|github.com": "Claude Code 2.1.156 — 修复使用 Opus 4.8 时思考块（thinking blocks）被修改导致 API 错误的问题。",
   "2026-05-27|industry|anthropic.com": "Anthropic 开设米兰办公室，为其第六个欧洲据点（继伦敦、都柏林、巴黎、苏黎世、慕尼黑之后）— 由南欧区负责人 Thomas Remy 领导，初期聚焦销售、营销与售前／售后技术支持，并在当地配置 AI 政策人员以参与意大利方兴未艾的 AI 伦理讨论。具名意大利企业客户涵盖金融业 Generali Group 与 Unipol Group、生命科学 Angelini Pharma 与 Bracco Group、能源 Enel Group、汽车 Pirelli。此次开幕紧接教宗良十四世首份 AI 通谕《Magnifica Humanitas》发表（Anthropic 联合创始人兼可解释性研究主管 Chris Olah 受邀在发表会演讲），被视为 Anthropic 于意大利布局与梵蒂冈定位的延伸；Anthropic EMEA run-rate 营收同比增长逾 9 倍。",
   "2026-05-28|platform|status.claude.com": "Claude 计费与订阅管理错误 — status.claude.com 于 2026-05-28 19:04 UTC 标记已定位问题、19:17 UTC 部署修复并进入监控、19:23 UTC 标记解除，历时约 19 分钟；影响范围仅限 claude.ai 与 Anthropic Console 的计费与订阅管理功能（查看订阅明细、管理付款方式、升级或变更方案时可能出错），Chat 与 API 访问不受影响；Anthropic 未公开根因。",

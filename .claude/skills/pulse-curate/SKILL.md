@@ -191,11 +191,15 @@ for e in entries:  # entries 按 log file order（新→舊）排序
 cd ~/claude-pulse
 git add claude_pulse_log.md site/src/i18n/
 git commit -m "pulse: add N items YYYY-MM-DD..YYYY-MM-DD (短分類描述)"
+# 推送前先 rebase 拉取遠端最新，避免與並行執行（LaunchAgent auto + 手動 /claude-pulse 同時段跑）撞車造成 non-fast-forward
+git -c credential.helper='!gh auth git-credential' pull --rebase https://github.com/Clementtang/claude-pulse.git main
 # Push 用 gh token over HTTPS — 不依賴 1Password SSH agent，auto mode 無人值守可靠
 git -c credential.helper='!gh auth git-credential' push https://github.com/Clementtang/claude-pulse.git main
 ```
 
 GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
+
+**並行撞車（concurrent run）處理：** 若 `pull --rebase` 在 `claude_pulse_log.md` 或 `site/src/i18n/*.json` 出現衝突，代表另一執行（多為並行的 LaunchAgent auto 與手動執行）已收錄重疊事件。處理原則：**去掉與遠端重複者（同 URL / 同 `{date}|{category}|{source}` key），僅保留己方獨有項目**。auto mode 無法互動解衝突，應 `git rebase --abort && git reset --hard origin/main`，再把本次「己方獨有且遠端沒有」的項目重新套用後 commit + push（或直接跳過本次，下次自動補抓）；互動模式則手動解衝突。注意重算 i18n 的 `#N` suffix：parser 由 log 上而下計數，首次出現無 suffix、第二次 `#2`、依此類推。
 
 **為何 push 不用 `git push origin main`（SSH remote）：** auto mode 由 LaunchAgent 無人值守觸發，若 1Password vault 鎖住，SSH agent 內的金鑰不可用 → SSH push 失敗、commit 卡在本地。改走 `gh` token（存於 macOS keyring，不受 1Password 鎖影響）over HTTPS 可穩定無人值守。commit 簽章已由 repo-local `commit.gpgsign=false` 關閉（互動開發仍走 global config 簽章），因此 `git commit` 不需 `--no-gpg-sign`。互動模式手動跑也可直接用此指令，或正常 `git push origin main`。
 

@@ -28,7 +28,7 @@ function localeUrl(loc: string): string {
 ---
 
 <Base
-  title={t.title}
+  title={t.seoTitle || t.title}
   description={t.metaDescription}
   htmlLang={t.htmlLang}
   locale={locale}
@@ -215,6 +215,11 @@ function localeUrl(loc: string): string {
   // ============================================================
   (function autoDetectLocale() {
     try {
+      // Never redirect crawlers. A JS locale redirect makes Googlebot (which
+      // presents as en) treat /ja/, /ko/, etc. as "Page with redirect" and drop
+      // them from the index — bots must render each locale page as-is.
+      if (/bot|crawl|spider|slurp/i.test(navigator.userAgent || "")) return;
+
       if (localStorage.getItem("claude-pulse-lang-redirected")) return;
 
       const browserLang = navigator.language || "en";

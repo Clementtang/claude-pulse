@@ -1,9 +1,14 @@
 ---
+import { SUPPORTED_LOCALES } from "../lib/i18n.js";
+
 interface Props {
   title?: string;
   description?: string;
   htmlLang?: string;
   locale?: string;
+  /** Page path relative to the locale root, no leading slash, trailing slash kept.
+      "" = locale home; e.g. "models/" for a future /models/ page. */
+  path?: string;
 }
 
 const {
@@ -11,9 +16,26 @@ const {
   description = "Anthropic / Claude news tracker",
   htmlLang = "en",
   locale = "en",
+  path = "",
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL;
+
+// Absolute canonical + hreflang URLs. en is the default locale (no path prefix);
+// other locales live under /{locale}/. trailingSlash: "always" keeps the slash.
+const SITE = (Astro.site?.href ?? "https://claude-pulse.chatbot.tw/").replace(
+  /\/$/,
+  "",
+);
+function localeUrl(loc: string, p: string = path): string {
+  const prefix = loc === "en" ? "" : `${loc}/`;
+  return `${SITE}/${prefix}${p}`;
+}
+const canonicalUrl = localeUrl(locale);
+const alternates = SUPPORTED_LOCALES.map((loc) => ({
+  hreflang: loc,
+  href: localeUrl(loc),
+}));
 ---
 
 <!doctype html>
@@ -34,6 +56,13 @@ const base = import.meta.env.BASE_URL;
       title="Claude Pulse RSS"
       href={`${base}feed.xml`}
     />
+    <link rel="canonical" href={canonicalUrl} />
+    {
+      alternates.map((alt) => (
+        <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={localeUrl("en")} />
     <title>{title}</title>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-R69N8EZQE7"></script>

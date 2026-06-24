@@ -181,7 +181,11 @@ _診斷數據：Thufir MCP（gsc_inspect_url、gsc_analytics、ga4_report），2
 ### 未完成 / 待驗
 
 - [ ] **內容去重 / 補價值訊號（根因假說 #2）**：hreflang/canonical 已給 Google 明確的 locale 關係（直接打最可能的根因假說 #1 重複內容），但「薄內容 / 低價值訊號」未另做。先觀察 hreflang 是否足夠，再決定是否補。
-- [ ] **GSC 送 reindex + 索引狀態複查**：2026-06-25 欲用 Thufir `gsc_inspect_url` 複查首頁索引狀態，OAuth token 連續 premature close（Thufir GSC 端暫時性故障），**本次無法確認**首頁是否已從 `Crawled – not indexed` 翻為 `Indexed`、也無法確認 reindex 請求是否已送出。待 Thufir 恢復後複查並補送 reindex。
+- [ ] **GSC 送 reindex + 索引狀態複查**：2026-06-25 Thufir 恢復後複查（`gsc_inspect_url`）：
+  - 首頁 `/` = `Crawled - currently not indexed`、`lastCrawlTime` = **2026-05-27T12:55Z**（不變）。
+  - `/ja/` = `Page with redirect`、`lastCrawlTime` = **2026-05-27T14:10Z**（不變）。
+  - **關鍵診斷**：兩頁的 `lastCrawlTime` 都停在 **5/27**，**早於** P0 修復上線（`901f995`，6 月）。即 GSC 現回報的是**修復前舊版頁面**的索引判定，Google 尚未重爬到帶 canonical/hreflang/bot-guard 的新版 → 修復對 Google 處於「休眠」，**要等重爬才生效**。
+  - **下一步槓桿**：Thufir GSC 工具全唯讀、無法送 reindex；需在 GSC 網頁介面手動「要求建立索引」逼 Google 重爬首頁（重爬後 hreflang 會帶動 locale 頁一併重評）。**待執行**。
 
 ### 驗收指標（不變）
 

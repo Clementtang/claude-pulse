@@ -185,10 +185,16 @@ _診斷數據：Thufir MCP（gsc_inspect_url、gsc_analytics、ga4_report），2
   - 首頁 `/` = `Crawled - currently not indexed`、`lastCrawlTime` = **2026-05-27T12:55Z**（不變）。
   - `/ja/` = `Page with redirect`、`lastCrawlTime` = **2026-05-27T14:10Z**（不變）。
   - **關鍵診斷**：兩頁的 `lastCrawlTime` 都停在 **5/27**，**早於** P0 修復上線（`901f995`，6 月）。即 GSC 現回報的是**修復前舊版頁面**的索引判定，Google 尚未重爬到帶 canonical/hreflang/bot-guard 的新版 → 修復對 Google 處於「休眠」，**要等重爬才生效**。
-  - **下一步槓桿**：Thufir GSC 工具全唯讀、無法送 reindex；需在 GSC 網頁介面手動「要求建立索引」逼 Google 重爬首頁（重爬後 hreflang 會帶動 locale 頁一併重評）。**待執行**。
+  - **下一步槓桿**：Thufir GSC 工具全唯讀、無法送 reindex；需在 GSC 網頁介面手動「要求建立索引」。
+- [x] **首頁 reindex 已送出（2026-06-25，使用者於 GSC UI 操作）**：狀態列顯示「✓ 已要求建立索引」。同畫面 URL inspection 面板補充讀數（皆為 5/27 舊爬取狀態）：
+  - 無技術性阻擋：是否允許檢索=是、網頁擷取狀態=成功、是否允許編入索引=是 → 非 robots/noindex 問題，是「爬了但判斷不值得收」的品質判定，正是本修復標的。
+  - 使用者宣告的標準網址 = **無**（修復前無 canonical，符合預期；重爬後應轉為指向自身）。
+  - Google 所選標準網址 = **受檢測網址**（Google 視首頁為自身 canonical，**未**併入其他 locale）→ 當前並非「重複內容被併走」，較像新網域 / 價值訊號不足；keyword title + hreflang 叢集針對此點。
+  - 發現方式：參照網頁含 `/ja/` 與 `sitemap-0.xml` → 首頁可被發現。
+- [ ] **重爬後複查**：待 `lastCrawlTime` 翻新（> 5/27）後，用 Thufir `gsc_inspect_url` 確認 `coverageState` 是否轉 `Indexed`、`使用者宣告 canonical` 是否出現。
 
 ### 驗收指標（不變）
 
-- [ ] GSC 首頁 = `Indexed`（程式面已備齊，剩 Google 重爬；數日後觀察）
+- [ ] GSC 首頁 = `Indexed`（程式面已備齊、reindex 已送，剩 Google 重爬；數日後觀察）
 
-_實作驗證：`git show 901f995`、本機 `npm run build` 後 grep `site/dist/{index,ja/index}.html` 確認 head 標籤；GSC 複查待 Thufir 恢復。_
+_實作驗證：`git show 901f995`、本機 `npm run build` 後 grep `site/dist/{index,ja/index}.html` 確認 head 標籤。GSC：2026-06-25 Thufir 複查 + 使用者 GSC UI 送 reindex。_

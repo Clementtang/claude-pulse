@@ -121,3 +121,70 @@ Email 是 retention（需先有 acquisition），矩陣是三案唯一的 discov
 
 _審查方法：`/seer` business profile（CFO / CMO / 競品分析師 / COO / Legal），steel-man → 倖存疑慮 → severity。
 數據來源：Thufir MCP（GA4 ga4_report、GSC gsc_analytics）。_
+
+---
+
+## Addendum（2026-06-20，更正根因：not-indexed）
+
+本檔原把上游問題定為「首頁 0% CTR」。後續 GSC 診斷**更正根因**：問題不是點擊率，是**首頁根本不在 Google 索引內**。0% CTR 只是「未被索引 → 沒有真實曝光」的下游表象。
+
+### 新增實證（GSC URL inspection + 趨勢，2026-06-20 驗證仍成立）
+
+- 首頁 `claude-pulse.chatbot.tw/` 索引狀態 = **`Crawled – currently not indexed`**；`lastCrawlTime` 停在 **2026-05-27**——Google 已 3 週未再爬，儘管 pulse 每日 commit。
+- `/ja/` = **`Page with redirect`**（被當轉址頁，非可索引頁）。
+- impressions 非穩定流，是一次性爆發：05-20 開竄 → 05-22 尖峰 162/天 → **06-06 起連續近乎 0/天**。判定為搬站（05-07 → chatbot.tw）後的抽樣索引 + 時效新聞 freshness，已衰退死透。
+- query 維度 41 天**完全回空**（全匿名化）、low-hanging-fruit 空 → 無集中高意圖查詢。
+- 98.5% 桌機（1091 vs 16 行動）；國家散在約 50 國；曝光最高頁是 `/ja/` 但曝光國家 USA 702 最大 → 語言/地區錯配。
+- 5 個 locale 的 `<title>` 全是裸品牌「Claude Pulse」（零關鍵字）；canonical + hreflang 全站缺（矩陣文件 §3.5 自承）。
+
+### 根因假說（最可能 → 待驗）
+
+1. **5 locale 結構雷同首頁 + 無 hreflang/canonical → 被判重複內容**，Google 一個都不收。← 最可能、最可行
+2. 自動生成 event log，薄內容/低價值訊號。
+3. 新子網域權重低、缺外部連結。
+4. `/ja/`「page with redirect」可能轉址鏈吃掉 locale 頁。
+
+### 對優先序的影響：新增「第 0 順位 = 可索引性」
+
+原「先解 0% CTR」修正為「**先讓站點能被索引**」。諷刺的是解藥（hreflang/canonical）已寫在矩陣文件 §3.5，只是被埋在它最不該優先的資料工程底下——應**抽出來單獨先做**。
+
+**修正後順序**：
+
+0. **解可索引性**（第 0 順位）：加 canonical + hreflang｜改 5 個裸 `<title>`｜查 `/ja/` 轉址鏈｜內容去重/補價值訊號｜GSC 送 reindex。**驗收：首頁 GSC 狀態 `Crawled – not indexed` → `Indexed`。**
+1. 確認索引恢復 + 是否帶來非作者自然流入（量測 gate）
+2. 放大既有社群（FB/Threads/X）
+3. 來源分層標記
+4. 矩陣**內容**（唯一抗 freshness-decay 的賭注，但僅在索引恢復後；90 天 kill gate、MVP 砍 pricing）
+5. Email（retention，最後做）
+
+### 硬前置條件（更正版，取代上方「前置條件」節）
+
+- [ ] GSC 首頁 = `Indexed`（非 `Crawled – currently not indexed`）
+- [ ] 存在「非作者自身社群」的自然流入證據
+
+_診斷數據：Thufir MCP（gsc_inspect_url、gsc_analytics、ga4_report），2026-06-17 採集、2026-06-20 複驗。_
+
+---
+
+## Addendum（2026-06-25，第 0 順位實作出貨狀態）
+
+第 0 順位「可索引性」的程式修復**已實作並上線**，commit `901f995`（`seo(p0): add canonical + hreflang, keyword titles, and crawler-safe locale redirect`）。該 commit 已是 main ancestor、其後經多次 push，Cloudflare Pages 已自動部署。
+
+### 已完成並驗證（本機 build dist 實測）
+
+- [x] **canonical + hreflang 全站**：`Base.astro` 每頁輸出指向自身的 `<link rel="canonical">`，並加 5 locale + `x-default` 的 `hreflang` alternates。設計為可複用機制（新增 optional `path` prop，未來 `/models/` 等內頁可直接沿用），additive、向後相容。
+  - dist 實測：EN 首頁 canonical=自身、5 hreflang + x-default 齊全；`/ja/` canonical=自身（`/ja/`）。
+- [x] **改 5 個裸 `<title>`**：i18n 新增關鍵字化、各語系在地化的 `seoTitle`（document title），H1 品牌字維持「Claude Pulse」不動。
+  - dist 實測：EN = `Claude Pulse — Anthropic & Claude News Tracker, Updated Daily`；`/ja/` = `Claude Pulse — Anthropic・Claude ニュース追跡、毎日更新`。
+- [x] **查 `/ja/` 轉址鏈（根因假說 #4 排除）**：根因**不是**部署/轉址配置，是 `HomePage.astro` 的 `autoDetectLocale()` client-side JS redirect。Googlebot 以 en 身分造訪 `/ja/` → 比對 locale ≠ ja → `window.location.replace('/')`，被判 `Page with redirect`。修復：加 UA bot guard（`/bot|crawl|spider|slurp/i`）跳過爬蟲的自動轉址，讓各 locale 頁原樣呈現。（`make-redirects.mjs` 僅在 GH Actions 跑、產 GH Pages redirect shell，CF Pages 不執行它，故與此症狀無關。）
+
+### 未完成 / 待驗
+
+- [ ] **內容去重 / 補價值訊號（根因假說 #2）**：hreflang/canonical 已給 Google 明確的 locale 關係（直接打最可能的根因假說 #1 重複內容），但「薄內容 / 低價值訊號」未另做。先觀察 hreflang 是否足夠，再決定是否補。
+- [ ] **GSC 送 reindex + 索引狀態複查**：2026-06-25 欲用 Thufir `gsc_inspect_url` 複查首頁索引狀態，OAuth token 連續 premature close（Thufir GSC 端暫時性故障），**本次無法確認**首頁是否已從 `Crawled – not indexed` 翻為 `Indexed`、也無法確認 reindex 請求是否已送出。待 Thufir 恢復後複查並補送 reindex。
+
+### 驗收指標（不變）
+
+- [ ] GSC 首頁 = `Indexed`（程式面已備齊，剩 Google 重爬；數日後觀察）
+
+_實作驗證：`git show 901f995`、本機 `npm run build` 後 grep `site/dist/{index,ja/index}.html` 確認 head 標籤；GSC 複查待 Thufir 恢復。_

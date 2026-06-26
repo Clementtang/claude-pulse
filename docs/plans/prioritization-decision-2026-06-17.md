@@ -195,7 +195,7 @@ _診斷數據：Thufir MCP（gsc_inspect_url、gsc_analytics、ga4_report），2
   - 首頁 `/`：`lastCrawlTime` 已翻新 → **2026-06-26T13:41Z**（reindex 後 Google 6/24、6/26 兩次 post-fix 重爬到帶 canonical/hreflang/keyword-title 的新版）。但 `coverageState` **仍為 `Crawled - currently not indexed`**——修好的頁被爬兩次仍未收。
   - `/ja/`：`lastCrawlTime` **仍停 2026-05-27T14:10Z**、`coverageState` 仍 `Page with redirect` → 首頁的 reindex 只逼了首頁重爬，**未帶到 `/ja/`**，crawler-guard 仍無從驗證。
   - **判讀更新**：根因假說 **#1（重複內容/缺 hreflang）權重續降**（Google 早判首頁為自身 canonical、未併走，且已重爬修復版仍不收）；天平往 **#2/#3（薄內容 / 新網域權威不足）** 移。hreflang/canonical 修對但越來越不像卡點。仍在合理 indexing 滯後窗內（post-fix 重爬僅數日），未到判失敗。
-- [ ] **對 `/ja/` 單獨送 reindex**：GSC UI 對 `https://claude-pulse.chatbot.tw/ja/`「要求建立索引」，逼其重爬以驗證 crawler-guard 是否解掉 `Page with redirect`。**待執行**。
+- [x] **對 `/ja/` 單獨送 reindex（2026-06-26，使用者於 GSC UI 操作）**：已送出，逼其重爬以驗證 crawler-guard 是否解掉 `Page with redirect`。待 `/ja/` `lastCrawlTime` 翻過 5/27 後複查 `coverageState` 是否脫離 `Page with redirect`。
 - [ ] **首頁觀察窗**：不再送 reindex（已被積極重爬），純等 indexing 決策。再給 ~1 週；若仍 not-indexed → 正視假說 #2，評估補內容價值訊號（較重的工）。
 
 ### 驗收指標（不變）

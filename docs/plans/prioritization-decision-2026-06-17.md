@@ -191,10 +191,15 @@ _診斷數據：Thufir MCP（gsc_inspect_url、gsc_analytics、ga4_report），2
   - 使用者宣告的標準網址 = **無**（修復前無 canonical，符合預期；重爬後應轉為指向自身）。
   - Google 所選標準網址 = **受檢測網址**（Google 視首頁為自身 canonical，**未**併入其他 locale）→ 當前並非「重複內容被併走」，較像新網域 / 價值訊號不足；keyword title + hreflang 叢集針對此點。
   - 發現方式：參照網頁含 `/ja/` 與 `sitemap-0.xml` → 首頁可被發現。
-- [ ] **重爬後複查**：待 `lastCrawlTime` 翻新（> 5/27）後，用 Thufir `gsc_inspect_url` 確認 `coverageState` 是否轉 `Indexed`、`使用者宣告 canonical` 是否出現。
+- [~] **重爬後複查（2026-06-26，Thufir `gsc_inspect_url`）**：
+  - 首頁 `/`：`lastCrawlTime` 已翻新 → **2026-06-26T13:41Z**（reindex 後 Google 6/24、6/26 兩次 post-fix 重爬到帶 canonical/hreflang/keyword-title 的新版）。但 `coverageState` **仍為 `Crawled - currently not indexed`**——修好的頁被爬兩次仍未收。
+  - `/ja/`：`lastCrawlTime` **仍停 2026-05-27T14:10Z**、`coverageState` 仍 `Page with redirect` → 首頁的 reindex 只逼了首頁重爬，**未帶到 `/ja/`**，crawler-guard 仍無從驗證。
+  - **判讀更新**：根因假說 **#1（重複內容/缺 hreflang）權重續降**（Google 早判首頁為自身 canonical、未併走，且已重爬修復版仍不收）；天平往 **#2/#3（薄內容 / 新網域權威不足）** 移。hreflang/canonical 修對但越來越不像卡點。仍在合理 indexing 滯後窗內（post-fix 重爬僅數日），未到判失敗。
+- [ ] **對 `/ja/` 單獨送 reindex**：GSC UI 對 `https://claude-pulse.chatbot.tw/ja/`「要求建立索引」，逼其重爬以驗證 crawler-guard 是否解掉 `Page with redirect`。**待執行**。
+- [ ] **首頁觀察窗**：不再送 reindex（已被積極重爬），純等 indexing 決策。再給 ~1 週；若仍 not-indexed → 正視假說 #2，評估補內容價值訊號（較重的工）。
 
 ### 驗收指標（不變）
 
-- [ ] GSC 首頁 = `Indexed`（程式面已備齊、reindex 已送，剩 Google 重爬；數日後觀察）
+- [ ] GSC 首頁 = `Indexed`（程式面已備齊、已重爬修復版；卡在 Google 的 indexing 價值判定，非技術阻擋）
 
-_實作驗證：`git show 901f995`、本機 `npm run build` 後 grep `site/dist/{index,ja/index}.html` 確認 head 標籤。GSC：2026-06-25 Thufir 複查 + 使用者 GSC UI 送 reindex。_
+_實作驗證：`git show 901f995`、本機 `npm run build` 後 grep `site/dist/{index,ja/index}.html` 確認 head 標籤。GSC：2026-06-25 送 reindex + Thufir 複查；2026-06-26 Thufir 複查（首頁已重爬修復版仍 not-indexed、`/ja/` 未重爬）。_

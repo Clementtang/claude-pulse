@@ -203,3 +203,21 @@ _診斷數據：Thufir MCP（gsc_inspect_url、gsc_analytics、ga4_report），2
 - [ ] GSC 首頁 = `Indexed`（程式面已備齊、已重爬修復版；卡在 Google 的 indexing 價值判定，非技術阻擋）
 
 _實作驗證：`git show 901f995`、本機 `npm run build` 後 grep `site/dist/{index,ja/index}.html` 確認 head 標籤。GSC：2026-06-25 送 reindex + Thufir 複查；2026-06-26 Thufir 複查（首頁已重爬修復版仍 not-indexed、`/ja/` 未重爬）。_
+
+---
+
+## Addendum（2026-07-10，觀察窗關閉 → 啟動假說 #2 對策）
+
+### P0 驗收複查（Thufir `gsc_inspect_url`，2026-07-10）
+
+- 首頁 `/`：仍 `Crawled – currently not indexed`，`lastCrawlTime` 停在 **2026-06-26T13:41Z** — 重爬修復版後 14 天無再爬、未收錄。**P0 驗收未過。**
+- `/ja/`：已被重爬（`lastCrawlTime` **2026-06-26T16:46Z**），`coverageState` 從 `Page with redirect` → `Crawled – currently not indexed` — **crawler-guard 修復驗證生效**，但同樣不收。
+- GSC 曝光自 6/06 起持續 ≈ 0（近 30 天僅 2 次，且在壞頁 `/ja/github.com`）。
+
+**判定**：技術面全綠（fetch 成功、robots/indexing 允許、canonical/hreflang 已被看到）仍不收 → 觀察窗正式關閉，根因確立為**假說 #2/#3（薄內容／新網域權威不足）**。
+
+### 已執行（2026-07-10，詳見 `docs/improvement-proposals-2026-07.md`）
+
+1. **P1 資料修復 + build 驗證層**（`ba08554`）：修復五類 log 沉默損壞（含產生 `/ja/github.com` 壞頁的欄位位移列），`site/scripts/validate-log.mjs` 接進 build，壞列改為 fail deploy。
+2. **P3 內容價值訊號**（`9624368`）：30 個月度 archive 頁（6 月份 × 5 locale，各含 canonical/hreflang + ItemList/NewsArticle JSON-LD + prev/next 導覽）、per-item 錨點 permalink、首頁瘦身至近 30 天（~930 KB → ~430 KB）。
+3. 待使用者於 GSC UI 對數個 archive 頁抽樣送 reindex；**90 天 kill gate = 2026-10-10**。

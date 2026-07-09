@@ -1,6 +1,8 @@
 # 功能與使用者需求改善提案（2026-07）
 
-**狀態**：提案文件，未實作。
+**狀態**：提案文件。**P1 與 P3 已於 2026-07-10 實作出貨**（P1：`ba08554`，P3：`9624368`），其餘提案未實作。
+**P1 實作時的額外發現**：除已知的 2.1.133 壞列外，validator 與對齊檢查另揪出 2026-05-15 incident 列缺 source/url 欄、2026-05-14 Reuters 列掛錯 incident URL、3 列 source 與 url host 不符（連帶 17 個 i18n key ×4 locale 重新編號）、16 筆翻譯值在 4 個日期群組內互換／輪轉錯位、2.1.161 翻譯因 batch-write dedup-skip bug 從未寫入（4 locale 補譯）。單一驗證層上線前，log 內共存著五類沉默損壞——支持 P1 排第一的判斷。
+**P3 kill gate**：2026-10-10 前 archive 頁 GSC 曝光仍為 0 → 凍結此方向。
 **定位**：接續 `docs/plans/prioritization-decision-2026-06-17.md`（含 06-20 / 06-25 / 06-26 addendum）的決策脈絡，不重開已否決的方向。該文件的第 0 順位（可索引性程式修復）已於 commit `901f995` 出貨；本文件回答「修復出貨後、Google 仍未收錄的現在，下一步做什麼」。
 **數據採集**：2026-07-08，Thufir MCP（`ga4_report` / `gsc_analytics` / `gsc_inspect_url`）+ repo 實地檢查（log、site build 產物、fetcher state）。
 

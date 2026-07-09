@@ -70,9 +70,11 @@ export function parsePulseLog() {
     if (line.includes("---")) continue;
     if (line.includes("| date")) continue;
 
+    // Split on unescaped pipes only — summaries may contain literal "|" as "\|"
+    // (markdown table escape), which is unescaped back after splitting.
     const cells = line
-      .split("|")
-      .map((cell) => cell.trim())
+      .split(/(?<!\\)\|/)
+      .map((cell) => cell.trim().replaceAll("\\|", "|"))
       .filter(Boolean);
 
     // New schema has 6 columns: date | time | category | summary | source | url

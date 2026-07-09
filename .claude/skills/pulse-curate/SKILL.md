@@ -273,4 +273,5 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
 3. **同 base key 順序**：log file 是日期降序，新 entry 在最頂，所以 base key 給「最新時間」的那筆，舊條目升 #2
 4. **未公布的 GitHub release**：candidates.json 沒列的版本不寫，即使 WebSearch 看到 tag 也不能信
 5. **commit-only-when-something-to-write**：無新動態時跳過 commit，不寫空 commit
-6. **X 帳號掃描預設用 search URL、profile timeline 當備援** — `x.com/<handle>` 的 timeline 常因 lazy-load / anti-bot 卡住不渲染（articles = 0、body 只有 profile header）。改用 `https://x.com/search?q=from%3A<handle>%20since%3A<YYYY-MM-DD>&src=typed_query&f=live` 直接命中搜尋結果頁，是另一條 render path、穩定許多。掃帳號預設順序：search URL → profile timeline → 放棄這輪 X scan 並告知使用者
+6. **summary 內的 `|` 必須跳脫為 `\|`** — 未跳脫會把 markdown 表格欄位切歪（source 位移進 url 欄，網站渲染出相對連結 `/github.com` 之類的壞頁）。build 前的 `site/scripts/validate-log.mjs` 會擋下這類列（含 url 非 https、category 不在 enum、未來日期），本地可先跑 `cd site && node scripts/validate-log.mjs` 自查
+7. **X 帳號掃描預設用 search URL、profile timeline 當備援** — `x.com/<handle>` 的 timeline 常因 lazy-load / anti-bot 卡住不渲染（articles = 0、body 只有 profile header）。改用 `https://x.com/search?q=from%3A<handle>%20since%3A<YYYY-MM-DD>&src=typed_query&f=live` 直接命中搜尋結果頁，是另一條 render path、穩定許多。掃帳號預設順序：search URL → profile timeline → 放棄這輪 X scan 並告知使用者

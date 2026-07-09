@@ -1,0 +1,12 @@
+---
+import ArchivePage from "../../../../components/ArchivePage.astro";
+import { getArchiveMonths } from "../../../../lib/parse-pulse.js";
+
+export function getStaticPaths() {
+  return getArchiveMonths().map((month) => ({ params: { month } }));
+}
+
+const { month } = Astro.params;
+---
+
+<ArchivePage locale="ko" month={month} />

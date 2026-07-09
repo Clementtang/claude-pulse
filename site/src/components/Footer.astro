@@ -1,0 +1,47 @@
+---
+interface Props {
+  t: any;
+}
+
+const { t } = Astro.props;
+---
+
+<footer class="footer">
+  <p>
+    {t.footer}
+    <a href="https://github.com/Clementtang">Clement Tang</a>
+    &nbsp;·&nbsp;
+    <a
+      href="https://github.com/Clementtang/claude-pulse"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {t.sourceCode}
+    </a>
+  </p>
+  <p class="footer-legal">
+    &copy; 2026 Clement Tang. {t.copyright}
+  </p>
+</footer>
+
+<style>
+  .footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+  }
+
+  .footer-legal {
+    margin-top: 0.625rem;
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+</style>

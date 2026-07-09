@@ -23,7 +23,7 @@ const displayDateFormatter = new Intl.DateTimeFormat("en-CA", {
   day: "2-digit",
 });
 
-function toDisplayDate(isoUtc) {
+export function toDisplayDate(isoUtc) {
   const parts = displayDateFormatter.formatToParts(new Date(isoUtc));
   const get = (type) => parts.find((p) => p.type === type)?.value ?? "";
   return `${get("year")}-${get("month")}-${get("day")}`;
@@ -115,11 +115,18 @@ export function parsePulseLog() {
       summaries[loc] = dict[lookupKey] || summary;
     }
 
+    const displayDate = toDisplayDate(datetimeUtc);
+
     items.push({
       date,
       time,
       datetimeUtc,
-      displayDate: toDisplayDate(datetimeUtc),
+      displayDate,
+      // Month bucket for archive pages, aligned with day-separator grouping.
+      month: displayDate.slice(0, 7),
+      // Stable per-item anchor id, derived from the same key that indexes
+      // the summary JSONs — survives rebuilds, unlike a positional index.
+      anchor: lookupKey.replace(/[^a-zA-Z0-9]+/g, "-"),
       category,
       categoryLabel: meta.label,
       categoryColor: meta.color,
@@ -136,6 +143,13 @@ export function parsePulseLog() {
   items.sort((a, b) => b.datetimeUtc.localeCompare(a.datetimeUtc));
 
   return items;
+}
+
+// Unique months (YYYY-MM, newest first) that have at least one item.
+export function getArchiveMonths(items = parsePulseLog()) {
+  return [...new Set(items.map((item) => item.month))].sort((a, b) =>
+    b.localeCompare(a),
+  );
 }
 
 export function getCategories() {

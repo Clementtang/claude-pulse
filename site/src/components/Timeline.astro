@@ -1,0 +1,245 @@
+---
+// Shared day-separated card timeline, used by HomePage and ArchivePage.
+// Each card carries a stable id (item.anchor) so entries are deep-linkable.
+interface Props {
+  items: any[];
+  locale: string;
+  t: any;
+}
+
+const { items, locale, t } = Astro.props;
+---
+
+<div class="timeline" id="timeline">
+  {
+    items.map((item, i) => {
+      const prevDate = i > 0 ? items[i - 1].displayDate : null;
+      const showSeparator = prevDate !== item.displayDate;
+      return (
+        <Fragment>
+          {showSeparator && (
+            <div class="day-separator" data-date={item.displayDate}>
+              <time class="day-separator-chip" datetime={item.displayDate}>
+                {item.displayDate}
+              </time>
+            </div>
+          )}
+          <article
+            class="card"
+            id={item.anchor}
+            data-category={item.category}
+            data-datetime={item.datetimeUtc}
+            data-display-date={item.displayDate}
+            style={`--cat-color: ${item.categoryColor}`}
+          >
+            <span class="card-category">
+              <span class="cat-dot" aria-hidden="true" />
+              {t.categories[item.category] || item.categoryLabel}
+            </span>
+            <p class="card-summary">{item.summaries?.[locale] || item.summary}</p>
+            <span class="card-source-row">
+              <span class="card-source-icon" aria-hidden="true">🔗</span>
+              <a
+                class="card-source"
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {item.source}
+              </a>
+            </span>
+            <time
+              class="card-time"
+              datetime={item.datetimeUtc}
+              data-datetime={item.datetimeUtc}
+            >
+              {item.date} {item.time} UTC
+            </time>
+          </article>
+        </Fragment>
+      );
+    })
+  }
+</div>
+
+<style>
+  /* ============================================================
+     DAY SEPARATOR — left-aligned, no line
+     ============================================================ */
+  .day-separator {
+    text-align: left;
+    margin: 2.25rem 0 0.75rem;
+    animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .day-separator:first-child {
+    margin-top: 0;
+  }
+
+  .day-separator-chip {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    width: 100%;
+  }
+
+  /* ============================================================
+     CARDS — Open layout, no hover effects
+     ============================================================ */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card {
+    padding: 1rem 0;
+    animation: fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    scroll-margin-top: 1rem;
+  }
+
+  .card:target {
+    background: var(--bg-surface);
+    border-radius: 0.375rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+  }
+
+  .card-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--cat-color);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-time {
+    display: block;
+    margin-top: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .card-category .cat-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cat-color);
+  }
+
+  .card-summary {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .card-source-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.5rem;
+  }
+
+  .card-source {
+    display: inline;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+  }
+
+  .card-source:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    text-decoration: none;
+  }
+
+  .card-source-icon {
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+  /* ============================================================
+     ANIMATIONS
+     ============================================================ */
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .card:nth-child(1) {
+    animation-delay: 0ms;
+  }
+  .card:nth-child(2) {
+    animation-delay: 30ms;
+  }
+  .card:nth-child(3) {
+    animation-delay: 60ms;
+  }
+  .card:nth-child(4) {
+    animation-delay: 90ms;
+  }
+  .card:nth-child(5) {
+    animation-delay: 120ms;
+  }
+  .card:nth-child(6) {
+    animation-delay: 150ms;
+  }
+  .card:nth-child(7) {
+    animation-delay: 180ms;
+  }
+  .card:nth-child(8) {
+    animation-delay: 210ms;
+  }
+
+  @media (max-width: 640px) {
+    .card-summary {
+      font-size: 0.875rem;
+    }
+  }
+
+  /* ============================================================
+     REDUCED MOTION
+     ============================================================ */
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .day-separator {
+      animation: none;
+    }
+  }
+</style>

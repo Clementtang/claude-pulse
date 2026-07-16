@@ -10,6 +10,7 @@ from src.collectors.anthropic_news import AnthropicNewsCollector
 from src.collectors.base import Collector
 from src.collectors.claude_status import ClaudeStatusCollector
 from src.collectors.github_releases import GitHubReleasesCollector
+from src.collectors.x_accounts import XAccountsCollector
 from src.dedup import dedup, filter_already_seen
 from src.incident_watcher import IncidentWatcher
 from src.models import Article
@@ -35,6 +36,7 @@ def get_collectors() -> list[Collector]:
         GitHubReleasesCollector(),
         ClaudeStatusCollector(),
         AnthropicNewsCollector(),
+        XAccountsCollector(),
     ]
 
 

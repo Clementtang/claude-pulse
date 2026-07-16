@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://claude-pulse.chatbot.tw/sitemap-index.xml

@@ -34,6 +34,14 @@ jobs:
         working-directory: site
         run: npm run build
 
+      # Notify Bing/Naver/etc. that URLs changed. Must run before
+      # make-redirects.mjs wipes dist (needs dist/sitemap-0.xml), and must
+      # never block the deploy.
+      - name: Ping IndexNow
+        working-directory: site
+        run: node scripts/indexnow-ping.mjs
+        continue-on-error: true
+
       - name: Replace dist with redirect-only shell (GH Pages → CF Pages)
         working-directory: site
         run: node scripts/make-redirects.mjs

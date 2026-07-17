@@ -11,6 +11,8 @@
   "range7": "7 天",
   "range30": "30 天",
   "rangeAll": "全部",
+  "filterSearch": "搜索",
+  "searchPlaceholder": "筛选条目…",
   "archiveLabel": "归档",
   "archiveTitle": "Claude Pulse — {month} Anthropic 与 Claude 动态归档",
   "archiveDescription": "{month} 的所有 Anthropic 与 Claude 动态 — Claude Code 版本、平台更新、研究成果与行业新闻。",

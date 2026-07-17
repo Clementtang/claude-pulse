@@ -106,11 +106,59 @@ const jsonLd = {
       }
     </nav>
 
+    <div class="search-row">
+      <input
+        id="archive-search"
+        class="search-input"
+        type="search"
+        placeholder={t.searchPlaceholder}
+        aria-label={t.filterSearch}
+      />
+    </div>
+
     <Timeline items={items} locale={locale} t={t} />
+
+    <p class="empty-state" id="empty" style="display: none;">
+      {t.empty}
+    </p>
 
     <Footer t={t} />
   </main>
 </Base>
+
+<script is:inline>
+  (function archiveSearch() {
+    const input = document.getElementById("archive-search");
+    if (!input) return;
+    const cards = [...document.querySelectorAll(".card")];
+    const separators = [...document.querySelectorAll(".day-separator")];
+    const emptyEl = document.getElementById("empty");
+    const cardTexts = new Map(
+      cards.map((card) => [card, card.textContent.toLowerCase()]),
+    );
+
+    input.addEventListener("input", () => {
+      const query = input.value.trim().toLowerCase();
+      const visibleDates = new Set();
+      let visibleCount = 0;
+
+      cards.forEach((card) => {
+        const visible = !query || cardTexts.get(card).includes(query);
+        card.style.display = visible ? "" : "none";
+        if (visible) {
+          visibleCount++;
+          visibleDates.add(card.dataset.displayDate);
+        }
+      });
+
+      separators.forEach((sep) => {
+        sep.style.display = visibleDates.has(sep.dataset.date) ? "" : "none";
+      });
+
+      if (emptyEl) emptyEl.style.display = visibleCount === 0 ? "" : "none";
+    });
+  })();
+</script>
 
 <style>
   .header {
@@ -233,6 +281,41 @@ const jsonLd = {
   .month-link:hover {
     color: var(--accent);
     text-decoration: none;
+  }
+
+  .search-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .search-input {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.625rem;
+    width: 14rem;
+    max-width: 100%;
+    transition: border-color 0.15s;
+  }
+
+  .search-input::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--text-tertiary);
+    padding: 3rem 0;
+    font-family: var(--font-body);
   }
 
   @media (max-width: 640px) {

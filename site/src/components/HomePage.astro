@@ -158,6 +158,16 @@ const jsonLd = {
           {t.archiveLabel} ↗
         </a>
       </div>
+      <div class="filter-group">
+        <span class="filter-label">{t.filterSearch}</span>
+        <input
+          id="search-input"
+          class="search-input"
+          type="search"
+          placeholder={t.searchPlaceholder}
+          aria-label={t.filterSearch}
+        />
+      </div>
     </nav>
 
     <Timeline items={items} locale={locale} t={t} />
@@ -388,6 +398,13 @@ const jsonLd = {
 
   let activeCategory = "all";
   let activeRange = "7";
+  let activeQuery = "";
+
+  // Case-insensitive haystack per card (summary + category + source + time),
+  // built once — card text never changes after load.
+  const cardTexts = new Map(
+    [...cards].map((card) => [card, card.textContent.toLowerCase()]),
+  );
 
   function daysSince(iso) {
     const d = new Date(iso);
@@ -407,7 +424,9 @@ const jsonLd = {
         activeCategory === "all" || cat === activeCategory;
       const matchRange =
         activeRange === "all" || days <= parseInt(activeRange, 10);
-      const visible = matchCategory && matchRange;
+      const matchQuery =
+        !activeQuery || cardTexts.get(card).includes(activeQuery);
+      const visible = matchCategory && matchRange && matchQuery;
 
       card.style.display = visible ? "" : "none";
       if (visible) {
@@ -451,6 +470,14 @@ const jsonLd = {
       applyFilters();
     });
   });
+
+  const searchInput = document.getElementById("search-input");
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      activeQuery = searchInput.value.trim().toLowerCase();
+      applyFilters();
+    });
+  }
 
   applyFilters();
 </script>
@@ -752,6 +779,28 @@ const jsonLd = {
 
   .archive-link {
     text-decoration: none;
+  }
+
+  .search-input {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.625rem;
+    width: 14rem;
+    max-width: 100%;
+    transition: border-color 0.15s;
+  }
+
+  .search-input::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent);
   }
 
   .archive-nav {

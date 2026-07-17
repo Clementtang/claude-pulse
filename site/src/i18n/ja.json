@@ -11,6 +11,8 @@
   "range7": "7 日間",
   "range30": "30 日間",
   "rangeAll": "すべて",
+  "filterSearch": "検索",
+  "searchPlaceholder": "エントリを絞り込む…",
   "archiveLabel": "アーカイブ",
   "archiveTitle": "Claude Pulse — {month} Anthropic・Claude ニュースアーカイブ",
   "archiveDescription": "{month} の Anthropic と Claude の全動向 — Claude Code リリース、プラットフォーム更新、研究、業界ニュース。",

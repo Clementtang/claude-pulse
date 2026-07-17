@@ -278,3 +278,5 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
 8. **X 貼文主要由 fetcher 的 `x_accounts` collector 供給（2026-07-17 起）** — 走 Nitter RSS 鏡像，`data/candidates.json` 內 `source = x.com` 的項目即是。collector 只收 top-level 貼文，**thread 內文與轉推會被濾掉**，所以候選只有串頭；要寫 summary 需 WebFetch 該 URL 讀完整串。若某輪 log 出現 `all mirrors failed for @<handle>` 代表 Nitter 全掛，該輪 X 覆蓋不完整，需互動補掃
 9. **X 搜尋頁的 `get_page_text` 一次只回傳一個 `<article>`** — 讀到一則**不等於**只有一則。連續呼叫可取得後續貼文；要斷言「官方沒發布過某公告」，單則樣本不構成證據。空結果會明確渲染成 `No results for "<query>"`，那才是真的沒有。2026-07-16 曾因此誤告使用者「官方沒發布 rate limit 重置」，實際上有且瀏覽數 230 萬
 10. **判定「無此公告」前先 grep log** — 同類事件常有前例可佐證模式（rate limit 重置 2026-07-09 已發生過一次，log 早有紀錄）。log 本身就是最便宜的查證來源
+11. **寫入前重跑一次 URL 去重，不能只靠步驟 1 的 baseline** — LaunchAgent auto 每週 39 次，互動 session 期間極可能有一輪落地。2026-07-17 就發生：互動查證期間 auto 收了同一筆 `/code-review` 公告，依開場 baseline 寫入即產生重複列（validate-log 不擋重複 URL，parser 會給兩列不同 `#N` key）。長時間 session 在寫入前重跑 `grep -c "<status-id>" claude_pulse_log.md`
+12. **auto 只拿得到 X 串頭，thread 內文要自己補** — 2026-07-17 auto 據串頭寫 `/code-review` effort levels，漏掉 `ultra` 等級與各等級策略差異。互動時見到 `source = x.com` 的候選，先 WebFetch 或讀 Nitter RSS（回覆在 feed 中是獨立 item，比開瀏覽器便宜）確認是否為 thread 再落筆

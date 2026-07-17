@@ -86,6 +86,25 @@ def check() -> int:
     return 0
 
 
+def run_coverage_refresh() -> None:
+    """Piggyback the weekly coverage refresh on the watchdog schedule.
+
+    Separate from check() so the freshness contract (and its tests) stays
+    free of coverage I/O; coverage problems notify but never affect the
+    health exit code.
+    """
+    try:
+        from src.coverage import refresh_if_due
+
+        alert = refresh_if_due()
+        if alert:
+            mac_notify("Claude Pulse coverage", alert)
+    except Exception as e:  # noqa: BLE001 — watchdog must survive coverage bugs
+        logger.warning("coverage refresh failed: %s", e)
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-    sys.exit(check())
+    exit_code = check()
+    run_coverage_refresh()
+    sys.exit(exit_code)

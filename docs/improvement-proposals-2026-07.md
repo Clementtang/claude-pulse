@@ -2,7 +2,7 @@
 
 **狀態**：提案文件。**P1 與 P3 已於 2026-07-10 實作出貨**（P1：`ba08554`，P3：`9624368`），其餘提案未實作。
 **P1 實作時的額外發現**：除已知的 2.1.133 壞列外，validator 與對齊檢查另揪出 2026-05-15 incident 列缺 source/url 欄、2026-05-14 Reuters 列掛錯 incident URL、3 列 source 與 url host 不符（連帶 17 個 i18n key ×4 locale 重新編號）、16 筆翻譯值在 4 個日期群組內互換／輪轉錯位、2.1.161 翻譯因 batch-write dedup-skip bug 從未寫入（4 locale 補譯）。單一驗證層上線前，log 內共存著五類沉默損壞——支持 P1 排第一的判斷。
-**P3 kill gate**：2026-10-10 前 archive 頁 GSC 曝光仍為 0 → 凍結此方向。
+**⚠️ SEO 方向已於 2026-07-20 收線 — P3 kill gate 與 P7 gate 均撤銷，不必等 2026-10-10。** 詳見文末〈SEO 方向收線〉。
 **定位**：接續 `docs/plans/prioritization-decision-2026-06-17.md`（含 06-20 / 06-25 / 06-26 addendum）的決策脈絡，不重開已否決的方向。該文件的第 0 順位（可索引性程式修復）已於 commit `901f995` 出貨；本文件回答「修復出貨後、Google 仍未收錄的現在，下一步做什麼」。
 **數據採集**：2026-07-08，Thufir MCP（`ga4_report` / `gsc_analytics` / `gsc_inspect_url`）+ repo 實地檢查（log、site build 產物、fetcher state）。
 
@@ -159,3 +159,48 @@
 - 單頁 build 產物：`dist/index.html` 928 KB、`/ja/` 1.0 MB、`/ko/` 972 KB、`/zh-TW/`・`/zh-CN/` 868 KB；`feed.xml` 592 KB / 570 items。
 - 壞列：`claude_pulse_log.md:395`（2.1.133，summary 內 `` `fresh` |`head` `` 未跳脫）。
 - 月度條目量：2026-03 61、04 124、05 200、06 186、07（至 7 日）32。
+
+---
+
+## SEO 方向收線（2026-07-20）
+
+**決定：停止為搜尋曝光投入。P3 kill gate（原訂 2026-10-10）與 P7 ja/ko gate 一併撤銷，不必等到期。**
+
+### 為什麼提早結案
+
+本文件的 P1–P3 都是為了回應「Google 不收錄」而提出的。P3（月度 archive 頁 + permalink + 結構化資料）作為「對索引問題僅存的可行槓桿」已於 07-10 出貨，P2（IndexNow / Bing）07-16 出貨。**實驗結果出來了：**
+
+| 量測（2026-07-20，Thufir GSC） | 結果 |
+| --- | --- |
+| 全站曝光 | **2026-06-13 起連續 36 天為 0** |
+| 首頁 `coverageState` | `Crawled - currently not indexed` |
+| archive 頁 `coverageState` | `Crawled - currently not indexed`（與首頁相同） |
+| robots / indexing / fetch | ALLOWED / INDEXING_ALLOWED / SUCCESSFUL，lastCrawlTime 2026-07-16 |
+
+archive 頁與首頁得到**完全相同**的裁決。原 gate 問「archive 頁曝光是否為 0」，但在全站皆不被收錄的前提下，該問題無法區辨 archive 方向的成敗——**用這個量測結算會得出「archive 失敗」的錯誤歸因**。
+
+### 已排除的原因（逐項查證，不要重查）
+
+| 假設 | 查法 | 結果 |
+| --- | --- | --- |
+| 本地部署／設定改動觸發崩落 | `git log --since=2026-05-25 --until=2026-06-20 -- site/` | 排除 — 該期間 `site/` 只有 curation commit |
+| SEO 修復造成反效果 | 時間軸比對 | 排除 — 崩落 6/13 早於 404.astro（7/11）、robots.txt／IndexNow（7/16） |
+| chatbot.tw 母網域被連坐 | `gsc_inspect_url` 對照 buddydex.chatbot.tw | 排除 — buddydex 是 `URL is unknown to Google`，狀態不同，非連坐 |
+
+崩落前（05-01–06-13）的曝光組成：`/ja/` 690、`/` 283、`/ko/` 163、`/ja/github.com`（壞 URL）18、`/zh-TW/` 13 — 合計 0 點擊。**主力是機翻的 ja/ko 頁面，且含 SPA-fallback 假頁面；「回到 6 月水準」本身不是值得追求的目標。**
+
+### 收線的真正理由
+
+使用者確認：**本站主要用途是自用追蹤 + RSS 訂閱，搜尋曝光原本只是「或許有額外機會」的加分項。** 核心用途完全不依賴 Google — log 每日更新、fetcher 每 4 小時執行、RSS 正常發布，索引與否皆不受影響。
+
+在加分項上繼續投入沒有理由，尤其成功的上限只是回到「每日 40–50 次曝光、0 點擊」。
+
+### 這對其他提案的影響
+
+- **P7（ja/ko gate）撤銷**：其量測基礎是 sessions/曝光。使用者決定**保留全部 5 個 locale、網站不動**，每筆條目仍寫 4 個語系翻譯。ja/ko 的存廢日後若要重議，理由應是翻譯成本，不是 SEO 數據。
+- **P1／P2／P4／P5／P6／P8 不受影響**：資料驗證、RSS 修正、站內搜尋、涵蓋度告警、data 瘦身的價值都來自自用與管線正確性，與索引無關。
+- **不建議做的事**維持原判，但理由更新：「能力矩陣資料工程」原本等「索引恢復後才回頭評估」→ 現在是**不再等待，該方向關閉**。
+
+### 若日後想重啟
+
+不需要重跑上述排除項。真正未驗證的假說只剩一個：**Google 將本站判定為衍生內容**（新聞聚合 + 機翻摘要，原始資訊皆存在於 anthropic.com 等處）。這無法從 GSC 證實或推翻 — 該欄位不會告訴你判定理由。重啟前先想清楚「即使成功，得到的曝光值不值得」。

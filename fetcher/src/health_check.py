@@ -1,12 +1,20 @@
 """Health check for claude-pulse-fetcher.
 
-Reads data/state.json and checks each collector's last_checked timestamp.
-If any collector hasn't checked in within STALE_THRESHOLD, emit a macOS
-notification via osascript.
+Two independent failure modes, two checks:
 
-Rationale: the fetcher LaunchAgent silently failed for 16 hours (04-20) when
-the fetcher/*.py files were accidentally removed by a branch switch. A
-separate watchdog gives us a user-visible signal that something is wrong.
+1. Liveness — `last_checked` older than STALE_THRESHOLD means the collector
+   isn't running at all. Rationale: the fetcher LaunchAgent silently failed
+   for 16 hours (04-20) when a branch switch removed fetcher/*.py.
+
+2. Productivity — `last_run_with_new` far older than `last_checked` means the
+   collector runs but never yields anything. Rationale: on 07-17 the
+   x_accounts collector fetched 72 posts every run and dropped all of them at
+   the state filter; it logged "returned 72 items" and reported 0 new, which
+   is indistinguishable from a quiet news day. Nothing errored, nothing
+   alerted, and it was found only by chance while adding accounts.
+
+Both notify via osascript. Only liveness affects the exit code — a productive
+silence is suspicious, not proof of failure.
 """
 
 from __future__ import annotations
@@ -23,6 +31,24 @@ logger = logging.getLogger(__name__)
 STATE_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "state.json"
 # Fetcher runs every 4 hours; allow 1 hour buffer before alerting.
 STALE_THRESHOLD = timedelta(hours=5)
+
+# Per-collector "how long may this plausibly yield nothing before we suspect a
+# silent drop?" There is no single threshold: claude_status can legitimately be
+# quiet for days (no incidents), while x_accounts watches 8 active handles.
+#
+# Values are deliberately loose — a false alarm trains you to ignore the
+# notification, which is worse than a late one. Derived from observed gaps in
+# claude_pulse_log.md (2026-07), then rounded well past the longest.
+#
+# anthropic_news is exempt: its sitemap has no reliable publish dates, so most
+# of its 400+ entries are historical pages and last_run_with_new only advances
+# when something clears an already-high watermark — 53 days between advances
+# while perfectly healthy. Checking it would fire constantly.
+PRODUCTIVITY_THRESHOLD = {
+    "github_releases": timedelta(days=7),  # observed max gap 93h
+    "claude_status": timedelta(days=10),  # observed max gap 113h
+    "x_accounts": timedelta(days=5),  # 8 active handles; quiet 5d is odd
+}
 
 
 def mac_notify(title: str, message: str) -> None:
@@ -76,6 +102,10 @@ def check() -> int:
         if status == "STALE":
             stale_collectors.append(f"{name} ({age})")
 
+    unproductive = find_unproductive(state, now)
+    for name, age in unproductive:
+        print(f"{name}: UNPRODUCTIVE (last_run_with_new {age} ago)")
+
     if stale_collectors:
         mac_notify(
             "Claude Pulse Fetcher stale",
@@ -83,7 +113,43 @@ def check() -> int:
         )
         return 1
 
+    if unproductive:
+        mac_notify(
+            "Claude Pulse fetcher yielding nothing",
+            "; ".join(f"{name} ({age.days}d)" for name, age in unproductive)
+            + " — running but never new; check for a silent drop",
+        )
+
     return 0
+
+
+def find_unproductive(state: dict, now: datetime) -> list[tuple[str, timedelta]]:
+    """Collectors that run but haven't yielded a new item in too long.
+
+    Returns (name, age) pairs. A collector is only flagged when it is
+    currently alive — a dead one is already reported as STALE, and reporting
+    both for the same collector would just be noise.
+    """
+    flagged: list[tuple[str, timedelta]] = []
+
+    for name, threshold in PRODUCTIVITY_THRESHOLD.items():
+        entry = state.get(name)
+        if not entry:
+            continue
+
+        last_checked = entry.get("last_checked")
+        if not last_checked or now - datetime.fromisoformat(last_checked) > STALE_THRESHOLD:
+            continue  # dead or never run — the liveness check owns this case
+
+        last_new = entry.get("last_run_with_new")
+        if not last_new:
+            continue  # never produced anything; nothing to compare against yet
+
+        age = now - datetime.fromisoformat(last_new)
+        if age > threshold:
+            flagged.append((name, age))
+
+    return flagged
 
 
 def run_coverage_refresh() -> None:

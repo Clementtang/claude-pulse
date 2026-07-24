@@ -179,6 +179,56 @@ def test_should_fall_back_to_next_mirror_when_first_returns_empty(monkeypatch) -
     ]
 
 
+WHITELIST_PLACEHOLDER = _entry(
+    "RSS reader not yet whitelisted!",
+    "https://rss.xcancel.com/ClaudeDevs/rss",
+    WHEN,
+)
+
+
+def test_should_fall_back_to_next_mirror_when_feed_has_no_status_links(monkeypatch) -> None:
+    """xcancel.com gates its RSS behind a whitelist and serves a well-formed
+    placeholder feed to everyone else. Non-empty entries alone must not count
+    as mirror success, or the placeholder masks the real feed on later mirrors.
+    """
+    calls: list[str] = []
+
+    def fake_parse(url: str):
+        calls.append(url)
+        if "xcancel.com" in url:
+            return _feed([WHITELIST_PLACEHOLDER])
+        return _feed([RESET])
+
+    monkeypatch.setattr(x_accounts.feedparser, "parse", fake_parse)
+
+    articles = XAccountsCollector(
+        handles={"ClaudeDevs": HandleConfig(None, "T1")},
+        instances=("https://xcancel.com", "https://nitter.net"),
+    ).collect()
+
+    assert [a.url for a in articles] == ["https://x.com/ClaudeDevs/status/2077603834453770467"]
+    assert calls == [
+        "https://xcancel.com/ClaudeDevs/rss",
+        "https://nitter.net/ClaudeDevs/rss",
+    ]
+
+
+def test_should_log_all_mirrors_failed_when_every_feed_is_a_placeholder(monkeypatch, caplog) -> None:
+    """A placeholder-only rotation previously logged 'returned 1 entries' and
+    yielded nothing — a silent absence. It must surface as a mirror failure.
+    """
+    monkeypatch.setattr(x_accounts.feedparser, "parse", lambda url: _feed([WHITELIST_PLACEHOLDER]))
+
+    with caplog.at_level("ERROR"):
+        articles = XAccountsCollector(
+            handles={"ClaudeDevs": HandleConfig(None, "T1")},
+            instances=("https://xcancel.com",),
+        ).collect()
+
+    assert articles == []
+    assert any("all mirrors failed" in r.message for r in caplog.records)
+
+
 def test_should_return_empty_when_every_mirror_fails(monkeypatch) -> None:
     def boom(url: str):
         raise OSError("connection refused")

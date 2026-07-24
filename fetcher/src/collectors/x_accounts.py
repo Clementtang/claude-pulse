@@ -110,19 +110,27 @@ class XAccountsCollector:
                 logger.warning("%s: %s raised %s", self.name, url, e)
                 continue
 
-            if parsed.entries:
+            if _has_status_links(parsed.entries):
                 logger.info("%s: %s returned %d entries", self.name, url, len(parsed.entries))
                 return parsed.entries
 
+            # Some mirrors (xcancel.com) serve a well-formed placeholder feed
+            # to non-whitelisted readers, so non-empty entries alone don't
+            # prove the mirror worked.
             logger.warning(
-                "%s: %s returned no entries (%s)",
+                "%s: %s returned no usable entries (%s)",
                 self.name,
                 url,
-                getattr(parsed, "bozo_exception", "empty feed"),
+                getattr(parsed, "bozo_exception", None) or "empty or placeholder feed",
             )
 
         logger.error("%s: all mirrors failed for @%s — X scan incomplete", self.name, handle)
         return []
+
+
+def _has_status_links(entries) -> bool:
+    """True when the feed carries at least one real post link."""
+    return any(_STATUS_RE.search(entry.get("link") or "") for entry in entries)
 
 
 def _to_article(

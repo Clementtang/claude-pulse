@@ -23,7 +23,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const HOST = "claude-pulse.chatbot.tw";
-const KEY = "c830bdd34e354b03348e3f0aac6308037aaa14261d7356b22e97fdb20c4eb44a";
+const KEY = "7b03814ccb73a5474c5696381bb622a0520c8b2fd76fece8b1c165593409e614";
 const KEY_PATH = join(__dirname, "..", "public", `${KEY}.txt`);
 const ENDPOINTS = [
   "https://api.indexnow.org/indexnow",
@@ -85,6 +85,32 @@ async function submit(endpoint, payload) {
   }
 }
 
+// The GH Action fires ~1 min after push, but CF Pages needs ~2-3 min to
+// deploy. Submitting while the live key file is stale/404 poisons Bing's
+// synchronous key validation with a cached negative verdict (this is what
+// broke 07-16 and again at the 07-30 rotation). Never submit until the CDN
+// serves the exact key.
+async function waitForLiveKeyFile() {
+  const keyUrl = `https://${HOST}/${KEY}.txt`;
+  const maxAttempts = 20;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const res = await fetch(`${keyUrl}?cachebust=${attempt}`);
+      if (res.status === 200 && (await res.text()) === KEY) {
+        console.log(`✓ live key file verified (attempt ${attempt})`);
+        return true;
+      }
+    } catch {
+      // network hiccup — retry below
+    }
+    await new Promise((resolve) => setTimeout(resolve, 15000));
+  }
+  const msg = `live key file at ${keyUrl} never matched after ${maxAttempts} attempts — skipping submission to avoid poisoning key validation`;
+  console.error(`✗ ${msg}`);
+  writeStepSummary(`## IndexNow\n\n**Skipped:** ${msg}\n`);
+  return false;
+}
+
 assertKeyFile();
 
 const sitemap = readFileSync(
@@ -113,6 +139,10 @@ if (dryRun) {
     `dry-run: would submit ${urls.length} URLs to ${ENDPOINTS.join(", ")}`,
   );
   console.log(urls.join("\n"));
+  process.exit(0);
+}
+
+if (!(await waitForLiveKeyFile())) {
   process.exit(0);
 }
 

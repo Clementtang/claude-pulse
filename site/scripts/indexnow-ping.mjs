@@ -23,7 +23,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const HOST = "claude-pulse.chatbot.tw";
-const KEY = "59bb71005eaf7c07a88ea5d15647955ef8663627ce8f0243e70de1af5ab07a07";
+const KEY = "c830bdd34e354b03348e3f0aac6308037aaa14261d7356b22e97fdb20c4eb44a";
 const KEY_PATH = join(__dirname, "..", "public", `${KEY}.txt`);
 const ENDPOINTS = [
   "https://api.indexnow.org/indexnow",

@@ -26,7 +26,7 @@ const logPath = process.argv[2] ?? DEFAULT_LOG;
 const isDefaultLog = logPath === DEFAULT_LOG;
 
 const INDEXNOW_KEY =
-  "59bb71005eaf7c07a88ea5d15647955ef8663627ce8f0243e70de1af5ab07a07";
+  "c830bdd34e354b03348e3f0aac6308037aaa14261d7356b22e97fdb20c4eb44a";
 const INDEXNOW_KEY_PATH = join(
   __dirname,
   "..",

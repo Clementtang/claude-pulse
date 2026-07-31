@@ -13,6 +13,13 @@ export default defineConfig({
       prefixDefaultLocale: false,
     },
   },
+  // Keep page scripts as hashed /_astro/*.js files. Vite's default 4 KB
+  // inline limit was folding home-client into every locale HTML (~4 KB × 5).
+  vite: {
+    build: {
+      assetsInlineLimit: 0,
+    },
+  },
   integrations: [
     sitemap({
       i18n: {

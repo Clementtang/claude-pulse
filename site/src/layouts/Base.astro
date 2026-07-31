@@ -36,6 +36,21 @@ const alternates = SUPPORTED_LOCALES.map((loc) => ({
   hreflang: loc,
   href: localeUrl(loc),
 }));
+
+// Load only the CJK face this page needs. Latin faces are shared; shipping
+// all four Noto families on every locale wasted three font round-trips.
+const CJK_FONT_FAMILY: Record<string, string> = {
+  "zh-TW": "Noto+Sans+TC",
+  "zh-CN": "Noto+Sans+SC",
+  ja: "Noto+Sans+JP",
+  ko: "Noto+Sans+KR",
+};
+const latinFonts =
+  "family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Source+Sans+3:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500";
+const cjkFamily = CJK_FONT_FAMILY[locale];
+const fontsHref = `https://fonts.googleapis.com/css2?${latinFonts}${
+  cjkFamily ? `&family=${cjkFamily}:wght@400;500` : ""
+}&display=swap`;
 ---
 
 <!doctype html>
@@ -48,10 +63,7 @@ const alternates = SUPPORTED_LOCALES.map((loc) => ({
     <meta name="msvalidate.01" content="D23785EF988DB5D7F8C38A7C6DFFAE46" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Source+Sans+3:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500&family=Noto+Sans+SC:wght@400;500&family=Noto+Sans+JP:wght@400;500&family=Noto+Sans+KR:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
+    <link href={fontsHref} rel="stylesheet" />
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -94,9 +106,9 @@ const alternates = SUPPORTED_LOCALES.map((loc) => ({
         --border: #e5e2d6;
         --border-hover: #d4d0c2;
 
-        /* Font stacks — English base */
-        --font-display: "Newsreader", "Noto Sans TC", Georgia, serif;
-        --font-body: "Source Sans 3", "Noto Sans TC", system-ui, sans-serif;
+        /* Font stacks — English base; CJK falls back to system (en loads no Noto) */
+        --font-display: "Newsreader", Georgia, serif;
+        --font-body: "Source Sans 3", system-ui, sans-serif;
         --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
         /* Spacing tokens */

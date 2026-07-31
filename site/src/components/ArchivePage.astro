@@ -129,38 +129,9 @@ const jsonLd = {
   </main>
 </Base>
 
-<script is:inline>
-  (function archiveSearch() {
-    const input = document.getElementById("archive-search");
-    if (!input) return;
-    const cards = [...document.querySelectorAll(".card")];
-    const separators = [...document.querySelectorAll(".day-separator")];
-    const emptyEl = document.getElementById("empty");
-    const cardTexts = new Map(
-      cards.map((card) => [card, card.textContent.toLowerCase()]),
-    );
-
-    input.addEventListener("input", () => {
-      const query = input.value.trim().toLowerCase();
-      const visibleDates = new Set();
-      let visibleCount = 0;
-
-      cards.forEach((card) => {
-        const visible = !query || cardTexts.get(card).includes(query);
-        card.style.display = visible ? "" : "none";
-        if (visible) {
-          visibleCount++;
-          visibleDates.add(card.dataset.displayDate);
-        }
-      });
-
-      separators.forEach((sep) => {
-        sep.style.display = visibleDates.has(sep.dataset.date) ? "" : "none";
-      });
-
-      if (emptyEl) emptyEl.style.display = visibleCount === 0 ? "" : "none";
-    });
-  })();
+<script>
+  import { initArchiveSearch } from "../scripts/archive-client.js";
+  initArchiveSearch();
 </script>
 
 <style>

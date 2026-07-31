@@ -85,7 +85,6 @@ const { items, locale, t } = Astro.props;
   .day-separator {
     text-align: left;
     margin: 2.25rem 0 0.75rem;
-    animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
   .day-separator:first-child {
@@ -114,7 +113,6 @@ const { items, locale, t } = Astro.props;
 
   .card {
     padding: 1rem 0;
-    animation: fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
     scroll-margin-top: 1rem;
     /* Long archive months skip layout/paint for off-screen cards. */
     content-visibility: auto;
@@ -198,67 +196,9 @@ const { items, locale, t } = Astro.props;
     color: var(--text-tertiary);
   }
 
-  /* ============================================================
-     ANIMATIONS
-     ============================================================ */
-  @keyframes fade-up {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  .card:nth-child(1) {
-    animation-delay: 0ms;
-  }
-  .card:nth-child(2) {
-    animation-delay: 30ms;
-  }
-  .card:nth-child(3) {
-    animation-delay: 60ms;
-  }
-  .card:nth-child(4) {
-    animation-delay: 90ms;
-  }
-  .card:nth-child(5) {
-    animation-delay: 120ms;
-  }
-  .card:nth-child(6) {
-    animation-delay: 150ms;
-  }
-  .card:nth-child(7) {
-    animation-delay: 180ms;
-  }
-  .card:nth-child(8) {
-    animation-delay: 210ms;
-  }
-
   @media (max-width: 640px) {
     .card-summary {
       font-size: 0.875rem;
-    }
-  }
-
-  /* ============================================================
-     REDUCED MOTION
-     ============================================================ */
-  @media (prefers-reduced-motion: reduce) {
-    .card,
-    .day-separator {
-      animation: none;
     }
   }
 </style>

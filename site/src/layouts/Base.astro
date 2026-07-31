@@ -164,6 +164,29 @@ const fontsHref = `https://fonts.googleapis.com/css2?${latinFonts}${
         color: var(--accent-light);
         text-decoration: underline;
       }
+
+      /* Shared by HomePage + ArchivePage search fields */
+      .search-input {
+        font-family: var(--font-body);
+        font-size: 0.8125rem;
+        color: var(--text);
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 0.25rem;
+        padding: 0.25rem 0.625rem;
+        width: 14rem;
+        max-width: 100%;
+        transition: border-color 0.15s;
+      }
+
+      .search-input::placeholder {
+        color: var(--text-tertiary);
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
     </style>
   </head>
   <body>

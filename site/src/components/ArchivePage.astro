@@ -34,12 +34,15 @@ const homeUrl = localeUrl(locale, "");
 const title = t.archiveTitle.replace("{month}", month);
 const description = t.archiveDescription.replace("{month}", month);
 
+// Peak months exceed 200 entries; full ItemList duplicated every locale.
+const JSON_LD_ITEM_LIMIT = 20;
+const jsonLdItems = items.slice(0, JSON_LD_ITEM_LIMIT);
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   name: title,
-  numberOfItems: items.length,
-  itemListElement: items.map((item, i) => ({
+  numberOfItems: jsonLdItems.length,
+  itemListElement: jsonLdItems.map((item, i) => ({
     "@type": "ListItem",
     position: i + 1,
     item: {

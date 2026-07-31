@@ -23,10 +23,12 @@ const t = getStrings(locale);
 const languageOptions = getAllLanguageOptions();
 
 const allItems = parsePulseLog(); // already sorted desc by datetimeUtc
-// Home shows the last 30 days; everything older lives on archive pages.
-// Keeps page weight bounded as the log grows (~900 KB → ~150 KB HTML).
+// Home window is short; older entries live on monthly archive pages.
+// July 2026 alone hit ~9 items/day — a 30-day home DOM was ~500 KB HTML.
+const HOME_WINDOW_DAYS = 14;
+const JSON_LD_ITEM_LIMIT = 20;
 const cutoff = toDisplayDate(
-  new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+  new Date(Date.now() - HOME_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString(),
 );
 const items = allItems.filter((item) => item.displayDate >= cutoff);
 const months = getArchiveMonths(allItems);
@@ -44,12 +46,15 @@ function archiveUrl(month: string): string {
   return `${localeUrl(locale)}archive/${month}/`;
 }
 
+// Cap structured data: full month-scale lists bloat HTML without helping
+// readers (SEO track is closed; a short ItemList is enough for machines).
+const jsonLdItems = items.slice(0, JSON_LD_ITEM_LIMIT);
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   name: t.seoTitle || t.title,
-  numberOfItems: items.length,
-  itemListElement: items.map((item, i) => ({
+  numberOfItems: jsonLdItems.length,
+  itemListElement: jsonLdItems.map((item, i) => ({
     "@type": "ListItem",
     position: i + 1,
     item: {
@@ -151,8 +156,8 @@ const jsonLd = {
         <button class="filter-btn range-btn active" data-range="7">
           {t.range7}
         </button>
-        <button class="filter-btn range-btn" data-range="30">
-          {t.range30}
+        <button class="filter-btn range-btn" data-range="14">
+          {t.range14}
         </button>
         <a class="filter-btn archive-link" href={archiveUrl(months[0])}>
           {t.archiveLabel} ↗

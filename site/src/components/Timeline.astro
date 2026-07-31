@@ -116,6 +116,9 @@ const { items, locale, t } = Astro.props;
     padding: 1rem 0;
     animation: fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
     scroll-margin-top: 1rem;
+    /* Long archive months skip layout/paint for off-screen cards. */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 7.5rem;
   }
 
   .card:target {

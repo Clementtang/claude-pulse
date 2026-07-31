@@ -5,3 +5,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://static.cloudflareinsights.com; img-src 'self' data: https://www.google-analytics.com; connect-src 'self' https://status.claude.com https://www.google-analytics.com https://*.analytics.google.com https://*.google-analytics.com https://cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com
+
+# Hashed Vite/Astro assets (filename changes on content change).
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

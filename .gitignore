@@ -19,3 +19,6 @@ site/dist/
 # Env
 .env
 .env.local
+
+# Local MCP overrides (user/tooling scope; not shared)
+.mcp.json

@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "build": "node scripts/validate-log.mjs && astro build",
     "preview": "astro preview",
+    "test": "node --test scripts/test-parse-pulse.mjs",
     "astro": "astro"
   },
   "dependencies": {

@@ -15,10 +15,12 @@ T1 sources (GitHub releases / status.claude.com / anthropic.com sitemap / X via 
   → data/candidates.json
   → /pulse-curate（interactive 或 auto）
   → claude_pulse_log.md
-  → Astro build（5 locale + archive + RSS）
+  → Astro build（5 locale + 月索引/週 archive + RSS）
   → Cloudflare Pages（主站）
      └─ GitHub Pages 僅 redirect shell
 ```
+
+**Archive 路由**：`/archive/YYYY-MM/` 為月份索引；條目在 `/archive/YYYY-MM/wN/`（月內第 N 週，依 display 日 1–7… 切分）。舊的 `#anchor` 月連結會 client redirect 到對應週頁。
 
 詳見 [`docs/architecture.md`](docs/architecture.md)（2026-04 可行性研究稿；現況以本 README 與 `docs/history.md` 為準）。
 

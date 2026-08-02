@@ -4,6 +4,7 @@
 **出貨對照**：P1 `ba08554`（2026-07-10）、P2 IndexNow/Bing（07-16 起）、P3 `9624368`（07-10）、P4 `61cea78`、P5 `1586ec5`、P6 `f2ff4a8`、P8 `45a8c2a`；P7 gate 於 SEO 收線時撤銷（locale 全保留）。
 **P1 實作時的額外發現**：除已知的 2.1.133 壞列外，validator 與對齊檢查另揪出 2026-05-15 incident 列缺 source/url 欄、2026-05-14 Reuters 列掛錯 incident URL、3 列 source 與 url host 不符（連帶 17 個 i18n key ×4 locale 重新編號）、16 筆翻譯值在 4 個日期群組內互換／輪轉錯位、2.1.161 翻譯因 batch-write dedup-skip bug 從未寫入（4 locale 補譯）。單一驗證層上線前，log 內共存著五類沉默損壞——支持 P1 排第一的判斷。
 **SEO 方向已於 2026-07-20 收線 — P3 kill gate 與 P7 gate 均撤銷，不必等 2026-10-10。** 詳見文末〈SEO 方向收線〉。
+**2026-08 後續（非本提案範圍，見 `CHANGELOG.md`）**：P3 月 archive 再拆**月內週**以控制頁重；首頁 14 天；Astro 7；維持月內週、不改 ISO 全年週序。
 **定位**：接續 `docs/plans/prioritization-decision-2026-06-17.md`（含 06-20 / 06-25 / 06-26 addendum）的決策脈絡，不重開已否決的方向。該文件的第 0 順位（可索引性程式修復）已於 commit `901f995` 出貨；本文件回答「修復出貨後、Google 仍未收錄的現在，下一步做什麼」。
 **數據採集**：2026-07-08，Thufir MCP（`ga4_report` / `gsc_analytics` / `gsc_inspect_url`）+ repo 實地檢查（log、site build 產物、fetcher state）。
 

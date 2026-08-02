@@ -1,7 +1,7 @@
 # Claude Pulse v2 架構重構 — 階段 1 報告
 
 日期：2026-04-16  
-狀態：**歷史研究稿**（可行性驗證與語言選型）。程式已落地；部署與管線現況以根目錄 [`README.md`](../README.md) 與 [`history.md`](history.md) 為準，勿把本檔當 living architecture。
+狀態：**歷史研究稿**（可行性驗證與語言選型）。程式已落地；部署與管線現況以根目錄 [`README.md`](../README.md)、[`history.md`](history.md)、[`CHANGELOG.md`](../CHANGELOG.md) 為準，勿把本檔當 living architecture。
 
 ---
 

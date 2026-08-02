@@ -1,43 +1,62 @@
-# Astro Starter Kit: Minimal
+# Claude Pulse — Site
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Astro 靜態站：5 locale、月/週 archive、RSS。部署至 Cloudflare Pages（主站）與 GitHub Pages（redirect shell）。
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Stack
 
-## 🚀 Project Structure
+- **Astro** 7.x（Node ≥ 22.12）
+- `@astrojs/rss`、`@astrojs/sitemap`
+- 資料源：repo 根目錄 `../claude_pulse_log.md` + `src/i18n/summaries-*.json`
 
-Inside of your Astro project, you'll see the following folders and files:
+## 指令
+
+於 `site/` 目錄：
+
+| Command | 說明 |
+| --- | --- |
+| `npm install` | 安裝依賴 |
+| `npm run dev` | 本機開發伺服器 |
+| `npm test` | 週分桶等 unit tests |
+| `npm run build` | `validate-log` 後 `astro build` → `dist/` |
+| `npm run preview` | 預覽 production build |
+
+## 目錄結構（精簡）
 
 ```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+site/
+├── public/           # robots, _headers, favicon, IndexNow key, …
+├── scripts/
+│   ├── validate-log.mjs
+│   ├── indexnow-ping.mjs
+│   ├── make-redirects.mjs
+│   └── test-parse-pulse.mjs
+└── src/
+    ├── components/   # HomePage, ArchiveMonthHub, ArchivePage, Timeline, Footer
+    ├── i18n/         # UI 字串 + summaries-*.json
+    ├── layouts/Base.astro
+    ├── lib/parse-pulse.js
+    ├── pages/        # locale 路由 + feed.xml.js
+    ├── scripts/      # home-client.js, archive-client.js（build 後 hashed）
+    └── styles/archive-chrome.css
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 路由
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+| 路徑 | 內容 |
+| --- | --- |
+| `/`、`/{locale}/` | 首頁（近 14 天） |
+| `/archive/YYYY-MM/` | 月份索引 |
+| `/archive/YYYY-MM/wN/` | 週條目（w1=1–7 日 …） |
+| `/feed.xml` | RSS（50 筆） |
 
-Any static assets, like images, can be placed in the `public/` directory.
+en 無 prefix；其他 locale：`zh-TW`、`zh-CN`、`ja`、`ko`。
 
-## 🧞 Commands
+## 建置守門
 
-All commands are run from the root of the project, from a terminal:
+`npm run build` 前置 `validate-log.mjs`：欄位、category、https URL、source/host 一致、IndexNow key 位元組、i18n 覆蓋。失敗則不部署。
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## 相關文件
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- 專案入口：[`../README.md`](../README.md)
+- 變更紀錄：[`../CHANGELOG.md`](../CHANGELOG.md)
+- 沿革：[`../docs/history.md`](../docs/history.md)

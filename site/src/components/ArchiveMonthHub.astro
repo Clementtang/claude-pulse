@@ -1,0 +1,354 @@
+---
+import Base from "../layouts/Base.astro";
+import Footer from "./Footer.astro";
+import {
+  parsePulseLog,
+  getArchiveMonths,
+  getMonthWeekSummaries,
+  getMonthAnchorWeekMap,
+} from "../lib/parse-pulse.js";
+import { getStrings, getAllLanguageOptions } from "../lib/i18n.js";
+
+interface Props {
+  locale: string;
+  month: string;
+}
+
+const { locale, month } = Astro.props;
+const t = getStrings(locale);
+const languageOptions = getAllLanguageOptions();
+
+const allItems = parsePulseLog();
+const months = getArchiveMonths(allItems);
+const monthIndex = months.indexOf(month);
+const prevMonth = monthIndex < months.length - 1 ? months[monthIndex + 1] : null;
+const nextMonth = monthIndex > 0 ? months[monthIndex - 1] : null;
+
+const weekSummaries = getMonthWeekSummaries(month, allItems);
+const anchorWeekMap = getMonthAnchorWeekMap(month, allItems);
+const totalItems = weekSummaries.reduce((n, w) => n + w.count, 0);
+
+const base = import.meta.env.BASE_URL;
+const normalizedBase = base.endsWith("/") ? base : `${base}/`;
+const archivePath = `archive/${month}/`;
+
+function localeUrl(loc: string, path: string = archivePath): string {
+  const prefix = loc === "en" ? "" : `${loc}/`;
+  return `${normalizedBase}${prefix}${path}`;
+}
+const homeUrl = localeUrl(locale, "");
+
+const title = t.archiveTitle.replace("{month}", month);
+const description = t.archiveDescription.replace("{month}", month);
+---
+
+<Base
+  title={title}
+  description={description}
+  htmlLang={t.htmlLang}
+  locale={locale}
+  path={archivePath}
+>
+  <header class="header">
+    <div class="header-inner">
+      <p class="site-name"><a href={homeUrl}>{t.title}</a></p>
+      <h1>{t.archiveLabel} — {month}</h1>
+      <p class="hub-meta">
+        {t.monthItemCount.replace("{n}", String(totalItems))}
+      </p>
+      <nav class="lang-nav" aria-label={t.languageLabel}>
+        {
+          languageOptions.map((opt) =>
+            opt.key === locale ? (
+              <span class="lang-pill lang-active">{opt.name}</span>
+            ) : (
+              <a class="lang-pill" href={localeUrl(opt.key)}>
+                {opt.name}
+              </a>
+            ),
+          )
+        }
+      </nav>
+    </div>
+    <div class="header-line"></div>
+  </header>
+
+  <main class="main">
+    <nav class="month-nav" aria-label={t.browseArchive}>
+      {
+        prevMonth ? (
+          <a class="month-link" href={localeUrl(locale, `archive/${prevMonth}/`)}>
+            ← {prevMonth}
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      <a class="month-link month-home" href={homeUrl}>{t.backHome}</a>
+      {
+        nextMonth ? (
+          <a class="month-link" href={localeUrl(locale, `archive/${nextMonth}/`)}>
+            {nextMonth} →
+          </a>
+        ) : (
+          <span />
+        )
+      }
+    </nav>
+
+    <p class="hub-intro">{t.weekHubIntro}</p>
+
+    <ul class="week-list">
+      {
+        weekSummaries.map((w) => {
+          const n = w.week.replace(/^w/i, "");
+          const href = localeUrl(locale, `archive/${month}/${w.week}/`);
+          const label = t.weekLabel.replace("{n}", n);
+          const range = t.weekRange
+            .replace("{start}", String(w.startDay))
+            .replace("{end}", String(w.endDay));
+          const count = t.itemsCount.replace("{n}", String(w.count));
+          return (
+            <li>
+              <a class="week-card" href={href}>
+                <span class="week-card-title">{label}</span>
+                <span class="week-card-range">{range}</span>
+                <span class="week-card-count">{count}</span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+
+    <Footer t={t} />
+  </main>
+</Base>
+
+{/* Legacy /archive/YYYY-MM/#anchor → week page so old RSS/share links still resolve. */}
+<script
+  type="application/json"
+  id="pulse-anchor-week-map"
+  set:html={JSON.stringify(anchorWeekMap)}
+/>
+<script is:inline>
+  (function redirectLegacyAnchor() {
+    try {
+      var hash = location.hash.replace(/^#/, "");
+      if (!hash) return;
+      var el = document.getElementById("pulse-anchor-week-map");
+      if (!el) return;
+      var map = JSON.parse(el.textContent || "{}");
+      var week = map[hash];
+      if (!week) return;
+      var base = location.pathname.endsWith("/")
+        ? location.pathname
+        : location.pathname + "/";
+      location.replace(base + week + "/#" + hash);
+    } catch (e) {
+      /* ignore */
+    }
+  })();
+</script>
+
+<style>
+  .header {
+    padding: 3rem 1rem 0;
+  }
+
+  .header-inner {
+    max-width: 48rem;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .site-name {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.375rem;
+  }
+
+  .site-name a {
+    color: inherit;
+  }
+
+  .site-name a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .header h1 {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .hub-meta {
+    margin-top: 0.5rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .lang-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .lang-pill {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.625rem;
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    text-decoration: none;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+  }
+
+  a.lang-pill:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  .lang-active {
+    color: var(--accent);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .header-line {
+    max-width: 48rem;
+    margin: 2rem auto 0;
+    height: 1px;
+    background: var(--border);
+    position: relative;
+  }
+
+  .header-line::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 3rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .main {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 2rem 1rem 3rem;
+  }
+
+  .month-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .month-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+  }
+
+  .month-link:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .hub-intro {
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .week-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .week-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 0.25rem 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color 0.15s,
+      background 0.15s;
+  }
+
+  .week-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-surface);
+    text-decoration: none;
+  }
+
+  .week-card-title {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .week-card-range {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    grid-column: 1;
+  }
+
+  .week-card-count {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--accent);
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+
+  @media (max-width: 640px) {
+    .header {
+      padding-top: 2rem;
+    }
+
+    .header h1 {
+      font-size: 1.375rem;
+    }
+  }
+</style>

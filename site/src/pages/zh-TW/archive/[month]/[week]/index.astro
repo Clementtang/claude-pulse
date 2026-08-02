@@ -1,0 +1,14 @@
+---
+import ArchivePage from "../../../../../components/ArchivePage.astro";
+import { getArchiveMonthWeekPaths } from "../../../../../lib/parse-pulse.js";
+
+export function getStaticPaths() {
+  return getArchiveMonthWeekPaths().map(({ month, week }) => ({
+    params: { month, week },
+  }));
+}
+
+const { month, week } = Astro.params;
+---
+
+<ArchivePage locale="zh-TW" month={month} week={week} />

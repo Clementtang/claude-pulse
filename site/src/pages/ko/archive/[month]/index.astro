@@ -1,5 +1,5 @@
 ---
-import ArchivePage from "../../../../components/ArchivePage.astro";
+import ArchiveMonthHub from "../../../../components/ArchiveMonthHub.astro";
 import { getArchiveMonths } from "../../../../lib/parse-pulse.js";
 
 export function getStaticPaths() {
@@ -9,4 +9,4 @@ export function getStaticPaths() {
 const { month } = Astro.params;
 ---
 
-<ArchivePage locale="ko" month={month} />
+<ArchiveMonthHub locale="ko" month={month} />

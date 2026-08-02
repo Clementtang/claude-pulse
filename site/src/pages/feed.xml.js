@@ -1,11 +1,12 @@
 import rss from "@astrojs/rss";
 import { parsePulseLog } from "../lib/parse-pulse.js";
 
-// Feed conventions: newest 50 items only (the full history lives on the
-// archive pages), real UTC timestamps from the log's time column, and links
-// that deep-link to each entry's stable archive anchor. @astrojs/rss emits
+// Feed conventions: newest 50 items only (history lives on week archive
+// pages), real UTC timestamps from the log's time column, and links that
+// deep-link to each entry's stable week-page anchor. @astrojs/rss emits
 // <guid isPermaLink="true">{link}</guid>, so a stable link doubles as a
 // stable guid — items no longer re-surface as unread when the log grows.
+// Guid path changed once when weeks split from month pages (2026-08).
 const FEED_ITEM_LIMIT = 50;
 
 export function GET(context) {
@@ -20,7 +21,7 @@ export function GET(context) {
       description: item.summary,
       pubDate: new Date(item.datetimeUtc),
       categories: [item.category],
-      link: `${context.site}zh-TW/archive/${item.month}/#${item.anchor}`,
+      link: `${context.site}zh-TW/archive/${item.month}/${item.week}/#${item.anchor}`,
     })),
     customData: "<language>zh-Hant</language>",
   });

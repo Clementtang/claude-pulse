@@ -116,6 +116,10 @@ export function parsePulseLog() {
     }
 
     const displayDate = toDisplayDate(datetimeUtc);
+    const month = displayDate.slice(0, 7);
+    // Week-of-month from the display calendar day (Hanoi): days 1–7 → w1, …
+    // Keeps monthly hubs light while entries stay deep-linkable on week pages.
+    const week = weekOfMonth(displayDate);
 
     items.push({
       date,
@@ -123,7 +127,8 @@ export function parsePulseLog() {
       datetimeUtc,
       displayDate,
       // Month bucket for archive pages, aligned with day-separator grouping.
-      month: displayDate.slice(0, 7),
+      month,
+      week,
       // Stable per-item anchor id, derived from the same key that indexes
       // the summary JSONs — survives rebuilds, unlike a positional index.
       anchor: lookupKey.replace(/[^a-zA-Z0-9]+/g, "-"),
@@ -145,11 +150,81 @@ export function parsePulseLog() {
   return items;
 }
 
+/** @param {string} displayDate YYYY-MM-DD */
+export function weekOfMonth(displayDate) {
+  const day = Number(displayDate.slice(8, 10));
+  if (!Number.isFinite(day) || day < 1) return "w1";
+  return `w${Math.ceil(day / 7)}`;
+}
+
+/** Calendar day range label for a week slug (w1 → 1–7, w5 → 29–31). */
+export function weekDayRange(week) {
+  const n = Number(String(week).replace(/^w/i, ""));
+  if (!Number.isFinite(n) || n < 1) return { start: 1, end: 7 };
+  const start = (n - 1) * 7 + 1;
+  const end = Math.min(n * 7, 31);
+  return { start, end };
+}
+
 // Unique months (YYYY-MM, newest first) that have at least one item.
 export function getArchiveMonths(items = parsePulseLog()) {
   return [...new Set(items.map((item) => item.month))].sort((a, b) =>
     b.localeCompare(a),
   );
+}
+
+/** Weeks present in a month, newest first (w5 … w1). */
+export function getArchiveWeeks(month, items = parsePulseLog()) {
+  return [
+    ...new Set(
+      items.filter((item) => item.month === month).map((item) => item.week),
+    ),
+  ].sort((a, b) => b.localeCompare(a));
+}
+
+/** { month, week } pairs for getStaticPaths, newest months first. */
+export function getArchiveMonthWeekPaths(items = parsePulseLog()) {
+  const byMonth = new Map();
+  for (const item of items) {
+    let weeks = byMonth.get(item.month);
+    if (!weeks) {
+      weeks = new Set();
+      byMonth.set(item.month, weeks);
+    }
+    weeks.add(item.week);
+  }
+  const months = [...byMonth.keys()].sort((a, b) => b.localeCompare(a));
+  return months.flatMap((month) =>
+    [...byMonth.get(month)]
+      .sort((a, b) => b.localeCompare(a))
+      .map((week) => ({ month, week })),
+  );
+}
+
+/** Summary rows for a month hub: week slug, counts, day range from data. */
+export function getMonthWeekSummaries(month, items = parsePulseLog()) {
+  const inMonth = items.filter((item) => item.month === month);
+  const weeks = getArchiveWeeks(month, inMonth);
+  return weeks.map((week) => {
+    const weekItems = inMonth.filter((item) => item.week === week);
+    const days = weekItems.map((item) => Number(item.displayDate.slice(8, 10)));
+    const { start: fallbackStart, end: fallbackEnd } = weekDayRange(week);
+    return {
+      week,
+      count: weekItems.length,
+      startDay: days.length ? Math.min(...days) : fallbackStart,
+      endDay: days.length ? Math.max(...days) : fallbackEnd,
+    };
+  });
+}
+
+/** anchor → week map for redirecting legacy month#anchor links. */
+export function getMonthAnchorWeekMap(month, items = parsePulseLog()) {
+  const map = {};
+  for (const item of items) {
+    if (item.month === month) map[item.anchor] = item.week;
+  }
+  return map;
 }
 
 export function getCategories() {

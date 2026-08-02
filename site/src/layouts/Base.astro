@@ -165,7 +165,7 @@ const fontsHref = `https://fonts.googleapis.com/css2?${latinFonts}${
         text-decoration: underline;
       }
 
-      /* Shared by HomePage + ArchivePage search fields */
+      /* Shared by HomePage + ArchivePage filter chrome */
       .search-input {
         font-family: var(--font-body);
         font-size: 0.8125rem;
@@ -186,6 +186,87 @@ const fontsHref = `https://fonts.googleapis.com/css2?${latinFonts}${
       .search-input:focus {
         outline: none;
         border-color: var(--accent);
+      }
+
+      .filters {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .filter-group {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+      }
+
+      .filter-label {
+        font-family: var(--font-body);
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-right: 0.75rem;
+      }
+
+      .filter-btn {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-family: var(--font-body);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        padding: 0.25rem 0.25rem;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
+
+      .filter-btn:hover {
+        color: var(--text);
+      }
+
+      .filter-btn.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+
+      .filter-btn:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        border-radius: 2px;
+      }
+
+      .filter-btn .cat-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .empty-state {
+        text-align: center;
+        color: var(--text-tertiary);
+        padding: 3rem 0;
+        font-family: var(--font-body);
+      }
+
+      @media (max-width: 640px) {
+        .filter-label {
+          width: 100%;
+          margin-bottom: 0.25rem;
+        }
       }
     </style>
   </head>

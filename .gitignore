@@ -22,3 +22,6 @@ site/dist/
 
 # Local MCP overrides (user/tooling scope; not shared)
 .mcp.json
+
+# Firecrawl CLI 快取（pulse-curate 步驟 4 fallback 產生）
+.firecrawl/

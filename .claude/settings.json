@@ -1,0 +1,5 @@
+{
+  "permissions": {
+    "deny": ["mcp__claude-in-chrome__javascript_tool"]
+  }
+}

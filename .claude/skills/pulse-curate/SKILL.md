@@ -20,15 +20,16 @@ Anthropic / Claude 動態追蹤。搜尋最新消息，比對已知項目，只�
 
 ## 相關檔案
 
-| 用途              | 路徑                                                           |
-| ----------------- | -------------------------------------------------------------- |
-| Pulse Log         | `~/claude-pulse/claude_pulse_log.md`（repo 內，權威資料源）    |
-| 4 locale 翻譯     | `~/claude-pulse/site/src/i18n/summaries-{en,zh-CN,ja,ko}.json` |
-| 本地 fetcher 候選 | `~/claude-pulse/data/candidates.json`                          |
-| Pending updates   | `~/claude-pulse/data/pending_log_updates.json`                 |
-| Astro 站          | `~/claude-pulse/site/`                                         |
-| Deploy            | push to `main` → GitHub Actions → CF Pages + GH Pages redirect |
-| Auto mode log     | `~/.claude/logs/pulse-curate-out.log` / `pulse-curate-err.log` |
+| 用途              | 路徑                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------ |
+| Pulse Log         | `~/claude-pulse/claude_pulse_log.md`（repo 內，權威資料源）                                |
+| 4 locale 翻譯     | `~/claude-pulse/site/src/i18n/summaries-{en,zh-CN,ja,ko}.json`                             |
+| 本地 fetcher 候選 | `~/claude-pulse/data/candidates.json`                                                      |
+| Pending updates   | `~/claude-pulse/data/pending_log_updates.json`                                             |
+| Astro 站          | `~/claude-pulse/site/`                                                                     |
+| Deploy            | push to `main` → GitHub Actions → CF Pages + GH Pages redirect                             |
+| Auto mode log     | `~/.claude/logs/pulse-curate-out.log` / `pulse-curate-err.log`                             |
+| Firecrawl         | CLI `/opt/homebrew/bin/firecrawl`，認證用已存 credentials（`firecrawl --status` 可查額度） |
 
 ## 分類
 
@@ -117,18 +118,41 @@ Anthropic / Claude 動態追蹤。搜尋最新消息，比對已知項目，只�
 
 ### 步驟 4：URL 驗證與 fallback
 
-每筆候選 WebFetch 確認：
+每筆候選確認：
 
 1. HTTP 200
 2. 頁面內容與 summary 相符（標題 / 日期 / 關鍵數字）
 3. URL 是完整文章 URL 不是首頁
 
-**Fallback 順序：**
+**Fallback 順序**（逐階往下，成功即停）：
 
-1. WebFetch 直連
-2. 失敗 (403/429) → 嘗試 Chrome MCP（`mcp__claude-in-chrome__navigate` + `get_page_text`）
-3. Bloomberg / 主流站 Chrome MCP 也擋 → WebSearch 找 `finance.yahoo.com` / `investing.com` 等鏡像
-4. 仍失敗 → 該筆 BLOCK，stderr log 記錄
+1. **WebFetch 直連**
+2. 失敗 (403/429) → **Firecrawl scrape**（見下）
+3. 仍失敗 → **Chrome MCP**（`mcp__claude-in-chrome__navigate` + `get_page_text`）
+4. Bloomberg / 主流站連 Chrome MCP 也擋 → WebSearch 找 `finance.yahoo.com` / `investing.com` 等鏡像
+5. 仍失敗 → 該筆 BLOCK，stderr log 記錄
+
+**Firecrawl 呼叫方式**（用 CLI，**不要用 curl**：`Bash(curl *)` 在 user settings 的 deny 清單裡，會被硬擋）：
+
+```bash
+firecrawl scrape --format markdown --only-main-content "<URL>"
+```
+
+單一 format 直接輸出內容本身。認證走 CLI 已存的 credentials，不需要環境變數。
+
+**降級規則：** CLI 不存在、認證失效、credits 用盡、或非零退出，一律**靜默進入第 3 階**，不得中斷整個 curate 流程。Firecrawl 是選用的加速層，它掛掉時管線行為要跟加入前一致。
+
+**副作用注意：** `firecrawl scrape` 會在 cwd 建 `.firecrawl/` 快取目錄（已加入 `.gitignore`）。步驟 8 的 `git add` 只列舉特定路徑，不受影響。
+
+**為何排在 Chrome MCP 之前：** Firecrawl 不佔本機記憶體、無人值守可靠，且只在 WebFetch 已經失敗時才消耗 credits。Chrome MCP 每次會在主力機開分頁，資源成本最高，留作最後手段。
+
+**每筆候選必須記錄命中階層**（供 Firecrawl 用量與 fallback 分布量測），stderr 一行：
+
+```
+[pulse-curate] fetch-tier=<1|2|3|4|blocked> host=<domain> url=<url>
+```
+
+累積一個月後可用 `grep 'fetch-tier=' ~/.claude/logs/pulse-curate-err.log | sed -E 's/.*fetch-tier=([^ ]+) host=([^ ]+).*/\1 \2/' | sort | uniq -c | sort -rn` 看分布。
 
 ### 步驟 5：去重 + 篩選
 
@@ -238,9 +262,9 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
 
 ## 反幻覺鐵律
 
-- **唯一來源 of truth**：每條 entry 的內容與 URL 必須來自這次 session 的某個 WebFetch / WebSearch 結果
+- **唯一來源 of truth**：每條 entry 的內容與 URL 必須來自這次 session 的某個 WebFetch / Firecrawl / WebSearch / Chrome MCP 結果
 - **不要推測**：不「推斷」最近可能發生什麼。只寫看到的
-- **寫入前必須 WebFetch URL 驗證 200 + 內容佐證**，失敗則經 fallback；fallback 全失敗則 BLOCK
+- **寫入前必須取得 URL 200 + 內容佐證**（步驟 4 任一階皆可），失敗則往下一階；fallback 全失敗則 BLOCK
 - 未公布的 GitHub release version 一律不寫（曾踩坑，連續 3 天寫不存在的 v2.1.120）
 
 ## 繁中用語規則（zh-TW）
@@ -269,7 +293,7 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
 ## Gotchas
 
 1. **批次寫多筆同 (date, category, source) 必須先計算 #N suffix** — Python dict 第二次相同 key 會 skip；用 `Counter` 預算（見步驟 7a）
-2. **Bloomberg 等主流媒體 403** — 必走 fallback 順序：WebFetch → Chrome MCP → Yahoo Finance 鏡像
+2. **Bloomberg 等主流媒體 403** — 必走 fallback 順序：WebFetch → Firecrawl → Chrome MCP → Yahoo Finance 鏡像。**不要跳階**直接開 Chrome，那是最貴的一階
 3. **同 base key 順序**：log file 是日期降序，新 entry 在最頂，所以 base key 給「最新時間」的那筆，舊條目升 #2
 4. **未公布的 GitHub release**：candidates.json 沒列的版本不寫，即使 WebSearch 看到 tag 也不能信
 5. **commit-only-when-something-to-write**：無新動態時跳過 commit，不寫空 commit

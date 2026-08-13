@@ -146,13 +146,9 @@ firecrawl scrape --format markdown --only-main-content "<URL>"
 
 **為何排在 Chrome MCP 之前：** Firecrawl 不佔本機記憶體、無人值守可靠，且只在 WebFetch 已經失敗時才消耗 credits。Chrome MCP 每次會在主力機開分頁，資源成本最高，留作最後手段。
 
-**每筆候選必須記錄命中階層**（供 Firecrawl 用量與 fallback 分布量測），stderr 一行：
+**階層計數（供 Firecrawl 用量與 fallback 分布量測）：** 過程中在心裡累計每一階成功了幾筆，**於步驟 9 的摘要行輸出 `tiers=` 欄位**（格式見步驟 9）。
 
-```
-[pulse-curate] fetch-tier=<1|2|3|4|blocked> host=<domain> url=<url>
-```
-
-累積一個月後可用 `grep 'fetch-tier=' ~/.claude/logs/pulse-curate-err.log | sed -E 's/.*fetch-tier=([^ ]+) host=([^ ]+).*/\1 \2/' | sort | uniq -c | sort -rn` 看分布。
+不要寫成 stderr 的散落行：本管線的 stderr 從未被使用（`pulse-curate-err.log` 長期為 0 bytes），所有輸出都進 `pulse-curate-out.log`，而步驟 9 的摘要行是唯一每輪必寫、格式固定的通道。
 
 ### 步驟 5：去重 + 篩選
 
@@ -234,9 +230,10 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
 **Auto mode**：
 
 1. **輸出**一行結構化摘要當作回應文字（**不要** `>> file` 重定向）。格式：
-   `[YYYY-MM-DDThh:mm:ssZ] pulse-curate auto: +N items YYYY-MM-DD — commit <hash> <commit-url>`
+   `[YYYY-MM-DDThh:mm:ssZ] pulse-curate auto: +N items YYYY-MM-DD — commit <hash> <commit-url> | tiers=1:<n>,2:<n>,3:<n>,4:<n>,blocked:<n>`
    接著輸出依分類的自然語言報告。
    - LaunchAgent plist 的 `StandardOutPath` 已把 `claude -p` 的 stdout 全部重定向進 `~/.claude/logs/pulse-curate-out.log`，所以「輸出為文字」自然落入 log，無須也不要自己 `echo >> file`（會撞 `~/.claude/` 敏感路徑寫入權限）。
+   - **`tiers=` 欄位每輪必寫，即使全部為 0**：數字是步驟 4 各階層「成功取得內容」的候選筆數（`blocked` 是四階全失敗者）。這是判斷 Firecrawl 值不值得、以及 Chrome MCP 還被依賴多深的唯一資料來源，漏寫等於該輪資料遺失。欄位固定五個、順序固定，不要改寫成自然語言。
 2. macOS notification：
    - 若 `terminal-notifier` 已安裝：
      ```bash
@@ -247,7 +244,7 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
      ```bash
      osascript -e 'display notification "+N 筆" with title "Pulse" subtitle "YYYY-MM-DD"'
      ```
-3. 無新動態：輸出一行 `[YYYY-MM-DDThh:mm:ssZ] pulse-curate auto: 沒有新動態` 當回應文字，**不發 notification**（避免 noise），exit 0
+3. 無新動態：輸出一行 `[YYYY-MM-DDThh:mm:ssZ] pulse-curate auto: 沒有新動態 | tiers=1:<n>,2:<n>,3:<n>,4:<n>,blocked:<n>` 當回應文字，**不發 notification**（避免 noise），exit 0。這一輪若完全沒做 URL 驗證，五個數字全填 0
 
 ## 編輯原則
 

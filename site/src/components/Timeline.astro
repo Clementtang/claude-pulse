@@ -47,7 +47,7 @@ const sharePath = (item: any) =>
             data-datetime={item.datetimeUtc}
             data-display-date={item.displayDate}
             data-share-path={sharePath(item)}
-            style={`--cat-color: ${item.categoryColor}`}
+            style={`--cat-color: var(--cat-${item.category})`}
           >
             <span class="card-category">
               <span class="cat-dot" aria-hidden="true" />

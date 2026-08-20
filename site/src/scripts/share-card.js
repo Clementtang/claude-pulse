@@ -1,10 +1,13 @@
 /**
- * Share-as-image for timeline cards (Futu-style share card).
+ * Share-as-image for timeline cards — "Editorial" design (design canvas
+ * option A): Newsreader masthead with the pulse logo, double rule, serif
+ * title, centered text block, footer with site domain + QR.
  *
- * Draws the card on an offscreen canvas instead of screenshotting the DOM:
- * deterministic layout, fixed light palette regardless of viewer theme, and
- * no html-to-image dependency. Localized strings arrive via data attributes
- * on #timeline so this bundle stays identical (and cacheable) across locales.
+ * Draws on an offscreen canvas instead of screenshotting the DOM:
+ * deterministic layout and a fixed light palette regardless of viewer theme
+ * (the shared image is brand identity, not a themed surface). Localized
+ * strings arrive via data attributes on #timeline so this bundle stays
+ * identical (and cacheable) across locales.
  */
 import QRCode from "qrcode";
 
@@ -15,17 +18,43 @@ const CARD_WIDTH = 640;
 // image fills one screen; overflowing content grows the card instead.
 const MIN_HEIGHT = Math.round((CARD_WIDTH * 19.5) / 9);
 const SCALE = 2;
-const PAD = 48;
+const PAD_X = 52;
+const PAD_TOP = 56;
+const PAD_BOTTOM = 52;
 
-// Fixed light palette (matches the site's light theme tokens in Base.astro).
+// Fixed light palette (site light-theme tokens in Base.astro). The share
+// image deliberately ignores the viewer's dark mode — including the
+// category colors, which have brighter dark variants on the site.
 const C = {
   bg: "#faf9f0",
   text: "#1a1a1b",
   secondary: "#5c5a52",
   tertiary: "#9c9889",
   accent: "#d97757",
-  border: "#e5e2d5",
+  border: "#e5e2d6",
 };
+
+const CAT_COLORS = {
+  "claude-code": "#2563eb",
+  platform: "#059669",
+  research: "#7c3aed",
+  industry: "#d97706",
+  enterprise: "#dc2626",
+};
+
+// Pulse polyline from the site logo (HomePage.astro), 36×20 viewBox.
+const LOGO_POINTS = [
+  [0, 10],
+  [6, 10],
+  [9, 10],
+  [12, 3],
+  [15, 17],
+  [18, 6],
+  [21, 14],
+  [24, 10],
+  [28, 10],
+  [36, 10],
+];
 
 export function initShareCards() {
   const timeline = document.getElementById("timeline");
@@ -103,8 +132,7 @@ function extractCardData(card) {
     body:
       body.length > BODY_MAX_CHARS ? body.slice(0, BODY_MAX_CHARS) + "…" : body,
     category: card.querySelector(".card-category")?.textContent.trim() || "",
-    categoryColor:
-      getComputedStyle(card).getPropertyValue("--cat-color").trim() || C.accent,
+    categoryColor: CAT_COLORS[card.dataset.category] || C.accent,
     // The visible .card-time is rewritten to a relative label ("6 小時前")
     // which would go stale inside a static image — rebuild from the UTC value.
     timeLabel: formatUtc(card.dataset.datetime),
@@ -134,26 +162,27 @@ async function renderCard(data, strings) {
   });
   const qrImg = await loadImage(qrDataUrl);
 
-  const contentWidth = CARD_WIDTH - PAD * 2;
+  const contentWidth = CARD_WIDTH - PAD_X * 2;
   const measure = document.createElement("canvas").getContext("2d");
 
-  const titleFont = `700 30px ${fontBody}`;
+  const titleFont = `500 37px ${fontDisplay}`;
   const bodyFont = `400 18px ${fontBody}`;
   const titleLines = wrapText(measure, data.title, titleFont, contentWidth, 6);
 
-  const titleLH = 44;
-  const bodyLH = 32;
-  const footerH = qrSize;
-  // Fixed vertical anatomy: brand row + category row above the title,
-  // divider + footer block anchored at the card bottom.
-  const headerH = 38 + 40;
-  const bottomH = 30 + 22 + footerH + PAD;
+  const titleLH = 50;
+  const bodyLH = 33;
 
-  const titleEnd =
-    PAD + headerH + titleLines.length * titleLH + (data.body ? 18 : 0);
-  // Body may use whatever fits above the bottom block; if even the char-capped
-  // text doesn't fit the phone-screen height, the card grows instead.
-  const maxBodyLines = Math.floor((MIN_HEIGHT - bottomH - titleEnd) / bodyLH);
+  // Masthead: logo row (24px tall) + gap + double rule.
+  const mastheadH = 24 + 16 + 6;
+  const footerH = qrSize;
+  const bottomH = PAD_BOTTOM + footerH + 22 + 1;
+  const contentTop = PAD_TOP + mastheadH + 24;
+
+  // Category row (18) + gap + title + gap before body.
+  const preBodyH = 18 + 26 + titleLines.length * titleLH + (data.body ? 26 : 0);
+  const maxBodyLines = Math.floor(
+    (MIN_HEIGHT - contentTop - bottomH - preBodyH - 24) / bodyLH,
+  );
   const bodyLines = wrapText(
     measure,
     data.body,
@@ -162,15 +191,13 @@ async function renderCard(data, strings) {
     Math.max(maxBodyLines, 4),
   );
 
-  const contentEnd = titleEnd + bodyLines.length * bodyLH;
-  const cardHeight = Math.max(MIN_HEIGHT, contentEnd + bottomH);
-  const dividerY = cardHeight - PAD - footerH - 22;
+  const contentH = preBodyH + bodyLines.length * bodyLH;
+  const cardHeight = Math.max(MIN_HEIGHT, contentTop + contentH + 24 + bottomH);
+  const dividerY = cardHeight - PAD_BOTTOM - footerH - 22;
   const footerY = dividerY + 22;
-  // Short entries: center the text block between header and footer instead
-  // of piling all the slack at the bottom.
-  const slack = Math.max(0, dividerY - 30 - contentEnd);
-  const titleY = PAD + headerH + slack / 2;
-  const bodyY = titleEnd + slack / 2;
+  // Center the text block between masthead and footer divider.
+  const slack = Math.max(0, dividerY - 24 - contentTop - contentH);
+  const catY = contentTop + slack / 2;
 
   const canvas = document.createElement("canvas");
   canvas.width = CARD_WIDTH * SCALE;
@@ -182,60 +209,66 @@ async function renderCard(data, strings) {
   ctx.fillRect(0, 0, CARD_WIDTH, cardHeight);
   ctx.textBaseline = "alphabetic";
 
-  // Brand row: accent dot + wordmark left, date right
-  let by = PAD + 16;
-  ctx.fillStyle = C.accent;
-  ctx.beginPath();
-  ctx.arc(PAD + 6, by - 7, 6, 0, Math.PI * 2);
-  ctx.fill();
+  // Masthead: pulse logo + wordmark left, date right (vertically centered
+  // on the 24px logo row).
+  const rowMid = PAD_TOP + 12;
+  drawLogo(ctx, PAD_X, PAD_TOP, 44, 24);
+  ctx.textBaseline = "middle";
   ctx.fillStyle = C.text;
-  ctx.font = `600 21px ${fontDisplay}`;
-  ctx.fillText("Claude Pulse", PAD + 22, by);
-  ctx.font = `400 12px ${fontMono}`;
+  ctx.font = `600 27px ${fontDisplay}`;
+  ctx.fillText("Claude Pulse", PAD_X + 44 + 12, rowMid);
+  ctx.font = `400 13px ${fontMono}`;
   ctx.fillStyle = C.tertiary;
   ctx.textAlign = "right";
-  ctx.fillText(data.displayDate, CARD_WIDTH - PAD, by);
+  ctx.fillText(data.displayDate, CARD_WIDTH - PAD_X, rowMid);
   ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+
+  // Double rule: heavy line over hairline, newspaper masthead style.
+  const ruleY = PAD_TOP + 24 + 16;
+  ctx.fillStyle = C.text;
+  ctx.fillRect(PAD_X, ruleY, contentWidth, 2);
+  ctx.fillStyle = C.border;
+  ctx.fillRect(PAD_X, ruleY + 5, contentWidth, 1);
 
   // Category row
-  const cy = PAD + 30 + 20;
   ctx.fillStyle = data.categoryColor;
   ctx.beginPath();
-  ctx.arc(PAD + 4, cy - 4, 4, 0, Math.PI * 2);
+  ctx.arc(PAD_X + 4, catY + 9, 4, 0, Math.PI * 2);
   ctx.fill();
-  ctx.font = `600 12px ${fontBody}`;
-  ctx.fillText(data.category.toUpperCase(), PAD + 15, cy);
+  ctx.font = `700 14px ${fontBody}`;
+  withLetterSpacing(ctx, "1.4px", () => {
+    ctx.fillText(data.category.toUpperCase(), PAD_X + 16, catY + 14);
+  });
 
-  // Title + body
+  // Title (serif) + body
+  const titleY = catY + 18 + 26;
   ctx.fillStyle = C.text;
   ctx.font = titleFont;
   titleLines.forEach((line, i) => {
-    ctx.fillText(line, PAD, titleY + 26 + i * titleLH);
+    ctx.fillText(line, PAD_X, titleY + 37 + i * titleLH);
   });
+  const bodyY = titleY + titleLines.length * titleLH + (data.body ? 26 : 0);
   ctx.fillStyle = C.secondary;
   ctx.font = bodyFont;
   bodyLines.forEach((line, i) => {
-    ctx.fillText(line, PAD, bodyY + 18 + i * bodyLH);
+    ctx.fillText(line, PAD_X, bodyY + 20 + i * bodyLH);
   });
 
-  // Divider
-  ctx.strokeStyle = C.border;
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(PAD, dividerY);
-  ctx.lineTo(CARD_WIDTH - PAD, dividerY);
-  ctx.stroke();
+  // Footer divider
+  ctx.fillStyle = C.border;
+  ctx.fillRect(PAD_X, dividerY, contentWidth, 1);
 
   // Footer: site + source left, QR right
   ctx.fillStyle = C.accent;
-  ctx.font = `600 14px ${fontBody}`;
-  ctx.fillText(SITE_DOMAIN, PAD, footerY + 24);
+  ctx.font = `700 17px ${fontBody}`;
+  ctx.fillText(SITE_DOMAIN, PAD_X, footerY + 30);
   ctx.fillStyle = C.tertiary;
-  ctx.font = `400 12px ${fontMono}`;
-  ctx.fillText(`${data.source} · ${data.timeLabel}`, PAD, footerY + 46);
-  ctx.font = `400 12px ${fontBody}`;
-  ctx.fillText(strings.subtitle || "", PAD, footerY + 68);
-  ctx.drawImage(qrImg, CARD_WIDTH - PAD - qrSize, footerY, qrSize, qrSize);
+  ctx.font = `400 13px ${fontMono}`;
+  ctx.fillText(`${data.source} · ${data.timeLabel}`, PAD_X, footerY + 56);
+  ctx.font = `400 13.5px ${fontBody}`;
+  ctx.fillText(strings.subtitle || "", PAD_X, footerY + 80);
+  ctx.drawImage(qrImg, CARD_WIDTH - PAD_X - qrSize, footerY, qrSize, qrSize);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
@@ -243,6 +276,39 @@ async function renderCard(data, strings) {
       "image/png",
     );
   });
+}
+
+function drawLogo(ctx, x, y, w, h) {
+  const sx = w / 36;
+  const sy = h / 20;
+  ctx.strokeStyle = C.accent;
+  ctx.lineWidth = 2.4;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  LOGO_POINTS.forEach(([px, py], i) => {
+    if (i === 0) ctx.moveTo(x + px * sx, y + py * sy);
+    else ctx.lineTo(x + px * sx, y + py * sy);
+  });
+  ctx.stroke();
+}
+
+// Canvas letterSpacing shipped in Chrome 99+/Safari 17.4+; degrade silently.
+function withLetterSpacing(ctx, value, draw) {
+  const prev = ctx.letterSpacing;
+  try {
+    ctx.letterSpacing = value;
+  } catch {
+    // property unsupported
+  }
+  draw();
+  if (prev !== undefined) {
+    try {
+      ctx.letterSpacing = prev;
+    } catch {
+      // property unsupported
+    }
+  }
 }
 
 /**

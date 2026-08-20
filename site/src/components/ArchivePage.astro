@@ -179,10 +179,10 @@ const jsonLd = {
             <button
               class="filter-btn"
               data-category={cat.key}
-              style={`--cat-color: ${cat.color}`}
+              style={`--cat-color: var(--cat-${cat.key})`}
               aria-pressed="false"
             >
-              <span class="cat-dot" style={`background: ${cat.color}`} />
+              <span class="cat-dot" style="background: var(--cat-color)" />
               {t.categories[cat.key] || cat.label}
             </button>
           ))

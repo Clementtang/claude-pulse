@@ -58,6 +58,16 @@ const fontsHref = `https://fonts.googleapis.com/css2?${latinFonts}${
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#faf9f0"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#141413"
+    />
     <meta name="description" content={description} />
     <!-- Bing Webmaster Tools ownership verification (same ID as BingSiteAuth.xml) -->
     <meta name="msvalidate.01" content="D23785EF988DB5D7F8C38A7C6DFFAE46" />
@@ -106,6 +116,13 @@ const fontsHref = `https://fonts.googleapis.com/css2?${latinFonts}${
         --border: #e5e2d6;
         --border-hover: #d4d0c2;
 
+        /* Category colors — centralized so dark mode can swap them */
+        --cat-claude-code: #2563eb;
+        --cat-platform: #059669;
+        --cat-research: #7c3aed;
+        --cat-industry: #d97706;
+        --cat-enterprise: #dc2626;
+
         /* Font stacks — English base; CJK falls back to system (en loads no Noto) */
         --font-display: "Newsreader", Georgia, serif;
         --font-body: "Source Sans 3", system-ui, sans-serif;
@@ -118,6 +135,32 @@ const fontsHref = `https://fonts.googleapis.com/css2?${latinFonts}${
         --sp-4: 2rem;
         --sp-6: 3rem;
         --sp-8: 4rem;
+      }
+
+      /* Dark theme — follows the system, warm blacks to keep the paper
+         feel. Category colors brighten one step for contrast on dark. */
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #141413;
+          --bg-surface: #1e1d1b;
+          --bg-surface-hover: #262420;
+
+          --text: #f0efe6;
+          --text-secondary: #b8b5a8;
+          --text-tertiary: #7d7a6e;
+
+          --accent: #e8956f;
+          --accent-light: #f0ab89;
+
+          --border: #2e2c27;
+          --border-hover: #3a3831;
+
+          --cat-claude-code: #7aa5f8;
+          --cat-platform: #34d399;
+          --cat-research: #a78bfa;
+          --cat-industry: #fbbf24;
+          --cat-enterprise: #f87171;
+        }
       }
 
       /* Per-locale CJK primary font */

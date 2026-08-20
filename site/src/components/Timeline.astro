@@ -10,7 +10,14 @@ interface Props {
 const { items, locale, t } = Astro.props;
 ---
 
-<div class="timeline" id="timeline">
+<div
+  class="timeline"
+  id="timeline"
+  data-share-copied={t.shareCopied}
+  data-share-downloaded={t.shareDownloaded}
+  data-share-failed={t.shareFailed}
+  data-share-subtitle={t.subtitle}
+>
   {
     items.map((item, i) => {
       const prevDate = i > 0 ? items[i - 1].displayDate : null;
@@ -71,6 +78,30 @@ const { items, locale, t } = Astro.props;
             >
               {item.date} {item.time} UTC
             </time>
+            <button
+              type="button"
+              class="card-share-btn"
+              aria-label={t.share}
+              title={t.share}
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+            </button>
           </article>
         </Fragment>
       );
@@ -196,9 +227,47 @@ const { items, locale, t } = Astro.props;
     color: var(--text-tertiary);
   }
 
+  .card {
+    position: relative;
+  }
+
+  .card-share-btn {
+    position: absolute;
+    top: 0.875rem;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: none;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition:
+      color 0.15s,
+      background 0.15s;
+  }
+
+  .card-share-btn:hover {
+    color: var(--accent);
+    background: var(--bg-surface-hover);
+  }
+
+  .card:target .card-share-btn {
+    right: 0.75rem;
+  }
+
   @media (max-width: 640px) {
     .card-summary {
       font-size: 0.875rem;
     }
   }
 </style>
+
+<script>
+  import { initShareCards } from "../scripts/share-card.js";
+  initShareCards();
+</script>

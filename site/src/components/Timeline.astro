@@ -8,6 +8,15 @@ interface Props {
 }
 
 const { items, locale, t } = Astro.props;
+
+// Canonical share target: the entry's archive week page (permanent), not the
+// current page — home-page anchors rot once items scroll off the front page.
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const localePrefix = locale === "en" ? "" : `${locale}/`;
+const sharePath = (item: any) =>
+  `${base}${localePrefix}archive/${item.month}/${item.week}/#${item.anchor}`;
 ---
 
 <div
@@ -37,6 +46,7 @@ const { items, locale, t } = Astro.props;
             data-category={item.category}
             data-datetime={item.datetimeUtc}
             data-display-date={item.displayDate}
+            data-share-path={sharePath(item)}
             style={`--cat-color: ${item.categoryColor}`}
           >
             <span class="card-category">

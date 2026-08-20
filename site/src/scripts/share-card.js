@@ -9,10 +9,13 @@
 import QRCode from "qrcode";
 
 const SITE_DOMAIN = "claude-pulse.chatbot.tw";
-const BODY_MAX_CHARS = 200;
+const BODY_MAX_CHARS = 600;
 const CARD_WIDTH = 640;
+// Portrait card matching mainstream phone screens (9:19.5) so the shared
+// image fills one screen; overflowing content grows the card instead.
+const MIN_HEIGHT = Math.round((CARD_WIDTH * 19.5) / 9);
 const SCALE = 2;
-const PAD = 44;
+const PAD = 48;
 
 // Fixed light palette (matches the site's light theme tokens in Base.astro).
 const C = {
@@ -107,7 +110,9 @@ function extractCardData(card) {
     timeLabel: formatUtc(card.dataset.datetime),
     source: card.querySelector(".card-source")?.textContent.trim() || "",
     displayDate: card.dataset.displayDate || "",
-    url: `${location.origin}${location.pathname}#${card.id}`,
+    url: card.dataset.sharePath
+      ? `${location.origin}${card.dataset.sharePath}`
+      : `${location.origin}${location.pathname}#${card.id}`,
   };
 }
 
@@ -121,7 +126,7 @@ async function renderCard(data, strings) {
   const fontMono =
     rootStyle.getPropertyValue("--font-mono").trim() || "monospace";
 
-  const qrSize = 92;
+  const qrSize = 104;
   const qrDataUrl = await QRCode.toDataURL(data.url, {
     width: qrSize * SCALE,
     margin: 0,
@@ -132,29 +137,40 @@ async function renderCard(data, strings) {
   const contentWidth = CARD_WIDTH - PAD * 2;
   const measure = document.createElement("canvas").getContext("2d");
 
-  const titleFont = `700 24px ${fontBody}`;
-  const bodyFont = `400 15.5px ${fontBody}`;
+  const titleFont = `700 30px ${fontBody}`;
+  const bodyFont = `400 18px ${fontBody}`;
   const titleLines = wrapText(measure, data.title, titleFont, contentWidth, 6);
-  const bodyLines = wrapText(measure, data.body, bodyFont, contentWidth, 7);
 
-  const titleLH = 35;
-  const bodyLH = 27;
-  const footerH = Math.max(qrSize, 64);
+  const titleLH = 44;
+  const bodyLH = 32;
+  const footerH = qrSize;
+  // Fixed vertical anatomy: brand row + category row above the title,
+  // divider + footer block anchored at the card bottom.
+  const headerH = 38 + 40;
+  const bottomH = 30 + 22 + footerH + PAD;
 
-  let y = PAD;
-  y += 30; // brand row
-  y += 34; // category row
-  const titleY = y;
-  y += titleLines.length * titleLH;
-  if (bodyLines.length) y += 14;
-  const bodyY = y;
-  y += bodyLines.length * bodyLH;
-  y += 28; // gap before divider
-  const dividerY = y;
-  y += 22;
-  const footerY = y;
-  y += footerH + PAD;
-  const cardHeight = y;
+  const titleEnd =
+    PAD + headerH + titleLines.length * titleLH + (data.body ? 18 : 0);
+  // Body may use whatever fits above the bottom block; if even the char-capped
+  // text doesn't fit the phone-screen height, the card grows instead.
+  const maxBodyLines = Math.floor((MIN_HEIGHT - bottomH - titleEnd) / bodyLH);
+  const bodyLines = wrapText(
+    measure,
+    data.body,
+    bodyFont,
+    contentWidth,
+    Math.max(maxBodyLines, 4),
+  );
+
+  const contentEnd = titleEnd + bodyLines.length * bodyLH;
+  const cardHeight = Math.max(MIN_HEIGHT, contentEnd + bottomH);
+  const dividerY = cardHeight - PAD - footerH - 22;
+  const footerY = dividerY + 22;
+  // Short entries: center the text block between header and footer instead
+  // of piling all the slack at the bottom.
+  const slack = Math.max(0, dividerY - 30 - contentEnd);
+  const titleY = PAD + headerH + slack / 2;
+  const bodyY = titleEnd + slack / 2;
 
   const canvas = document.createElement("canvas");
   canvas.width = CARD_WIDTH * SCALE;

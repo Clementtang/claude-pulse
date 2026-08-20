@@ -128,9 +128,13 @@ Anthropic / Claude 動態追蹤。搜尋最新消息，比對已知項目，只�
 
 1. **WebFetch 直連**
 2. 失敗 (403/429) → **Firecrawl scrape**（見下）
-3. 仍失敗 → **Chrome MCP**（`mcp__claude-in-chrome__navigate` + `get_page_text`）
-4. Bloomberg / 主流站連 Chrome MCP 也擋 → WebSearch 找 `finance.yahoo.com` / `investing.com` 等鏡像
-5. 仍失敗 → 該筆 BLOCK，stderr log 記錄
+3. 仍失敗 → **Chrome MCP**（`mcp__claude-in-chrome__navigate` + `get_page_text`）——**僅限互動模式**，auto mode 直接跳第 4 階
+4. Bloomberg / 主流站擋 → WebSearch 找 `finance.yahoo.com` / `investing.com` 等鏡像
+5. 仍失敗 → 該筆 BLOCK，log 記錄（互動 session 可再補查）
+
+**Auto mode 禁用 Chrome（硬規則）：** 無人值守 session 不得呼叫任何 Chrome 類工具（`mcp__claude-in-chrome__*` 與 `mcp__chrome-devtools__*` 全部在內），包括 `new_page`／`navigate`／`tabs_create_mcp`。理由：排程一週跑 39 次，每輪留下的 x.com 等重量級分頁無人清理，已造成主力機 Chrome 記憶體耗盡卡死；且無人值守下 `new_page` 曾空轉 1800 秒才逾時，拖垮整輪。拿不到就走鏡像或 BLOCK，寧缺勿濫。
+
+**互動模式用完必關：** 經 Chrome MCP 開的分頁，取完內容後立即以 `tabs_close_mcp`（或 `close_page`）關閉，一輪結束時不得留下任何本流程開的分頁。
 
 **Firecrawl 呼叫方式**（用 CLI，**不要用 curl**：`Bash(curl *)` 在 user settings 的 deny 清單裡，會被硬擋）：
 
@@ -290,7 +294,7 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
 ## Gotchas
 
 1. **批次寫多筆同 (date, category, source) 必須先計算 #N suffix** — Python dict 第二次相同 key 會 skip；用 `Counter` 預算（見步驟 7a）
-2. **Bloomberg 等主流媒體 403** — 必走 fallback 順序：WebFetch → Firecrawl → Chrome MCP → Yahoo Finance 鏡像。**不要跳階**直接開 Chrome，那是最貴的一階
+2. **Bloomberg 等主流媒體 403** — 必走 fallback 順序：WebFetch → Firecrawl →（互動模式才有）Chrome MCP → Yahoo Finance 鏡像。**不要跳階**直接開 Chrome，那是最貴的一階；auto mode 依步驟 4 的硬規則完全不碰 Chrome
 3. **同 base key 順序**：log file 是日期降序，新 entry 在最頂，所以 base key 給「最新時間」的那筆，舊條目升 #2
 4. **未公布的 GitHub release**：candidates.json 沒列的版本不寫，即使 WebSearch 看到 tag 也不能信
 5. **commit-only-when-something-to-write**：無新動態時跳過 commit，不寫空 commit

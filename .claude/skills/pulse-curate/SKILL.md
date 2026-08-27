@@ -112,7 +112,9 @@ Anthropic / Claude 動態追蹤。搜尋最新消息，比對已知項目，只�
 
 **具名公司觸發詞**（補通用搜尋詞抓不到的）：
 
-- `Anthropic [Akamai OR EPAM OR Microsoft OR Google OR SpaceX OR JPMorgan OR Amazon] [month] [year]`
+- `Anthropic [Akamai OR EPAM OR Microsoft OR Google OR SpaceX OR JPMorgan OR Amazon OR Salesforce] [month] [year]`
+
+**夥伴主場發布的盲點：** 重大合作常由**對方**發布、Anthropic 官方當天不發文，fetcher 的來源清單（github／status／anthropic.com sitemap／x.com）完全抓不到。2026-08-26 的 Claudeforce 就是這樣漏收：當天 log 收了七筆卻獨缺當日最大的企業新聞。深度合作夥伴（Salesforce、Slack、Cognizant、Millennium 等）出現在近期 log 時，該輪應主動以具名觸發詞補搜一次。
 
 視結果追加搜尋（產品細節、產業動態、GitHub issues 社群反應）。
 
@@ -129,12 +131,20 @@ Anthropic / Claude 動態追蹤。搜尋最新消息，比對已知項目，只�
 1. **WebFetch 直連**
 2. 失敗 (403/429) → **Firecrawl scrape**（見下）
 3. 仍失敗 → **Chrome MCP**（`mcp__claude-in-chrome__navigate` + `get_page_text`）——**僅限互動模式**，auto mode 直接跳第 4 階
-4. Bloomberg / 主流站擋 → WebSearch 找 `finance.yahoo.com` / `investing.com` 等鏡像
+4. 仍失敗 → **找鏡像**（見下「鏡像來源優先序」）
 5. 仍失敗 → 該筆 BLOCK，log 記錄（互動 session 可再補查）
 
 **Auto mode 禁用 Chrome（硬規則）：** 無人值守 session 不得呼叫任何 Chrome 類工具（`mcp__claude-in-chrome__*` 與 `mcp__chrome-devtools__*` 全部在內），包括 `new_page`／`navigate`／`tabs_create_mcp`。理由：排程一週跑 39 次，每輪留下的 x.com 等重量級分頁無人清理，已造成主力機 Chrome 記憶體耗盡卡死；且無人值守下 `new_page` 曾空轉 1800 秒才逾時，拖垮整輪。拿不到就走鏡像或 BLOCK，寧缺勿濫。
 
 **互動模式用完必關：** 經 Chrome MCP 開的分頁，取完內容後立即以 `tabs_close_mcp`（或 `close_page`）關閉，一輪結束時不得留下任何本流程開的分頁。
+
+**鏡像來源優先序**（第 4 階；找到能回 200 且內容相符者即停）：
+
+1. **公司 IR 網站** — 上市公司的新聞稿在 `investor.<公司網域>` 幾乎必有一份，且**通常不設 WAF**。主站 403 時第一個試這裡，網址型態如 `https://investor.salesforce.com/news/news-details/<year>/<slug>/default.aspx`。2026-08-26 Salesforce×Anthropic 的 Claudeforce 公告即為實例：`salesforce.com` 主站與 CNBC、Salesforce Ben 全部 403、Firecrawl 額度用盡，只有 IR 鏡像取得全文，且內容比二手報導完整（多出 AIforce、Atlas Reasoning Engine、Bedrock Trust Boundary 等原始細節）
+2. **財經入口鏡像** — `finance.yahoo.com`、`investing.com`（Bloomberg／Reuters 等主流媒體的既有備援路徑）
+3. **新聞稿通路** — `prnewswire.com`、`businesswire.com`、`globenewswire.com`
+
+**注意 `http://` 要改寫成 `https://`**：IR 網站常以 http 對外給連結，但 `validate-log.mjs` 會擋非 https 的 url 欄位（build 失敗）。寫入前先確認 https 版本同樣回 200 且是同一篇。
 
 **Firecrawl 呼叫方式**（用 CLI，**不要用 curl**：`Bash(curl *)` 在 user settings 的 deny 清單裡，會被硬擋）：
 
@@ -294,7 +304,7 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
 ## Gotchas
 
 1. **批次寫多筆同 (date, category, source) 必須先計算 #N suffix** — Python dict 第二次相同 key 會 skip；用 `Counter` 預算（見步驟 7a）
-2. **Bloomberg 等主流媒體 403** — 必走 fallback 順序：WebFetch → Firecrawl →（互動模式才有）Chrome MCP → Yahoo Finance 鏡像。**不要跳階**直接開 Chrome，那是最貴的一階；auto mode 依步驟 4 的硬規則完全不碰 Chrome
+2. **Bloomberg 等主流媒體 403** — 必走 fallback 順序：WebFetch → Firecrawl →（互動模式才有）Chrome MCP → 鏡像。**不要跳階**直接開 Chrome，那是最貴的一階；auto mode 依步驟 4 的硬規則完全不碰 Chrome。**企業公告類的 403 先試公司 IR 網站**，命中率高於財經入口鏡像
 3. **同 base key 順序**：log file 是日期降序，新 entry 在最頂，所以 base key 給「最新時間」的那筆，舊條目升 #2
 4. **未公布的 GitHub release**：candidates.json 沒列的版本不寫，即使 WebSearch 看到 tag 也不能信
 5. **commit-only-when-something-to-write**：無新動態時跳過 commit，不寫空 commit

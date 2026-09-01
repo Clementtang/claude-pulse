@@ -122,10 +122,7 @@ async function handleShare(card, strings) {
 
 function extractCardData(card) {
   const summary = card.querySelector(".card-summary")?.textContent.trim() || "";
-  // Summaries follow "title sentence — body"; the first separator wins.
-  const sep = summary.indexOf(" — ");
-  const title = sep > 0 ? summary.slice(0, sep) : summary;
-  const body = sep > 0 ? summary.slice(sep + 3) : "";
+  const { title, body } = splitSummary(summary);
   return {
     anchor: card.id,
     title,
@@ -311,42 +308,110 @@ function withLetterSpacing(ctx, value, draw) {
   }
 }
 
+// Characters that must not start a line (CJK closing punctuation).
+const NO_LINE_START = /^[、。，：；！？）」』〉》】…,.:;!?)\]]$/;
+// CJK scripts break between any two characters; everything else breaks
+// only at whitespace.
+const CJK = /\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Hangul}|[\u3000-\u303f\uff00-\uffef]/u;
+
 /**
- * Greedy wrapper that handles CJK (breaks anywhere) and Latin (prefers the
- * last space on the line). Returns at most maxLines lines, last one ellipsized.
+ * Split text into break units: whitespace runs, single CJK characters, and
+ * atomic non-CJK words (Latin, digits, attached punctuation).
+ */
+function tokenize(text) {
+  const tokens = [];
+  let word = "";
+  const flush = () => {
+    if (word) tokens.push({ text: word, space: false });
+    word = "";
+  };
+  for (const ch of text) {
+    if (/\s/.test(ch)) {
+      flush();
+      if (tokens.length && !tokens[tokens.length - 1].space) {
+        tokens.push({ text: " ", space: true });
+      }
+    } else if (CJK.test(ch)) {
+      flush();
+      tokens.push({ text: ch, space: false });
+    } else {
+      word += ch;
+    }
+  }
+  flush();
+  return tokens;
+}
+
+/**
+ * Word-wrap mixed CJK/Latin text: CJK breaks between characters, Latin
+ * words stay whole, closing punctuation never starts a line. Returns at
+ * most maxLines lines, last one ellipsized.
  */
 function wrapText(ctx, text, font, maxWidth, maxLines) {
   if (!text) return [];
   ctx.font = font;
+  const width = (s) => ctx.measureText(s).width;
   const lines = [];
   let line = "";
-  for (const ch of text) {
-    if (ch === "\n") {
-      lines.push(line);
-      line = "";
+
+  const push = (l) => {
+    lines.push(l);
+    return lines.length >= maxLines;
+  };
+
+  for (const tok of tokenize(text)) {
+    if (tok.space) {
+      if (line) line += " ";
       continue;
     }
-    if (ctx.measureText(line + ch).width > maxWidth && line) {
-      const lastSpace = line.lastIndexOf(" ");
-      // Only rewind to a space when it's near the end — CJK lines rarely
-      // contain spaces and should break at the overflowing character.
-      if (/[A-Za-z0-9]/.test(ch) && lastSpace > line.length - 16) {
-        lines.push(line.slice(0, lastSpace));
-        line = line.slice(lastSpace + 1) + ch;
-      } else {
-        lines.push(line);
-        line = ch === " " ? "" : ch;
-      }
-      if (lines.length === maxLines) {
-        lines[maxLines - 1] = lines[maxLines - 1].replace(/.$/, "…");
-        return lines;
-      }
-    } else {
-      line += ch;
+    const candidate = line + tok.text;
+    if (!line || width(candidate) <= maxWidth || NO_LINE_START.test(tok.text)) {
+      line = candidate;
+      continue;
+    }
+    if (push(line.trimEnd())) return ellipsize(lines);
+    line = tok.text;
+    // A single word wider than the line: hard-break it by character.
+    while (width(line) > maxWidth && line.length > 1) {
+      let cut = line.length - 1;
+      while (cut > 1 && width(line.slice(0, cut)) > maxWidth) cut--;
+      if (push(line.slice(0, cut))) return ellipsize(lines);
+      line = line.slice(cut);
     }
   }
-  if (line) lines.push(line);
+  if (line) lines.push(line.trimEnd());
   return lines;
+}
+
+function ellipsize(lines) {
+  const last = lines[lines.length - 1];
+  lines[lines.length - 1] = last.replace(/.$/, "…");
+  return lines;
+}
+
+/**
+ * Summaries follow "title sentence — body". The em dash is the separator,
+ * but after fullwidth punctuation (）」〉) curators omit the leading space,
+ * so match the first em dash with optional whitespace on either side.
+ * Entries from before the convention have no em dash at all; fall back to
+ * the first sentence so the card still gets a title and a body.
+ */
+function splitSummary(summary) {
+  const dash = /\s*—\s*/.exec(summary);
+  if (dash && dash.index > 0) {
+    return {
+      title: summary.slice(0, dash.index),
+      body: summary.slice(dash.index + dash[0].length),
+    };
+  }
+  const period = summary.indexOf("。");
+  if (period > 0 && period < summary.length - 1) {
+    return {
+      title: summary.slice(0, period),
+      body: summary.slice(period + 1),
+    };
+  }
+  return { title: summary, body: "" };
 }
 
 function formatUtc(iso) {

@@ -365,13 +365,17 @@ function wrapText(ctx, text, font, maxWidth, maxLines) {
       continue;
     }
     const candidate = line + tok.text;
-    if (!line || width(candidate) <= maxWidth || NO_LINE_START.test(tok.text)) {
+    if (
+      width(candidate) <= maxWidth ||
+      (line && NO_LINE_START.test(tok.text))
+    ) {
       line = candidate;
       continue;
     }
-    if (push(line.trimEnd())) return ellipsize(lines);
+    if (line && push(line.trimEnd())) return ellipsize(lines);
     line = tok.text;
-    // A single word wider than the line: hard-break it by character.
+    // A single word wider than the line (including one that starts the
+    // text): hard-break it by character.
     while (width(line) > maxWidth && line.length > 1) {
       let cut = line.length - 1;
       while (cut > 1 && width(line.slice(0, cut)) > maxWidth) cut--;
@@ -394,7 +398,8 @@ function ellipsize(lines) {
  * but after fullwidth punctuation (）」〉) curators omit the leading space,
  * so match the first em dash with optional whitespace on either side.
  * Entries from before the convention have no em dash at all; fall back to
- * the first sentence so the card still gets a title and a body.
+ * the first sentence (。 for zh/ja, ". " for en/ko) so the card still gets
+ * a title and a body.
  */
 function splitSummary(summary) {
   const dash = /\s*—\s*/.exec(summary);
@@ -404,11 +409,12 @@ function splitSummary(summary) {
       body: summary.slice(dash.index + dash[0].length),
     };
   }
-  const period = summary.indexOf("。");
-  if (period > 0 && period < summary.length - 1) {
+  // Fullwidth period (zh/ja) or ". " (en/ko): first sentence becomes the title.
+  const period = /。|\. /.exec(summary);
+  if (period && period.index > 0 && period.index < summary.length - 2) {
     return {
-      title: summary.slice(0, period),
-      body: summary.slice(period + 1),
+      title: summary.slice(0, period.index),
+      body: summary.slice(period.index + period[0].length).trimStart(),
     };
   }
   return { title: summary, body: "" };

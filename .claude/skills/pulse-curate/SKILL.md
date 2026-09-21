@@ -41,6 +41,8 @@ Anthropic / Claude 動態追蹤。搜尋最新消息，比對已知項目，只�
 | `industry`    | 產業動態、競爭、法律         |
 | `enterprise`  | 企業功能、定價、合作         |
 
+**依來源決定分類（2026-09-21 起）**：第三方媒體、部落格、電子報的條目一律標 `industry`，不看主題；上表的主題分類只適用官方來源（anthropic.com、claude.com、github.com、status.claude.com、官方 X 帳號）。例如 TechCrunch 報導 Claude Code 新功能、媒體報導服務中斷、Bloomberg 報導 IPO 傳聞，都標 `industry`。這條規則配合「同事件多源拆兩筆」：官方那筆按主題分類，媒體那筆標 `industry`。舊列不回溯修正，因為改 category 會改到 `summaries-*.json` 的 key。
+
 ## Log Schema v2
 
 ```

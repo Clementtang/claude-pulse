@@ -25,3 +25,6 @@ site/dist/
 
 # Firecrawl CLI 快取（pulse-curate 步驟 4 fallback 產生）
 .firecrawl/
+
+# 1Password env-file（op:// reference，本機專用）
+op.env

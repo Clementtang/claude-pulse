@@ -190,8 +190,8 @@ firecrawl scrape --format markdown --only-main-content "<URL>"
 
 ### 步驟 6'：套用 default rules（Auto only）
 
-1. **全收原則**：所有通過 URL 驗證的候選預設全收
-2. **同事件多源拆兩筆**：T1 官方（anthropic.com）+ T2 媒體拆兩筆 entries
+1. **全收原則**：所有通過 URL 驗證的候選預設全收（同事件的後續媒體報導例外，見下一條）
+2. **同事件多源拆兩筆**：T1 官方（anthropic.com）+ T2 媒體拆兩筆 entries。**媒體那筆只有一筆**：log 裡已有該事件的媒體列時，新報導併進那一列（改寫摘要補上新事實、新來源名稱，key 與 URL 不動，4 語系同步更新），不新增列。只有新報導帶出獨立的新事件（例如政府另發命令、另一起事故）才另開一列。2026-10-12 費城假命案線索事件曾逐家累積到 13 列，事後手動併為一筆（commit 98842b8）
 3. **多筆同 base key**：自動計算 `#N` suffix（見步驟 7）
 4. **URL 驗證失敗**：經過全部 fallback 仍失敗才 skip
 
@@ -265,7 +265,7 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
 ## 編輯原則
 
 - **T1 官方優先**：anthropic.com/engineering > anthropic.com/news > claude.com/blog > github.com/anthropics > 媒體 > 社群
-- **同事件可拆兩筆**：官方公告先、Bloomberg / 媒體解析後
+- **同事件可拆兩筆**：官方公告先、Bloomberg / 媒體解析後；後續跟進的媒體併進既有媒體列（見步驟 6' 第 2 條）。事後合併多列時，沿用首報那列的 key 與 URL，其餘列與 4 語系 key 一併刪除
 - **寧缺勿濫**：今天沒可驗證新動態 → 「沒有新動態」 → 跳過 commit。不為了「有產出」而寫推測
 - **log 是 retrospective — 不寫未來日期**：每筆 entry 的 `date` 必須 ≤ 今天（系統 `date` 命令的當前日期）。對「未來事件公告」（例如尚未舉辦的大會、即將推出的功能）：
   - 若用「公告日」可考據 → 用公告日入 log，summary 描述「將於 YYYY-MM-DD 舉辦/上線」

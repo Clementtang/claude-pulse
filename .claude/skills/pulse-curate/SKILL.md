@@ -93,7 +93,7 @@ Anthropic / Claude 動態追蹤。搜尋最新消息，比對已知項目，只�
 
 ### 步驟 3：平行 WebSearch（T2 媒體 + engineering blog + X）
 
-至少 6 個平行 WebSearch，分三層：
+**下列 9 組查詢（三層 8 組＋具名公司 1 組）每輪全部執行，不因 candidates 為空或前幾組結果稀少而提前收工。** 這是硬下限。搜尋結果薄正是漏收的高風險時段，此時更要跑完。2026-10-12 改用 Sonnet 5.5 的首輪只跑 3 組就判定「沒有新動態」（Opus 時期每輪 8–10 組），所以下限必須可稽核：步驟 9 的摘要行要寫 `searches=<實際執行組數>`，報告要逐組列出查詢詞與結果中可用的新事件數。未滿 9 組不得輸出「沒有新動態」，應先補跑。
 
 **第一層 — 官方來源**
 
@@ -246,8 +246,9 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
 **Auto mode**：
 
 1. **輸出**一行結構化摘要當作回應文字（**不要** `>> file` 重定向）。格式：
-   `[YYYY-MM-DDThh:mm:ssZ] pulse-curate auto: +N items YYYY-MM-DD — commit <hash> <commit-url> | tiers=1:<n>,2:<n>,3:<n>,4:<n>,blocked:<n>`
-   接著輸出依分類的自然語言報告。
+   `[YYYY-MM-DDThh:mm:ssZ] pulse-curate auto: +N items YYYY-MM-DD — commit <hash> <commit-url> | tiers=1:<n>,2:<n>,3:<n>,4:<n>,blocked:<n> | searches=<n>`
+   接著輸出依分類的自然語言報告，並附步驟 3 的逐組查詢清單（查詢詞 → 可用新事件數）。
+   - **`searches=` 每輪必寫**：步驟 3 實際執行的 WebSearch 組數（含追加搜尋）。低於 9 代表該輪違反步驟 3 的硬下限。
    - LaunchAgent plist 的 `StandardOutPath` 已把 `claude -p` 的 stdout 全部重定向進 `~/.claude/logs/pulse-curate-out.log`，所以「輸出為文字」自然落入 log，無須也不要自己 `echo >> file`（會撞 `~/.claude/` 敏感路徑寫入權限）。
    - **`tiers=` 欄位每輪必寫，即使全部為 0**：數字是步驟 4 各階層「成功取得內容」的候選筆數（`blocked` 是四階全失敗者）。這是判斷 Firecrawl 值不值得、以及 Chrome MCP 還被依賴多深的唯一資料來源，漏寫等於該輪資料遺失。欄位固定五個、順序固定，不要改寫成自然語言。
 2. macOS notification：
@@ -260,7 +261,7 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
      ```bash
      osascript -e 'display notification "+N 筆" with title "Pulse" subtitle "YYYY-MM-DD"'
      ```
-3. 無新動態：輸出一行 `[YYYY-MM-DDThh:mm:ssZ] pulse-curate auto: 沒有新動態 | tiers=1:<n>,2:<n>,3:<n>,4:<n>,blocked:<n>` 當回應文字，**不發 notification**（避免 noise），exit 0。這一輪若完全沒做 URL 驗證，五個數字全填 0
+3. 無新動態：輸出一行 `[YYYY-MM-DDThh:mm:ssZ] pulse-curate auto: 沒有新動態 | tiers=1:<n>,2:<n>,3:<n>,4:<n>,blocked:<n> | searches=<n>` 當回應文字，後附逐組查詢清單，**不發 notification**（避免 noise），exit 0。這一輪若完全沒做 URL 驗證，五個數字全填 0
 
 ## 編輯原則
 

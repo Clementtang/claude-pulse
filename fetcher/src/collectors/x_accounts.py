@@ -44,8 +44,6 @@ DEFAULT_HANDLES = {
     # opinion, so they don't carry first-party announcement weight — T2 keeps
     # the coverage report's T1 section meaning "official, check these".
     "bcherny": HandleConfig(None, "T2"),  # Boris Cherny, Claude Code
-    "_catwu": HandleConfig(None, "T2"),  # Cat Wu, Head of Product (Code/Cowork)
-    "trq212": HandleConfig(None, "T2"),  # Thariq, Claude Code
     "DarioAmodei": HandleConfig(None, "T2"),  # CEO
     "mikeyk": HandleConfig(None, "T2"),  # Mike Krieger, CPO
 }

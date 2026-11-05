@@ -34,7 +34,7 @@ STALE_THRESHOLD = timedelta(hours=5)
 
 # Per-collector "how long may this plausibly yield nothing before we suspect a
 # silent drop?" There is no single threshold: claude_status can legitimately be
-# quiet for days (no incidents), while x_accounts watches 8 active handles.
+# quiet for days (no incidents), while x_accounts watches 6 active handles.
 #
 # Values are deliberately loose — a false alarm trains you to ignore the
 # notification, which is worse than a late one. Derived from observed gaps in
@@ -47,7 +47,7 @@ STALE_THRESHOLD = timedelta(hours=5)
 PRODUCTIVITY_THRESHOLD = {
     "github_releases": timedelta(days=7),  # observed max gap 93h
     "claude_status": timedelta(days=10),  # observed max gap 113h
-    "x_accounts": timedelta(days=5),  # 8 active handles; quiet 5d is odd
+    "x_accounts": timedelta(days=5),  # 6 active handles; quiet 5d is odd
 }
 
 

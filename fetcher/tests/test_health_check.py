@@ -162,7 +162,7 @@ def test_should_exempt_anthropic_news_from_productivity_check() -> None:
 
 def test_should_use_per_collector_thresholds() -> None:
     """claude_status may be quiet for days with no incidents; x_accounts
-    watching 8 active handles may not.
+    watching 6 active handles may not.
     """
     now = datetime.now(timezone.utc)
     seven_days = (now - timedelta(days=7)).isoformat()

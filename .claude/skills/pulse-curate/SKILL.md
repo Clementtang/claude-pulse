@@ -80,10 +80,10 @@ Anthropic / Claude 動態追蹤。搜尋最新消息，比對已知項目，只�
 ### 步驟 2：讀本地 fetcher candidates
 
 - Read `data/candidates.json`
-- 過濾 `published_at >= 最新 log 日期` 的項目
+- 取 `published_at` 在最近 14 天內、且 URL 不在步驟 1 既有 URL set 的項目。不要用「log 最新日期」當下限：別輪先收了較新的事件，較早發布的候選就會永遠被濾掉（2026-11 v2.1.319–322 因此擱置一週）
 - 依 source 分類：github.com（release）、status.claude.com（incident）、anthropic.com（sitemap）、x.com（@ClaudeDevs / @AnthropicAI / @claudeai 貼文，經 Nitter RSS）
 
-**補位責任：** 若 `data/candidates.json` mtime > 6h（fetcher 可能未跑），fallback 自抓 atom：
+**補位責任：** 若 `data/candidates.json` 不存在（cloud routine 一律如此，`data/` 不進 git）或 mtime > 6h（fetcher 可能未跑），fallback 自抓 atom：
 
 - `https://github.com/anthropics/claude-code/releases.atom`
 - `https://status.claude.com/history.atom`
@@ -316,7 +316,7 @@ GitHub Actions ~1 分鐘觸發 CF Pages + GH Pages redirect deploy。
 1. **批次寫多筆同 (date, category, source) 必須先計算 #N suffix** — Python dict 第二次相同 key 會 skip；用 `Counter` 預算（見步驟 7a）
 2. **Bloomberg 等主流媒體 403** — 必走 fallback 順序：WebFetch → Firecrawl →（互動模式才有）Chrome MCP → 鏡像。**不要跳階**直接開 Chrome，那是最貴的一階；auto mode 依步驟 4 的硬規則完全不碰 Chrome。**企業公告類的 403 先試公司 IR 網站**，命中率高於財經入口鏡像
 3. **同 base key 順序**：log file 是日期降序，新 entry 在最頂，所以 base key 給「最新時間」的那筆，舊條目升 #2
-4. **未公布的 GitHub release**：candidates.json 沒列的版本不寫，即使 WebSearch 看到 tag 也不能信
+4. **未公布的 GitHub release**：candidates.json 或步驟 2 自抓的 releases.atom 都沒列的版本不寫，即使 WebSearch 看到 tag 也不能信
 5. **commit-only-when-something-to-write**：無新動態時跳過 commit，不寫空 commit
 6. **summary 內的 `|` 必須跳脫為 `\|`** — 未跳脫會把 markdown 表格欄位切歪（source 位移進 url 欄，網站渲染出相對連結 `/github.com` 之類的壞頁）。build 前的 `site/scripts/validate-log.mjs` 會擋下這類列（含 url 非 https、category 不在 enum、未來日期），本地可先跑 `cd site && node scripts/validate-log.mjs` 自查
 7. **X 帳號掃描預設用 search URL、profile timeline 當備援** — `x.com/<handle>` 的 timeline 常因 lazy-load / anti-bot 卡住不渲染（articles = 0、body 只有 profile header）。改用 `https://x.com/search?q=from%3A<handle>%20since%3A<YYYY-MM-DD>&src=typed_query&f=live` 直接命中搜尋結果頁，是另一條 render path、穩定許多。掃帳號預設順序：search URL → profile timeline → 放棄這輪 X scan 並告知使用者
